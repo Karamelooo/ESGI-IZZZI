@@ -11,7 +11,7 @@ export default defineConfig(( { mode } ) => {
       host: true,
       port: 5173,
       strictPort: true,
-      allowedHosts: env.VITE_ALLOWED_HOSTS.split(','),
+      allowedHosts: [env.VITE_ALLOWED_HOST],
     },
   }
 })
