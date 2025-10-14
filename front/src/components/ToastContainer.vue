@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import Icon from './Icon.vue'
 import { useToast } from '../composables/useToast';
+import Button from './Button.vue';
 
 const toast = useToast();
 </script>
@@ -8,11 +9,14 @@ const toast = useToast();
 <template>
     <div class="toast-container">
         <div class="toast" :class="toast.class" v-for="toast in toast.toasts" :key="toast.id">
-            <div class="toast-header">
-                <Icon :name="toast.icon" />
-                <span>{{ toast.title }}</span>
+            <div class="toast-content">
+                <div class="toast-header">
+                    <Icon :name="toast.icon" />
+                    <span>{{ toast.title }}</span>
+                </div>
+                <span>{{ toast.message }}</span>
             </div>
-            <span>{{ toast.message }}</span>
+            <Button v-if="toast.buttonText" variant="plain" icon="Arrow">{{toast.buttonText}}</Button>
         </div>
     </div>
 </template>
@@ -31,8 +35,8 @@ const toast = useToast();
   border:1px solid black;
   border-radius:8px;
   padding:16px;
+  gap:80px;
   display:flex;
-  flex-direction: column;
   align-content:center;
   font-family:'Poppins';
   font-size:12px;

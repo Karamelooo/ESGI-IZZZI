@@ -50,6 +50,7 @@ const handleClick = (event: MouseEvent) => {
     padding: 16px 26px;
     border-radius: 8px;
     cursor: pointer;
+    font-size:16px;
 
     transition:
         background-color 0.2s ease-in-out,

@@ -5,11 +5,13 @@ type ToastType = 'success' | 'positive' | 'negative' | 'info' | 'warning' | 'inf
 type Toast = {
     id: number;
     title: string;
-    message: string;
+    message?: string;
     type: ToastType;
     class: string;
     duration: number;
     icon: string;
+    buttonText?: string;
+    buttonClick?: string;
 }
 
 const state = reactive({
@@ -18,7 +20,7 @@ const state = reactive({
 
 let idSeq = 1;
 
-function show(title: string, message: string, type: ToastType) {
+function show(title: string, type: ToastType, message?: string, buttonClick?: string, buttonText?: string) {
     const toast: Toast = {
         id: idSeq++,
         title,
@@ -26,7 +28,9 @@ function show(title: string, message: string, type: ToastType) {
         type,
         class: 'toast-'+type,
         duration:5000,
-        icon: type === 'success' ? 'Check-Desktop' : type === 'positive' ? 'Love' : type === 'negative' ? 'Warning-Desktop' : type === 'info' ? 'Info-Desktop' : type === 'warning' ? 'Warning-Desktop' : type === 'info-warning' ? 'Info-Desktop' : type === 'lock' ? 'Lock-Desktop' : type === 'lock-warning' ? 'Lock-Desktop' : 'Lock-Desktop'
+        icon: type === 'success' ? 'Check-Desktop' : type === 'positive' ? 'Love' : type === 'negative' ? 'Warning-Desktop' : type === 'info' ? 'Info-Desktop' : type === 'warning' ? 'Warning-Desktop' : type === 'info-warning' ? 'Info-Desktop' : type === 'lock' ? 'Lock-Desktop' : type === 'lock-warning' ? 'Lock-Desktop' : 'Lock-Desktop',
+        buttonText,
+        buttonClick
     }
     state.toasts.push(toast);
 
@@ -42,13 +46,13 @@ export function useToast() {
     return {
         toasts: readonly(state.toasts),
         show,
-        success: (title: string, message: string) => show(title, message, 'success'),
-        positive: (title: string, message: string) => show(title, message, 'positive'),
-        negative: (title: string, message: string) => show(title, message, 'negative'),
-        info: (title: string, message: string) => show(title, message, 'info'),
-        warning: (title: string, message: string) => show(title, message, 'warning'),
-        infoWarning: (title: string, message: string) => show(title, message, 'info-warning'),
-        lock: (title: string, message: string) => show(title, message, 'lock'),
-        lockWarning: (title: string, message: string) => show(title, message, 'lock-warning'),
+        success: (title: string, message?: string, buttonClick?: string, buttonText?: string) => show(title, 'success', message, buttonClick, buttonText),
+        positive: (title: string, message?: string, buttonClick?: string, buttonText?: string) => show(title, 'positive', message, buttonClick, buttonText),
+        negative: (title: string, message?: string, buttonClick?: string, buttonText?: string) => show(title, 'negative', message, buttonClick, buttonText),
+        info: (title: string, message?: string, buttonClick?: string, buttonText?: string) => show(title, 'info', message, buttonClick, buttonText),
+        warning: (title: string, message?: string, buttonClick?: string, buttonText?: string) => show(title, 'warning', message, buttonClick, buttonText),
+        infoWarning: (title: string, message?: string, buttonClick?: string, buttonText?: string) => show(title, 'info-warning', message, buttonClick, buttonText),
+        lock: (title: string, message?: string, buttonClick?: string, buttonText?: string) => show(title, 'lock', message, buttonClick, buttonText),
+        lockWarning: (title: string, message?: string, buttonClick?: string, buttonText?: string) => show(title, 'lock-warning', message, buttonClick, buttonText),
     }
 }
