@@ -1,22 +1,13 @@
-<template>
-    <button
-        :class="['button', `button--${variant}`, `button--${size}`]"
-        :type="type"
-        :disabled="disabled"
-        @click="handleClick"
-    >
-        <slot />
-    </button>
-</template>
-
 <script lang="ts" setup>
 import { defineProps, defineEmits } from 'vue';
+import Icon from './Icon.vue' 
 
 const props = withDefaults(
     defineProps<{
         type?: 'button' | 'submit' | 'reset';
         variant?: 'primary' | 'neutral' | 'plain';
         size?: 'small' | 'medium';
+        icon?: string;
         disabled?: boolean;
     }>(),
     {
@@ -38,6 +29,20 @@ const handleClick = (event: MouseEvent) => {
 };
 </script>
 
+<template>
+    <button
+        :class="['button', `button--${variant}`, `button--${size}`]"
+        :type="type"
+        :disabled="disabled"
+        @click="handleClick"
+    >
+    <div class="container-button">
+        <slot />
+        <Icon v-if=icon :name="icon" />
+    </div>
+    </button>
+</template>
+
 <style scoped>
 /* Base styles */
 .button {
@@ -45,11 +50,18 @@ const handleClick = (event: MouseEvent) => {
     padding: 16px 26px;
     border-radius: 8px;
     cursor: pointer;
+    font-size:16px;
 
     transition:
         background-color 0.2s ease-in-out,
         border-color 0.2s ease-in-out,
         color 0.2s ease-in-out;
+}
+
+.container-button {
+    display:flex;
+    gap:16px;
+    align-items:center;
 }
 
 /* Size variants */
