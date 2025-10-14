@@ -1,1 +1,59 @@
 @import url('./fonts.css');
+
+:root {
+    /* Theme */
+    --primary: #ffe552;
+    --secondary: #fff9d8;
+
+    /* Grayscale */
+    --gray-2: #fbfbfb;
+    --gray-5: #f4f4f4;
+    --gray-10: #eaeae9;
+    --gray-100: #2f2e2c;
+}
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html,
+body {
+    height: 100%;
+    width: 100%;
+    color: var(--gray-100);
+    font-family: 'Poppins', sans-serif;
+}
+
+ul,
+ol {
+    list-style: none;
+}
+
+a {
+    text-decoration: none;
+    color: inherit;
+}
+
+button,
+input,
+textarea,
+select {
+    font: inherit;
+    background: none;
+    border: none;
+    outline: none;
+}
+
+img,
+picture,
+video,
+canvas,
+svg {
+    display: block;
+    max-width: 100%;
+    height: auto;
+}
