@@ -9,6 +9,7 @@ services:
       - ./front:/app
     environment:
       - NODE_ENV=development
+      - VITE_ALLOWED_HOST
     command: sh -c "npm ci && npm run dev -- --host 0.0.0.0 --port 5173"
     depends_on:
       - back
