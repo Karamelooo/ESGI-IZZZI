@@ -4,6 +4,7 @@ import vue from '@vitejs/plugin-vue'
 // https://vite.dev/config/
 export default defineConfig(( { mode } ) => {
   const env = loadEnv(mode, process.cwd(), '')
+  const allowedHost = env.VITE_ALLOWED_HOST?.trim()
   
   return {
     plugins: [vue()],
@@ -11,7 +12,7 @@ export default defineConfig(( { mode } ) => {
       host: true,
       port: 5173,
       strictPort: true,
-      allowedHosts: [env.VITE_ALLOWED_HOST],
+      ...(allowedHost ? { allowedHosts: [allowedHost] } : {}),
     },
   }
 })
