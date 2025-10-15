@@ -1,9 +1,9 @@
 <script lang="ts" setup>
-import Button from './components/Button.vue';
+import { ref } from 'vue';
 import { useToast } from './composables/useToast';
-import ToastContainer from './components/ToastContainer.vue'
 
 const toast = useToast();
+const activeTab = ref(0);
 </script>
 <template>
     <ToastContainer />
@@ -27,16 +27,31 @@ const toast = useToast();
             <Button size="small" variant="plain">Sans fond</Button>
             <Button size="small" variant="plain" :disabled="true">Sans fond — désactivé</Button>
         </div>
+
+        <h3>Onglets</h3>
+        <Switch
+            v-model="activeTab"
+            :tabs="[
+                { name: 'Onglet 1' },
+                { name: 'Onglet 2' },
+                { name: 'Onglet 3' },
+            ]"
+        >
+            <template #tab-0> Onglet 1 (slot) </template>
+            <template #tab-1> Onglet 2 (slot) </template>
+            <template #tab-2> Onglet 3 (slot) </template>
+        </Switch>
+
         <h3>Toasts</h3>
         <div class="row">
-            <Button @click="toast.success('Les étudiants ont bien été relancés.')">Success</button><br>
-            <Button  @click="toast.positive('Alerte', 'Ricotta Chicago Aussie extra pie. Ranch parmesan anchovies sautéed lovers red Chicago stuffed.')">Positive</button><br>
-            <Button  @click="toast.negative('Alerte', 'Ricotta Chicago Aussie extra pie. Ranch parmesan anchovies sautéed lovers red Chicago stuffed.')">Negative</button><br>
-            <Button  @click="toast.info('Plan actuel.')">Info</button><br>
-            <Button  @click="toast.warning('Période d’essai terminée :\n changez de plan pour débloquer les retours illimités.', undefined, undefined, 'Je passe au plan Super IZZZI')">Warning</button><br>
-            <Button  @click="toast.infoWarning('Les étudiants ont bien été relancés.')">InfoWarning</button><br>
-            <Button  @click="toast.lock('Les étudiants ont bien été relancés.')">Lock</button><br>
-            <Button  @click="toast.lockWarning('Les étudiants ont bien été relancés.')">LockWarning</button><br>
+            <Button @click="toast.success('Lorem ipsum.')">Success</button><br>
+            <Button @click="toast.positive('Lorem', 'Lorem ipsum.')">Positive</button><br>
+            <Button @click="toast.negative('Lorem', 'Lorem ipsum.')">Negative</button><br>
+            <Button @click="toast.info('Lorem ipsum.')">Info</button><br>
+            <Button @click="toast.warning('Lorem', undefined, undefined, 'Lorem ipsum.')">Warning</button><br>
+            <Button @click="toast.infoWarning('Lorem ipsum.')">InfoWarning</button><br>
+            <Button @click="toast.lock('Lorem ipsum.')">Lock</button><br>
+            <Button @click="toast.lockWarning('Lorem ipsum.')">LockWarning</button><br>
         </div>
     </div>
 </template>
