@@ -45,14 +45,14 @@ const tabList = [{ name: 'Onglet 1' }, { name: 'Onglet 2' }, { name: 'Onglet 3' 
     <h3>Toasts</h3>
 
     <div class="row">
-      <Button @click="toast.success('Lorem ipsum.')">Success</Button><br />
-      <Button @click="toast.positive('Lorem', 'Lorem ipsum.')">Positive</Button><br />
-      <Button @click="toast.negative('Lorem', 'Lorem ipsum.')">Negative</Button><br />
-      <Button @click="toast.info('Lorem ipsum.')">Info</Button><br />
-      <Button @click="toast.warning('Lorem', undefined, undefined, 'Lorem ipsum.')">Warning</Button><br />
-      <Button @click="toast.infoWarning('Lorem ipsum.')">InfoWarning</Button><br />
-      <Button @click="toast.lock('Lorem ipsum.')">Lock</Button><br />
-      <Button @click="toast.lockWarning('Lorem ipsum.')">LockWarning</Button><br />
+      <Button @click="toast.success('Lorem ipsum.')">Success</Button>
+      <Button @click="toast.positive('Lorem', 'Lorem ipsum.')">Positive</Button>
+      <Button @click="toast.negative('Lorem', 'Lorem ipsum.')">Negative</Button>
+      <Button @click="toast.info('Lorem ipsum.')">Info</Button>
+      <Button @click="toast.warning('Lorem', undefined, undefined, 'Lorem ipsum.')">Warning</Button>
+      <Button @click="toast.infoWarning('Lorem ipsum.')">InfoWarning</Button>
+      <Button @click="toast.lock('Lorem ipsum.')">Lock</Button>
+      <Button @click="toast.lockWarning('Lorem ipsum.')">LockWarning</Button>
     </div>
   </div>
 </template>
