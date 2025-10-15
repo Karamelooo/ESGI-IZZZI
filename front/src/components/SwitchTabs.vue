@@ -31,7 +31,13 @@ const setTab = (index: number) => {
 
 <style scoped>
 .switch-tabs {
+  width: fit-content;
   display: flex;
-  gap: 20px;
+  align-items: center;
+  gap: 40px;
+  padding: 10px 40px 10px 10px;
+  border: 1px solid var(--gray-15);
+  border-radius: 8px;
+  background-color: var(--gray-5);
 }
 </style>

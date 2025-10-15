@@ -32,7 +32,7 @@ const handleClick = (event: MouseEvent) => {
 
 <template>
   <button
-    :class="['button', `button--${variant}`, `button--${size}`]"
+    :class="['button', `button--${size}`, `button--${variant}`, { 'button--in-switch': inSwitchComponent }]"
     :type="type"
     :disabled="disabled"
     @click="handleClick"
@@ -54,7 +54,7 @@ const handleClick = (event: MouseEvent) => {
 /* Base styles */
 .button {
   color: var(--gray-100);
-  padding: 16px 26px;
+  padding: 12px 26px;
   border-radius: 8px;
   cursor: pointer;
   font-size: 16px;
@@ -69,7 +69,7 @@ const handleClick = (event: MouseEvent) => {
 
 /* Size variants */
 .button--small {
-  padding: 10px 16px;
+  padding: 8px 16px;
   font-size: 14px;
 }
 
@@ -127,5 +127,10 @@ const handleClick = (event: MouseEvent) => {
   background-color: var(--gray-100);
   border: 1px solid var(--gray-100);
   color: var(--gray-2);
+  padding: 12px 60px;
+}
+
+.button--plain.button--in-switch {
+  border-radius: 0;
 }
 </style>
