@@ -4,13 +4,17 @@ import { useToast } from './composables/useToast';
 
 const toast = useToast();
 const activeTab = ref(0);
+
+const tabList = [{ name: 'Onglet 1' }, { name: 'Onglet 2' }, { name: 'Onglet 3' }];
 </script>
+
 <template>
   <ToastContainer />
   <div id="root">
     <h1>UI Kit — © IZZZI 2025.</h1>
 
     <h3>Boutons</h3>
+
     <div class="row">
       <Button>Primaire</Button>
       <Button :disabled="true">Primaire — désactivé</Button>
@@ -19,6 +23,7 @@ const activeTab = ref(0);
       <Button variant="plain">Sans fond</Button>
       <Button variant="plain" :disabled="true">Sans fond — désactivé</Button>
     </div>
+
     <div class="row">
       <Button size="small">Primaire</Button>
       <Button size="small" :disabled="true">Primaire — désactivé</Button>
@@ -29,13 +34,16 @@ const activeTab = ref(0);
     </div>
 
     <h3>Onglets</h3>
-    <Switch v-model="activeTab" :tabs="[{ name: 'Onglet 1' }, { name: 'Onglet 2' }, { name: 'Onglet 3' }]">
+
+    <SwitchTabs v-model="activeTab" :tabs="tabList" />
+    <SwitchPanels :activeTab="activeTab">
       <template #tab-0> Onglet 1 (slot) </template>
       <template #tab-1> Onglet 2 (slot) </template>
       <template #tab-2> Onglet 3 (slot) </template>
-    </Switch>
+    </SwitchPanels>
 
     <h3>Toasts</h3>
+
     <div class="row">
       <Button @click="toast.success('Lorem ipsum.')">Success</Button><br />
       <Button @click="toast.positive('Lorem', 'Lorem ipsum.')">Positive</Button><br />
