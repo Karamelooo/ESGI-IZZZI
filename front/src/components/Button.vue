@@ -1,20 +1,21 @@
 <script lang="ts" setup>
 import { defineProps, defineEmits } from 'vue';
-import Icon from './Icon.vue' 
 
 const props = withDefaults(
     defineProps<{
         type?: 'button' | 'submit' | 'reset';
-        variant?: 'primary' | 'neutral' | 'plain';
+        variant?: 'primary' | 'neutral' | 'plain' | 'switch';
         size?: 'small' | 'medium';
         icon?: string;
         disabled?: boolean;
+        inSwitchComponent?: boolean;
     }>(),
     {
         type: 'button',
         variant: 'primary',
         size: 'medium',
         disabled: false,
+        inSwitchComponent: false,
     }
 );
 
@@ -31,37 +32,43 @@ const handleClick = (event: MouseEvent) => {
 
 <template>
     <button
-        :class="['button', `button--${variant}`, `button--${size}`]"
+        :class="[
+            'button',
+            `button--${variant}`,
+            `button--${size}`,
+        ]"
         :type="type"
         :disabled="disabled"
         @click="handleClick"
     >
-    <div class="container-button">
-        <slot />
-        <Icon v-if=icon :name="icon" />
-    </div>
+        <div class="button-container">
+            <slot />
+            <Icon v-if="icon" :name="icon" />
+        </div>
     </button>
 </template>
 
 <style scoped>
+.button-container {
+    display: flex;
+    gap: 16px;
+    align-items: center;
+}
+
 /* Base styles */
 .button {
     color: var(--gray-100);
     padding: 16px 26px;
     border-radius: 8px;
     cursor: pointer;
-    font-size:16px;
+    font-size: 16px;
 
     transition:
         background-color 0.2s ease-in-out,
         border-color 0.2s ease-in-out,
-        color 0.2s ease-in-out;
-}
-
-.container-button {
-    display:flex;
-    gap:16px;
-    align-items:center;
+        color 0.2s ease-in-out,
+        padding-left 0.2s ease-in-out,
+        padding-right 0.2s ease-in-out;
 }
 
 /* Size variants */
@@ -117,5 +124,12 @@ const handleClick = (event: MouseEvent) => {
 
 .button--plain:disabled:hover {
     text-decoration: none;
+}
+
+/* Switch variant */
+.button--switch {
+    background-color: var(--gray-100);
+    border: 1px solid var(--gray-100);
+    color: var(--gray-2);
 }
 </style>
