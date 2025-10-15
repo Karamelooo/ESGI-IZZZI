@@ -23,20 +23,13 @@ const activeTab = ref(0);
       <Button size="small">Primaire</Button>
       <Button size="small" :disabled="true">Primaire — désactivé</Button>
       <Button size="small" variant="neutral">Neutre</Button>
-      <Button size="small" variant="neutral" :disabled="true"
-        >Neutre — désactivé</Button
-      >
+      <Button size="small" variant="neutral" :disabled="true">Neutre — désactivé</Button>
       <Button size="small" variant="plain">Sans fond</Button>
-      <Button size="small" variant="plain" :disabled="true"
-        >Sans fond — désactivé</Button
-      >
+      <Button size="small" variant="plain" :disabled="true">Sans fond — désactivé</Button>
     </div>
 
     <h3>Onglets</h3>
-    <Switch
-      v-model="activeTab"
-      :tabs="[{ name: 'Onglet 1' }, { name: 'Onglet 2' }, { name: 'Onglet 3' }]"
-    >
+    <Switch v-model="activeTab" :tabs="[{ name: 'Onglet 1' }, { name: 'Onglet 2' }, { name: 'Onglet 3' }]">
       <template #tab-0> Onglet 1 (slot) </template>
       <template #tab-1> Onglet 2 (slot) </template>
       <template #tab-2> Onglet 3 (slot) </template>
@@ -45,20 +38,13 @@ const activeTab = ref(0);
     <h3>Toasts</h3>
     <div class="row">
       <Button @click="toast.success('Lorem ipsum.')">Success</Button><br />
-      <Button @click="toast.positive('Lorem', 'Lorem ipsum.')">Positive</Button
-      ><br />
-      <Button @click="toast.negative('Lorem', 'Lorem ipsum.')">Negative</Button
-      ><br />
+      <Button @click="toast.positive('Lorem', 'Lorem ipsum.')">Positive</Button><br />
+      <Button @click="toast.negative('Lorem', 'Lorem ipsum.')">Negative</Button><br />
       <Button @click="toast.info('Lorem ipsum.')">Info</Button><br />
-      <Button
-        @click="toast.warning('Lorem', undefined, undefined, 'Lorem ipsum.')"
-        >Warning</Button
-      ><br />
-      <Button @click="toast.infoWarning('Lorem ipsum.')">InfoWarning</Button
-      ><br />
+      <Button @click="toast.warning('Lorem', undefined, undefined, 'Lorem ipsum.')">Warning</Button><br />
+      <Button @click="toast.infoWarning('Lorem ipsum.')">InfoWarning</Button><br />
       <Button @click="toast.lock('Lorem ipsum.')">Lock</Button><br />
-      <Button @click="toast.lockWarning('Lorem ipsum.')">LockWarning</Button
-      ><br />
+      <Button @click="toast.lockWarning('Lorem ipsum.')">LockWarning</Button><br />
     </div>
   </div>
 </template>

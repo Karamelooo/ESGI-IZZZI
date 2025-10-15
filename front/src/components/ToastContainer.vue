@@ -6,11 +6,7 @@ const toast = useToast();
 
 <template>
   <div class="toast-container">
-    <div
-      v-for="toast in toast.toasts"
-      :class="['toast', toast.class]"
-      :key="toast.id"
-    >
+    <div v-for="toast in toast.toasts" :class="['toast', toast.class]" :key="toast.id">
       <div class="toast-content">
         <div class="toast-header">
           <Icon :name="toast.icon" />
