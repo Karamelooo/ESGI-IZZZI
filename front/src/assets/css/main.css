@@ -5,10 +5,16 @@
   --primary: #ffe552;
   --secondary: #fff9d8;
 
+  /* Status */
+  --success: #4caf50;
+  --error: #e53935;
+  --warning: #ff9800;
+
   /* Grayscale */
   --gray-2: #fbfbfb;
   --gray-5: #f4f4f4;
   --gray-10: #eaeae9;
+  --gray-15: #e0e0e0;
   --gray-100: #2f2e2c;
 }
 
