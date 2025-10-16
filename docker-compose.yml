@@ -24,12 +24,13 @@ services:
       - ./back:/app
     environment:
       - CHOKIDAR_USEPOLLING=true
+      - DATABASE_URL=postgresql://postgres:password@db:5432/izzzi?schema=public
     command: sh -c "npm ci && npm run start:dev"
     depends_on:
       - db
 
   db:
-    image: postgres:13
+    image: postgres:15
     volumes:
       - db_data:/var/lib/postgresql/data
     ports:
@@ -37,6 +38,7 @@ services:
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: password
+      POSTGRES_DB: izzzi
 
 volumes:
   db_data:
