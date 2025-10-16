@@ -1,6 +1,7 @@
 <script lang="ts" setup>
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
 import { useToast } from './composables/useToast';
+import Icon from './components/Icon.vue';
 
 const toast = useToast();
 
@@ -10,6 +11,20 @@ const emailInput = ref('');
 const passwordInput = ref('');
 const textareaInput = ref('');
 const disabledInput = ref('');
+const filesIcons = import.meta.glob('/src/assets/svg/icons/*.svg', { eager: true, as: 'url' }) as Record<
+  string,
+  string
+>;
+const iconNames = computed(() => {
+  return Object.keys(filesIcons)
+    .map((p) => p.split('/').pop()!.replace('.svg', ''))
+    .sort((a, b) => a.localeCompare(b));
+});
+
+const chunk = <T,>(arr: T[], size: number) =>
+  Array.from({ length: Math.ceil(arr.length / size) }, (_, i) => arr.slice(i * size, i * size + size));
+
+const iconRows = computed(() => chunk(iconNames.value, 5));
 </script>
 
 <template>
@@ -17,8 +32,20 @@ const disabledInput = ref('');
   <div id="root">
     <h1>UI Kit — © IZZZI 2025.</h1>
 
+    <h3>Icones</h3>
+    <div class="row" style="flex-wrap: wrap">
+      <table style="border-collapse: collapse">
+        <tr v-for="(row, rIdx) in iconRows" :key="rIdx" class="icon-item">
+          <td v-for="name in row" :key="name" style="border: 1px solid black">
+            <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 10px">
+              <span>{{ name }}</span>
+              <Icon :name="name" :size="'32px'" />
+            </div>
+          </td>
+        </tr>
+      </table>
+    </div>
     <h3>Boutons</h3>
-
     <div class="row">
       <Button>Primaire</Button>
       <Button :disabled="true">Primaire — désactivé</Button>
