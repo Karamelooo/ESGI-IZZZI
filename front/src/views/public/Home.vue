@@ -1,5 +1,7 @@
 <script lang="ts" setup></script>
 
-<template></template>
+<template>
+  <Header />
+</template>
 
 <style scoped></style>
