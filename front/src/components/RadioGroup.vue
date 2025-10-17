@@ -59,6 +59,6 @@ function handleSelect(value: string, index: number) {
 .radio-group-root {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 12px;
 }
 </style>
