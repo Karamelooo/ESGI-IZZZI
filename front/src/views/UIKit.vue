@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { ref, computed } from 'vue';
+import { ref } from 'vue';
 import { useToast } from '../composables/useToast';
 
 const toast = useToast();
@@ -45,20 +45,20 @@ const iconRows = chunk(iconNames, 7);
       <h3>Boutons</h3>
 
       <div class="row">
-        <Button>Primaire</Button>
+        <Button icon="Arrow" iconPosition="right">Primaire</Button>
         <Button :disabled="true">Primaire — désactivé</Button>
         <Button variant="neutral">Neutre</Button>
         <Button variant="neutral" :disabled="true">Neutre — désactivé</Button>
-        <Button variant="plain">Sans fond</Button>
+        <Button variant="plain" icon="Arrow" iconPosition="right">Sans fond</Button>
         <Button variant="plain" :disabled="true">Sans fond — désactivé</Button>
       </div>
 
       <div class="row">
-        <Button size="small">Primaire</Button>
+        <Button size="small" icon="Arrow" iconPosition="right">Primaire</Button>
         <Button size="small" :disabled="true">Primaire — désactivé</Button>
         <Button size="small" variant="neutral">Neutre</Button>
         <Button size="small" variant="neutral" :disabled="true">Neutre — désactivé</Button>
-        <Button size="small" variant="plain">Sans fond</Button>
+        <Button size="small" variant="plain" icon="Arrow" iconPosition="right">Sans fond</Button>
         <Button size="small" variant="plain" :disabled="true">Sans fond — désactivé</Button>
       </div>
     </div>
