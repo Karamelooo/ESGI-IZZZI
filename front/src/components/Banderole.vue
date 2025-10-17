@@ -20,6 +20,7 @@
   width: 100%;
   background-color: var(--dark-orange);
   color: #fff;
+  overflow: hidden;
   font-family: 'Mochiy Pop One';
 }
 
