@@ -87,7 +87,7 @@ const iconRows = computed(() => chunk(iconNames.value, 7));
         :required="true"
       />
 
-      <Radio v-model="radio1" label="Option 1" />
+      <Radio v-model="radio1" label="Option 1" :disabled="true" />
       <Radio v-model="radio2" icon="Check-Desktop" label="Option 2" />
     </div>
 

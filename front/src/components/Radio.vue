@@ -68,12 +68,9 @@ function toggle() {
   outline: none;
 }
 
-.radio--checked {
-}
-
 .radio--disabled {
   opacity: 0.6;
-  pointer-events: none;
+  cursor: not-allowed;
 }
 
 .radio-inner {
