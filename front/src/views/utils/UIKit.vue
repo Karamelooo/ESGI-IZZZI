@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { ref } from 'vue';
-import { useToast } from '../composables/useToast';
+import { useToast } from '@composables/useToast';
 
 const toast = useToast();
 
