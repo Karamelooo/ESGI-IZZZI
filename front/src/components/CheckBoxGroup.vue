@@ -1,23 +1,20 @@
 <script lang="ts" setup>
 const props = withDefaults(
   defineProps<{
-    modelValue?: string;
+    modelValue?: string[];
     options: Array<{
       value?: string;
       label?: string;
-      icon?: string;
       disabled?: boolean;
       color?: string;
       labelPosition?: string;
     }>;
-    icon?: string;
     color?: string;
     labelPosition?: string;
     disabled?: boolean;
     name?: string;
   }>(),
   {
-    icon: '',
     labelPosition: 'right',
     disabled: false,
     name: undefined,
@@ -25,28 +22,34 @@ const props = withDefaults(
 );
 
 const emit = defineEmits<{
-  (e: 'update:modelValue', value: string): void;
-  (e: 'change', value: string, index: number): void;
+  (e: 'update:modelValue', value: string[]): void;
+  (e: 'change', value: string[], index: number): void;
 }>();
 
 function handleSelect(value: string, index: number) {
-  emit('update:modelValue', value);
-  emit('change', value, index);
+  const values = props.modelValue ? [...props.modelValue] : [];
+  const i = values.indexOf(value);
+  if (i === -1) {
+    values.push(value);
+  } else {
+    values.splice(i, 1);
+  }
+  emit('update:modelValue', values);
+  emit('change', values, index);
 }
 </script>
 
 <template>
-  <div class="radio-group-root" role="radiogroup">
-    <input v-if="name" type="hidden" :name="name" :value="modelValue" />
+  <div class="checkbox-group-root" role="group">
+    <input v-if="name" type="hidden" :name="name" :value="modelValue?.join(',')" />
 
-    <Radio
+    <CheckBox
       v-for="(option, index) in options"
-      :key="option.value ?? `radio-${index}`"
-      :model-value="modelValue === (option.value ?? `radio-${index}`)"
+      :key="option.value ?? `checkbox-${index}`"
+      :model-value="modelValue?.includes(option.value ?? `checkbox-${index}`) ?? false"
       :value="option.value"
       :index="index"
       :label="option.label"
-      :icon="option.icon ?? icon"
       :color="option.color ?? color"
       :label-position="option.labelPosition ?? labelPosition"
       :disabled="option.disabled ?? disabled"
@@ -56,7 +59,7 @@ function handleSelect(value: string, index: number) {
 </template>
 
 <style scoped>
-.radio-group-root {
+.checkbox-group-root {
   display: flex;
   flex-direction: column;
   gap: 8px;

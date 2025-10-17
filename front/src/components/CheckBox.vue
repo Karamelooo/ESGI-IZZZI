@@ -5,7 +5,6 @@ const props = withDefaults(
   defineProps<{
     modelValue: boolean;
     disabled?: boolean;
-    icon?: string;
     color?: string;
     label?: string;
     labelPosition?: string;
@@ -24,86 +23,72 @@ const emit = defineEmits<{
   (e: 'select', value: string, index: number): void;
 }>();
 
-const radioValue = props.value ?? `radio-${props.index ?? 0}`;
+const borderColor = props.color || 'var(--gray-15)';
+
+const checkBoxValue = props.value ?? `checkbox-${props.index ?? 0}`;
 
 function toggle() {
   if (!props.disabled) {
     emit('update:modelValue', !props.modelValue);
-    emit('select', radioValue, props.index ?? 0);
+    emit('select', checkBoxValue, props.index ?? 0);
   }
 }
 </script>
 
 <template>
   <div
-    class="radio-root"
-    :class="{ 'radio--checked': modelValue, 'radio--disabled': disabled }"
+    class="checkbox-root"
+    :class="{ 'checkbox--checked': modelValue, 'checkbox--disabled': disabled }"
     :style="{ cursor: disabled ? 'not-allowed' : 'pointer' }"
     @click="toggle"
     @keydown.space.prevent="toggle"
     tabindex="0"
-    role="radio"
+    role="checkbox"
     :aria-checked="modelValue"
     :aria-disabled="disabled"
   >
-    <span v-if="label && labelPosition === 'left'" class="radio-label">{{ label }}</span>
+    <span v-if="label && labelPosition === 'left'" class="checkbox-label">{{ label }}</span>
 
-    <div
-      class="radio-inner"
-      :style="{ border: modelValue && color ? `1px solid ${color}` : '1px solid var(--gray-100)' }"
-    >
+    <div class="checkbox-inner" :style="{ border: `1px solid ${borderColor}` }">
       <template v-if="modelValue">
-        <Icon v-if="icon" :name="icon" :color="color" class="radio-icon" />
-        <span
-          v-else
-          class="radio-dot"
-          :style="{
-            backgroundColor: color ?? 'var(--gray-100)',
-          }"
-        />
+        <Icon name="Check-Desktop" :color="color" class="checkbox-icon" />
       </template>
     </div>
 
-    <span v-if="label && labelPosition === 'right'" class="radio-label">{{ label }}</span>
+    <span v-if="label && labelPosition === 'right'" class="checkbox-label">{{ label }}</span>
   </div>
 </template>
 
 <style scoped>
-.radio-root {
+.checkbox-root {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 9px;
   user-select: none;
   outline: none;
 }
 
-.radio--disabled {
+.checkbox--disabled {
   opacity: 0.6;
   cursor: not-allowed;
 }
 
-.radio-inner {
+.checkbox-inner {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 18px;
-  height: 18px;
-  border-radius: 50%;
+  width: 17px;
+  height: 17px;
+  border-radius: 3px;
+  background-color: var(--gray-2);
 }
 
-.radio-dot {
-  display: block;
-  border-radius: 50%;
-  width: 8px;
-  height: 8px;
+.checkbox-icon {
+  width: 15px;
+  height: 15px;
 }
 
-.radio-icon {
-  width: 12px;
-  height: 12px;
-}
-
-.radio-label {
+.checkbox-label {
   position: relative;
   top: 1px;
   font-size: 14px;

@@ -8,8 +8,10 @@ const activeTab = ref(0);
 const nameInput = ref('');
 const passwordInput = ref('');
 const selectedRadio = ref('');
+const selectedCheckBox = ref([]);
 
 function onRadioChange(value: string, index: number) {}
+function onCheckBoxChange(value: string[], index: number) {}
 
 const filesIcons = import.meta.glob('/src/assets/svg/icons/*.svg', { eager: true, as: 'url' }) as Record<
   string,
@@ -92,14 +94,27 @@ const iconRows = computed(() => chunk(iconNames.value, 7));
         v-model="selectedRadio"
         :options="[
           { label: 'Option 1' },
-          { label: 'Option 2', color: 'default' },
-          { label: 'Option 3', color: '#ff0000', icon: 'Check-Desktop', value: 'custom-value' },
+          { label: 'Option 2', color: 'var(--error)' },
+          { label: 'Option 3', color: 'var(--error)', icon: 'Check-Desktop', value: 'custom-value' },
         ]"
-        color="#4CAF50"
         label-position="right"
         @change="onRadioChange"
       />
-      <div>Valeur sélectionnée : {{ selectedRadio || 'Aucune' }}</div>
+      <div class="info">Valeur sélectionnée : {{ selectedRadio || 'Aucune' }}</div>
+
+      <CheckBoxGroup
+        v-model="selectedCheckBox"
+        :options="[
+          { label: 'Option 1' },
+          { label: 'Option 2' },
+          { label: 'Option 3', color: 'var(--error)', value: 'custom-value' },
+        ]"
+        label-position="right"
+        @change="onCheckBoxChange"
+      />
+      <div class="info">
+        Valeurs sélectionnées : {{ selectedCheckBox.length > 0 ? selectedCheckBox.join(', ') : 'Aucune' }}
+      </div>
     </div>
 
     <div class="component">
@@ -166,5 +181,10 @@ const iconRows = computed(() => chunk(iconNames.value, 7));
 .row {
   display: flex;
   gap: 20px;
+}
+
+.info {
+  font-size: 14px;
+  font-style: italic;
 }
 </style>
