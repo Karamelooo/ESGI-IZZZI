@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 const props = withDefaults(
   defineProps<{
+    to?: string;
     type?: 'button' | 'submit' | 'reset';
     variant?: 'primary' | 'neutral' | 'plain' | 'switch';
     size?: 'small' | 'medium';
@@ -31,7 +32,28 @@ const handleClick = (event: MouseEvent) => {
 </script>
 
 <template>
+  <router-link v-if="to" :to="to" custom v-slot="{ navigate, href }">
+    <button
+      :class="['button', `button--${size}`, `button--${variant}`, { 'button--in-switch': inSwitchComponent }]"
+      :type="type"
+      :disabled="disabled"
+      :href="href"
+      @click="
+        (event) => {
+          handleClick(event);
+          navigate(event);
+        }
+      "
+    >
+      <div class="button-container" :style="variant === 'plain' ? 'gap: 10px;' : size === 'small' ? 'gap: 12px;' : ''">
+        <Icon v-if="icon && iconPosition === 'left'" :name="icon" />
+        <slot />
+        <Icon v-if="icon && iconPosition === 'right'" :name="icon" />
+      </div>
+    </button>
+  </router-link>
   <button
+    v-else
     :class="['button', `button--${size}`, `button--${variant}`, { 'button--in-switch': inSwitchComponent }]"
     :type="type"
     :disabled="disabled"
@@ -112,6 +134,7 @@ const handleClick = (event: MouseEvent) => {
 .button--plain {
   background-color: transparent;
   border: none;
+  border-radius: 0;
   padding: 0;
 }
 
