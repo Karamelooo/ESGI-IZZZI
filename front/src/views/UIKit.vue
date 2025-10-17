@@ -104,6 +104,17 @@ const iconRows = computed(() => chunk(iconNames.value, 7));
     </div>
 
     <div class="component">
+      <h3>Animations</h3>
+      <div class="row">
+        <Loader />
+        <Live />
+      </div>
+      <div class="row">
+        <Banderole />
+      </div>
+    </div>
+
+    <div class="component">
       <h3>Toasts</h3>
 
       <div class="row">
