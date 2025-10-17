@@ -7,8 +7,9 @@ const toast = useToast();
 const activeTab = ref(0);
 const nameInput = ref('');
 const passwordInput = ref('');
-const radio1 = ref(false);
-const radio2 = ref(false);
+const selectedRadio = ref('');
+
+function onRadioChange(value: string, index: number) {}
 
 const filesIcons = import.meta.glob('/src/assets/svg/icons/*.svg', { eager: true, as: 'url' }) as Record<
   string,
@@ -87,8 +88,18 @@ const iconRows = computed(() => chunk(iconNames.value, 7));
         :required="true"
       />
 
-      <Radio v-model="radio1" label="Option 1" :disabled="true" />
-      <Radio v-model="radio2" icon="Check-Desktop" label="Option 2" />
+      <RadioGroup
+        v-model="selectedRadio"
+        :options="[
+          { label: 'Option 1' },
+          { label: 'Option 2', color: 'default' },
+          { label: 'Option 3', color: '#ff0000', icon: 'Check-Desktop', value: 'custom-value' },
+        ]"
+        color="#4CAF50"
+        label-position="right"
+        @change="onRadioChange"
+      />
+      <div>Valeur sélectionnée : {{ selectedRadio || 'Aucune' }}</div>
     </div>
 
     <div class="component">

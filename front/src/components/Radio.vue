@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { defineProps, defineEmits } from 'vue';
+import { computed, defineProps, defineEmits } from 'vue';
 
 const props = withDefaults(
   defineProps<{
@@ -9,6 +9,8 @@ const props = withDefaults(
     color?: string;
     label?: string;
     labelPosition?: string;
+    value?: string;
+    index?: number;
   }>(),
   {
     disabled: false,
@@ -19,11 +21,20 @@ const props = withDefaults(
 
 const emit = defineEmits<{
   (e: 'update:modelValue', value: boolean): void;
+  (e: 'select', value: string, index: number): void;
 }>();
+
+const radioValue = props.value ?? `radio-${props.index ?? 0}`;
+
+const computedColor = computed(() => {
+  const color = props.color?.trim() || 'default';
+  return color === 'default' ? 'var(--gray-100)' : color;
+});
 
 function toggle() {
   if (!props.disabled) {
     emit('update:modelValue', !props.modelValue);
+    emit('select', radioValue, props.index ?? 0);
   }
 }
 </script>
@@ -42,14 +53,17 @@ function toggle() {
   >
     <span v-if="label && labelPosition === 'left'" class="radio-label">{{ label }}</span>
 
-    <div class="radio-inner">
+    <div
+      class="radio-inner"
+      :style="{ border: modelValue && computedColor ? `1px solid ${computedColor}` : '1px solid var(--gray-100)' }"
+    >
       <template v-if="modelValue">
         <Icon v-if="icon" :name="icon" :color="color" class="radio-icon" />
         <span
           v-else
           class="radio-dot"
           :style="{
-            backgroundColor: color ?? 'var(--gray-100)',
+            backgroundColor: computedColor ?? 'var(--gray-100)',
           }"
         />
       </template>
@@ -79,9 +93,7 @@ function toggle() {
   justify-content: center;
   width: 18px;
   height: 18px;
-  border: 1px solid var(--gray-100);
   border-radius: 50%;
-  transition: border 0.2s ease-in-out;
 }
 
 .radio-dot {
