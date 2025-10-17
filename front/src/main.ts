@@ -6,6 +6,9 @@ import './assets/css/main.css';
 
 import Button from './components/Button.vue';
 import Icon from './components/Icon.vue';
+import Loader from './components/Loader.vue';
+import Live from './components/Live.vue';
+import Banderole from './components/Banderole.vue';
 import Input from './components/Input.vue';
 import Logo from './components/Logo.vue';
 import SwitchPanels from './components/SwitchPanels.vue';
@@ -16,6 +19,9 @@ const app = createApp(App);
 
 app.component('Button', Button);
 app.component('Icon', Icon);
+app.component('Loader', Loader);
+app.component('Live', Live);
+app.component('Banderole', Banderole);
 app.component('Input', Input);
 app.component('Logo', Logo);
 app.component('SwitchPanels', SwitchPanels);
