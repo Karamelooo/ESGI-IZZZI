@@ -1,7 +1,7 @@
 import { createRouter, createWebHistory, type RouteRecordRaw } from 'vue-router';
 
-import Home from '../views/Home.vue';
-import UIKit from '../views/UIKit.vue';
+import Home from '@views/Home.vue';
+import UIKit from '@views/UIKit.vue';
 
 const routes: Array<RouteRecordRaw> = [
   { path: '/', name: 'home', component: Home },
