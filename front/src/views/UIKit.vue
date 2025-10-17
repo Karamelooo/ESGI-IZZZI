@@ -13,12 +13,9 @@ const selectedCheckBox = ref([]);
 function onRadioChange(value: string, index: number) {}
 function onCheckBoxChange(value: string[], index: number) {}
 
-const filesIcons = import.meta.glob('/src/assets/svg/icons/*.svg', { eager: true, as: 'url' }) as Record<
-  string,
-  string
->;
+const iconFiles = import.meta.glob('/src/assets/svg/icons/*.svg', { eager: true, as: 'url' }) as Record<string, string>;
 
-const iconNames = Object.keys(filesIcons)
+const iconNames = Object.keys(iconFiles)
   .map((p) => p.split('/').pop()!.replace('.svg', ''))
   .sort((a, b) => a.localeCompare(b));
 

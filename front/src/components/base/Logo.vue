@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { computed } from 'vue';
-import logoSrc from '../assets/svg/Logo.svg';
+import logoSrc from '@svg/Logo.svg';
 
 const LOGO_SIZES = {
   regular: 112,

@@ -17,6 +17,7 @@ export default defineConfig(({ mode }) => {
         '@svg': path.resolve(__dirname, 'src/assets/svg'),
         '@fonts': path.resolve(__dirname, 'src/assets/fonts'),
         '@components': path.resolve(__dirname, 'src/components'),
+        '@composables': path.resolve(__dirname, 'src/composables'),
         '@views': path.resolve(__dirname, 'src/views'),
         '@router': path.resolve(__dirname, 'src/router'),
       },
