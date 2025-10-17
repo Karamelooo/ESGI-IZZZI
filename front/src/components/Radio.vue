@@ -24,7 +24,7 @@ const emit = defineEmits<{
   (e: 'select', value: string, index: number): void;
 }>();
 
-const radioValue = props.value ?? `radio-${props.index ?? 0}`;
+const radioValue = props.value ?? `option-${props.index ?? 0}`;
 
 function toggle() {
   if (!props.disabled) {

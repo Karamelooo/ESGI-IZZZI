@@ -25,7 +25,7 @@ const emit = defineEmits<{
 
 const borderColor = props.color || 'var(--gray-15)';
 
-const checkBoxValue = props.value ?? `checkbox-${props.index ?? 0}`;
+const checkBoxValue = props.value ?? `option-${props.index ?? 0}`;
 
 function toggle() {
   if (!props.disabled) {

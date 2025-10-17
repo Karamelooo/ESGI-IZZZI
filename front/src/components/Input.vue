@@ -53,6 +53,8 @@ const inputType = computed(() => {
   return normalizedType.value;
 });
 
+const isTextArea = computed(() => normalizedType.value === 'textarea');
+
 const emit = defineEmits<{
   (e: 'update:modelValue', value: string | number): void;
   (e: 'focus', event: FocusEvent): void;
@@ -92,12 +94,12 @@ const rulesResults = computed(() => {
       case 'minLength':
         return {
           valid: value.length >= rule.value,
-          message: rule.message ?? `${rule.value} caractères min.`,
+          message: rule.message ?? `${rule.value} caractère${rule.value > 1 ? 's' : ''} min.`,
         };
       case 'maxLength':
         return {
           valid: value.length <= rule.value,
-          message: rule.message ?? `${rule.value} caractères max.`,
+          message: rule.message ?? `${rule.value} caractère${rule.value > 1 ? 's' : ''} max.`,
         };
       case 'hasUppercase':
         return {
@@ -140,11 +142,11 @@ const wrapperClass = computed(() => ({
     </label>
 
     <div class="input-container">
-      <span v-if="iconLeft" class="input-icon input-icon--left">
+      <span v-if="iconLeft && !isTextArea" class="input-icon input-icon--left">
         <Icon :name="iconLeft" />
       </span>
 
-      <template v-if="inputType === 'textarea'">
+      <template v-if="isTextArea">
         <textarea
           :id="inputId"
           class="input"
@@ -177,12 +179,12 @@ const wrapperClass = computed(() => ({
         />
       </template>
 
-      <span v-if="iconRight" class="input-icon input-icon--right">
+      <span v-if="iconRight && !isTextArea" class="input-icon input-icon--right">
         <Icon :name="iconRight" />
       </span>
 
       <span
-        v-else-if="showPasswordToggle"
+        v-else-if="showPasswordToggle && !isTextArea"
         class="input-icon input-icon--right input-icon--clickable"
         @mousedown.prevent="isPasswordVisible = true"
         @mouseup.prevent="isPasswordVisible = false"
@@ -220,6 +222,7 @@ const wrapperClass = computed(() => ({
 .input-container {
   display: flex;
   align-items: center;
+  gap: 8px;
   border: 1px solid var(--gray-15);
   border-radius: 6px;
   padding: 8px 12px;
@@ -262,6 +265,11 @@ textarea.input {
 .input-error {
   font-size: 12px;
   color: var(--error);
+}
+
+.input-icon {
+  display: inline-flex;
+  align-items: center;
 }
 
 .input-icon--clickable {

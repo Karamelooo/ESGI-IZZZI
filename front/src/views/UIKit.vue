@@ -18,16 +18,14 @@ const filesIcons = import.meta.glob('/src/assets/svg/icons/*.svg', { eager: true
   string
 >;
 
-const iconNames = computed(() => {
-  return Object.keys(filesIcons)
-    .map((p) => p.split('/').pop()!.replace('.svg', ''))
-    .sort((a, b) => a.localeCompare(b));
-});
+const iconNames = Object.keys(filesIcons)
+  .map((p) => p.split('/').pop()!.replace('.svg', ''))
+  .sort((a, b) => a.localeCompare(b));
 
 const chunk = <T,>(arr: T[], size: number) =>
   Array.from({ length: Math.ceil(arr.length / size) }, (_, i) => arr.slice(i * size, i * size + size));
 
-const iconRows = computed(() => chunk(iconNames.value, 7));
+const iconRows = chunk(iconNames, 7);
 </script>
 
 <template>
@@ -38,8 +36,8 @@ const iconRows = computed(() => chunk(iconNames.value, 7));
       <h3>Logos</h3>
 
       <div class="row">
-        <Logo />
-        <Logo size="small" alt="Texte alternatif" :linkToHome="true" />
+        <Logo :linkToHome="true" />
+        <Logo size="small" alt="Texte alternatif" />
       </div>
     </div>
 
@@ -78,7 +76,15 @@ const iconRows = computed(() => chunk(iconNames.value, 7));
     <div class="component">
       <h3>Formulaires</h3>
 
-      <Input v-model="nameInput" label="Nom" name="nom" placeholder="Entrez votre nom" :required="true" />
+      <Input
+        v-model="nameInput"
+        type="text"
+        label="Nom"
+        name="name"
+        placeholder="Votre nom complet"
+        :rules="[{ type: 'minLength', value: 1 }]"
+        :required="true"
+      />
 
       <Input
         v-model="passwordInput"
