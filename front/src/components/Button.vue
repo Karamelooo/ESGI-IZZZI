@@ -132,5 +132,8 @@ const handleClick = (event: MouseEvent) => {
 
 .button--plain.button--in-switch {
   border-radius: 0;
+  height: -webkit-fill-available;
+  height: -moz-available;
+  height: fill-available;
 }
 </style>

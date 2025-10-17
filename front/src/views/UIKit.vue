@@ -7,6 +7,9 @@ const toast = useToast();
 const activeTab = ref(0);
 const nameInput = ref('');
 const passwordInput = ref('');
+const selectedRadio = ref('');
+
+function onRadioChange(value: string, index: number) {}
 
 const filesIcons = import.meta.glob('/src/assets/svg/icons/*.svg', { eager: true, as: 'url' }) as Record<
   string,
@@ -34,7 +37,7 @@ const iconRows = computed(() => chunk(iconNames.value, 7));
 
       <div class="row">
         <Logo />
-        <Logo size="small" alt="Texte alternatif" linkToHome="true" />
+        <Logo size="small" alt="Texte alternatif" :linkToHome="true" />
       </div>
     </div>
 
@@ -84,6 +87,19 @@ const iconRows = computed(() => chunk(iconNames.value, 7));
         :rules="[{ type: 'minLength', value: 8 }, { type: 'hasDigit' }, { type: 'hasSymbol' }]"
         :required="true"
       />
+
+      <RadioGroup
+        v-model="selectedRadio"
+        :options="[
+          { label: 'Option 1' },
+          { label: 'Option 2', color: 'default' },
+          { label: 'Option 3', color: '#ff0000', icon: 'Check-Desktop', value: 'custom-value' },
+        ]"
+        color="#4CAF50"
+        label-position="right"
+        @change="onRadioChange"
+      />
+      <div>Valeur sélectionnée : {{ selectedRadio || 'Aucune' }}</div>
     </div>
 
     <div class="component">
@@ -118,14 +134,14 @@ const iconRows = computed(() => chunk(iconNames.value, 7));
       <h3>Toasts</h3>
 
       <div class="row">
-        <Button @click="toast.success('Lorem ipsum.')">Success</Button>
-        <Button @click="toast.positive('Lorem', 'Lorem ipsum.')">Positive</Button>
-        <Button @click="toast.negative('Lorem', 'Lorem ipsum.')">Negative</Button>
-        <Button @click="toast.info('Lorem ipsum.')">Info</Button>
-        <Button @click="toast.warning('Lorem', undefined, undefined, 'Lorem ipsum.')">Warning</Button>
-        <Button @click="toast.infoWarning('Lorem ipsum.')">InfoWarning</Button>
-        <Button @click="toast.lock('Lorem ipsum.')">Lock</Button>
-        <Button @click="toast.lockWarning('Lorem ipsum.')">LockWarning</Button>
+        <Button size="small" @click="toast.success('Lorem ipsum.')">Success</Button>
+        <Button size="small" @click="toast.positive('Lorem', 'Lorem ipsum.')">Positive</Button>
+        <Button size="small" @click="toast.negative('Lorem', 'Lorem ipsum.')">Negative</Button>
+        <Button size="small" @click="toast.info('Lorem ipsum.')">Info</Button>
+        <Button size="small" @click="toast.warning('Lorem', undefined, undefined, 'Lorem ipsum.')">Warning</Button>
+        <Button size="small" @click="toast.infoWarning('Lorem ipsum.')">InfoWarning</Button>
+        <Button size="small" @click="toast.lock('Lorem ipsum.')">Lock</Button>
+        <Button size="small" @click="toast.lockWarning('Lorem ipsum.')">LockWarning</Button>
       </div>
     </div>
   </div>
