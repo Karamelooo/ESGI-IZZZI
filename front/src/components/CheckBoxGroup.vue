@@ -15,7 +15,6 @@ const props = withDefaults(
     name?: string;
   }>(),
   {
-    color: 'var(--gray-15)',
     labelPosition: 'right',
     disabled: false,
     name: undefined,

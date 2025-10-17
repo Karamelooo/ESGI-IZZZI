@@ -95,7 +95,7 @@ const iconRows = computed(() => chunk(iconNames.value, 7));
         :options="[
           { label: 'Option 1' },
           { label: 'Option 2', color: 'var(--error)' },
-          { label: 'Option 3', color: '#00ff00', icon: 'Check-Desktop', value: 'custom-value' },
+          { label: 'Option 3', color: 'var(--error)', icon: 'Check-Desktop', value: 'custom-value' },
         ]"
         label-position="right"
         @change="onRadioChange"
@@ -104,7 +104,11 @@ const iconRows = computed(() => chunk(iconNames.value, 7));
 
       <CheckBoxGroup
         v-model="selectedCheckBox"
-        :options="[{ label: 'Option 1' }, { label: 'Option 2' }, { label: 'Option 3' }]"
+        :options="[
+          { label: 'Option 1' },
+          { label: 'Option 2' },
+          { label: 'Option 3', color: 'var(--error)', value: 'custom-value' },
+        ]"
         label-position="right"
         @change="onCheckBoxChange"
       />

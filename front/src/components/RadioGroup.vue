@@ -18,7 +18,6 @@ const props = withDefaults(
   }>(),
   {
     icon: '',
-    color: 'var(--gray-100)',
     labelPosition: 'right',
     disabled: false,
     name: undefined,

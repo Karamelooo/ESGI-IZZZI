@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { computed, defineProps, defineEmits } from 'vue';
+import { defineProps, defineEmits } from 'vue';
 
 const props = withDefaults(
   defineProps<{
@@ -13,7 +13,7 @@ const props = withDefaults(
   }>(),
   {
     disabled: false,
-    color: 'var(--gray-15)',
+    color: 'var(--gray-100)',
     labelPosition: 'right',
   }
 );
@@ -22,6 +22,8 @@ const emit = defineEmits<{
   (e: 'update:modelValue', value: boolean): void;
   (e: 'select', value: string, index: number): void;
 }>();
+
+const borderColor = props.color || 'var(--gray-15)';
 
 const checkBoxValue = props.value ?? `checkbox-${props.index ?? 0}`;
 
@@ -47,13 +49,9 @@ function toggle() {
   >
     <span v-if="label && labelPosition === 'left'" class="checkbox-label">{{ label }}</span>
 
-    <div class="checkbox-inner">
+    <div class="checkbox-inner" :style="{ border: `1px solid ${borderColor}` }">
       <template v-if="modelValue">
-        <Icon
-          name="Check-Desktop"
-          :color="color === 'default' || color === 'var(--gray-15)' ? 'var(--gray-100)' : color"
-          class="checkbox-icon"
-        />
+        <Icon name="Check-Desktop" :color="color" class="checkbox-icon" />
       </template>
     </div>
 
@@ -81,7 +79,7 @@ function toggle() {
   justify-content: center;
   width: 17px;
   height: 17px;
-  border-radius: 2px;
+  border-radius: 3px;
   background-color: var(--gray-2);
 }
 
