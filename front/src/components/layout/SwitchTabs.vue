@@ -1,6 +1,4 @@
 <script lang="ts" setup>
-import { defineProps, defineEmits } from 'vue';
-
 const props = defineProps<{
   modelValue: number;
   tabs: { name: string }[];
