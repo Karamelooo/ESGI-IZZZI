@@ -32,8 +32,7 @@ const setTab = (index: number) => {
   width: fit-content;
   display: flex;
   align-items: center;
-  gap: 40px;
-  padding: 10px 40px 10px 10px;
+  padding: 10px;
   border: 1px solid var(--gray-15);
   border-radius: 8px;
   background-color: var(--gray-5);

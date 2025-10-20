@@ -6,7 +6,10 @@ import '@css/main.css';
 
 const app = createApp(App);
 
-const components = import.meta.glob('@components/**/*.vue', { eager: true });
+const components = {
+  ...import.meta.glob('@components/base/*.vue', { eager: true }),
+  ...import.meta.glob('@components/layout/*.vue', { eager: true }),
+};
 
 Object.entries(components as Record<string, { default: any }>).forEach(([path, module]) => {
   const fileName: string | undefined = path.split('/').pop();
