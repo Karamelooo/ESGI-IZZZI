@@ -18,6 +18,8 @@
 
   /* Colors */
   --dark-orange: #f26103;
+  --white: #fff;
+  --black: #000;
 
   /* Status */
   --success: #4caf50;
@@ -38,6 +40,7 @@ body {
   height: 100%;
   width: 100%;
   color: var(--gray-100);
+  background-color: var(--gray-5);
   font-family: 'Poppins', sans-serif;
 }
 
@@ -74,4 +77,13 @@ svg {
   display: block;
   max-width: 100%;
   height: auto;
+}
+
+a,
+a:visited,
+a:hover,
+a:active {
+  color: var(--black);
+  text-decoration: underline;
+  font-weight: 300;
 }
