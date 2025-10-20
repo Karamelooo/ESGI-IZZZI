@@ -7,7 +7,8 @@ const props = defineProps<{
   };
 }>();
 
-const isAdmin = ['super', 'admin'].includes(props.user.role);
+const isSuper = ['super', 'admin'].includes(props.user.role);
+const isAdmin = ['admin'].includes(props.user.role);
 
 function handleNotificationClick() {
   console.log('IconButton clicked!');
@@ -24,7 +25,7 @@ function handleNotificationClick() {
       <div class="infos">
         <p class="name">{{ props.user.firstName }} {{ props.user.lastName }}</p>
 
-        <div v-if="isAdmin" class="role-wrapper--admin">
+        <div v-if="isSuper" class="role-wrapper--admin">
           <Icon name="Crown" color="var(--white)" />
           <span class="role">Super</span>
         </div>
@@ -35,7 +36,7 @@ function handleNotificationClick() {
       </div>
     </div>
 
-    <Button>Partager</Button>
+    <Button v-if="isAdmin">Partager</Button>
   </div>
 </template>
 
