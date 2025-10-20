@@ -11,11 +11,11 @@ const props = withDefaults(
 
 <template>
   <nav class="navbar">
-    <Button to="/pricing" variant="plain" :class="{ active: activeRoute === '/pricing' }">Nos tarifs</Button>
+    <Button link="/pricing" variant="plain" :class="{ active: activeRoute === '/pricing' }">Nos tarifs</Button>
 
     <div class="auth">
-      <Button to="/auth/register" variant="primary" icon="Arrow" iconPosition="right">S'inscrire</Button>
-      <Button to="/auth/login" variant="neutral" icon="Arrow" iconPosition="right">Se connecter</Button>
+      <Button link="/auth/register" variant="primary" icon="Arrow" iconPosition="right">S'inscrire</Button>
+      <Button link="/auth/login" variant="neutral" icon="Arrow" iconPosition="right">Se connecter</Button>
     </div>
   </nav>
 </template>
@@ -24,6 +24,7 @@ const props = withDefaults(
 .navbar {
   display: flex;
   align-items: center;
+  justify-content: end;
   gap: 40px;
 }
 

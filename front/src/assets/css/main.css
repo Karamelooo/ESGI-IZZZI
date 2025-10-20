@@ -5,10 +5,9 @@
   --primary: #ffe552;
   --secondary: #fff9d8;
 
-  /* Status */
-  --success: #4caf50;
-  --error: #e53935;
-  --warning: #ff9800;
+  /* Black & White */
+  --black: #000000;
+  --white: #ffffff;
 
   /* Grayscale */
   --gray-2: #fbfbfb;
@@ -21,6 +20,11 @@
   --dark-orange: #f26103;
   --white: #fff;
   --black: #000;
+
+  /* Status */
+  --success: #4caf50;
+  --error: #e53935;
+  --warning: #ff9800;
 }
 
 *,
@@ -43,6 +47,11 @@ body {
 ul,
 ol {
   list-style: none;
+}
+
+p,
+span {
+  line-height: 1;
 }
 
 a {

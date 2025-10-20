@@ -1,6 +1,11 @@
 <script lang="ts" setup>
 import { ref } from 'vue';
 import { useToast } from '@composables/useToast';
+import RadioGroup from '@components/form/RadioGroup.vue';
+import CheckBoxGroup from '@components/form/CheckBoxGroup.vue';
+import Loader from '@components/animated/Loader.vue';
+import Live from '@components/animated/Live.vue';
+import Banderole from '@components/animated/Banderole.vue';
 
 const toast = useToast();
 
