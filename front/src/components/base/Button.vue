@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 const props = withDefaults(
   defineProps<{
-    to?: string;
+    link?: string;
     type?: 'button' | 'submit' | 'reset';
     variant?: 'primary' | 'neutral' | 'plain' | 'switch';
     size?: 'small' | 'medium';
@@ -32,7 +32,7 @@ const handleClick = (event: MouseEvent) => {
 </script>
 
 <template>
-  <router-link v-if="to" :to="to" custom v-slot="{ navigate, href }">
+  <router-link v-if="link" :to="link" custom v-slot="{ navigate, href }">
     <button
       :class="['button', `button--${size}`, `button--${variant}`, { 'button--in-switch': inSwitchComponent }]"
       :type="type"
@@ -155,6 +155,7 @@ const handleClick = (event: MouseEvent) => {
 }
 
 .button--plain.button--in-switch {
+  padding: 0 30px;
   border-radius: 0;
   height: -webkit-fill-available;
   height: -moz-available;
