@@ -58,15 +58,6 @@ const iconRows = chunk(iconNames, 7);
         <Button variant="plain" icon="Arrow" iconPosition="right">Sans fond</Button>
         <Button variant="plain" :disabled="true">Sans fond — désactivé</Button>
       </div>
-
-      <div class="row">
-        <Button size="small" icon="Arrow" iconPosition="right">Primaire</Button>
-        <Button size="small" :disabled="true">Primaire — désactivé</Button>
-        <Button size="small" variant="neutral">Neutre</Button>
-        <Button size="small" variant="neutral" :disabled="true">Neutre — désactivé</Button>
-        <Button size="small" variant="plain" icon="Arrow" iconPosition="right">Sans fond</Button>
-        <Button size="small" variant="plain" :disabled="true">Sans fond — désactivé</Button>
-      </div>
     </div>
 
     <div class="component">
@@ -161,14 +152,14 @@ const iconRows = chunk(iconNames, 7);
       <h3>Toasts</h3>
 
       <div class="row">
-        <Button size="small" @click="toast.success('Lorem ipsum.')">Success</Button>
-        <Button size="small" @click="toast.positive('Lorem', 'Lorem ipsum.')">Positive</Button>
-        <Button size="small" @click="toast.negative('Lorem', 'Lorem ipsum.')">Negative</Button>
-        <Button size="small" @click="toast.info('Lorem ipsum.')">Info</Button>
-        <Button size="small" @click="toast.warning('Lorem', undefined, undefined, 'Lorem ipsum.')">Warning</Button>
-        <Button size="small" @click="toast.infoWarning('Lorem ipsum.')">InfoWarning</Button>
-        <Button size="small" @click="toast.lock('Lorem ipsum.')">Lock</Button>
-        <Button size="small" @click="toast.lockWarning('Lorem ipsum.')">LockWarning</Button>
+        <Button @click="toast.success('Lorem ipsum.')">Success</Button>
+        <Button @click="toast.positive('Lorem', 'Lorem ipsum.')">Positive</Button>
+        <Button @click="toast.negative('Lorem', 'Lorem ipsum.')">Negative</Button>
+        <Button @click="toast.info('Lorem ipsum.')">Info</Button>
+        <Button @click="toast.warning('Lorem', undefined, undefined, 'Lorem ipsum.')">Warning</Button>
+        <Button @click="toast.infoWarning('Lorem ipsum.')">InfoWarning</Button>
+        <Button @click="toast.lock('Lorem ipsum.')">Lock</Button>
+        <Button @click="toast.lockWarning('Lorem ipsum.')">LockWarning</Button>
       </div>
     </div>
   </div>
@@ -192,6 +183,7 @@ const iconRows = chunk(iconNames, 7);
 
 .row {
   display: flex;
+  flex-wrap: wrap;
   gap: 20px;
 }
 

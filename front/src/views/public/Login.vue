@@ -31,6 +31,10 @@ const activeTab = ref(0);
   margin: 5rem auto 2rem auto;
 }
 
+.login-container .switch-tabs {
+  width: auto;
+}
+
 .login-container .switch-content {
   display: flex;
   flex-direction: column;
@@ -57,5 +61,12 @@ const activeTab = ref(0);
 
 .login-container .no-account {
   margin: 2rem auto;
+}
+
+@media (min-width: 768px) {
+  .container {
+    margin: auto;
+    width: 50vw;
+  }
 }
 </style>

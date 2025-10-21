@@ -4,7 +4,6 @@ const props = withDefaults(
     link?: string;
     type?: 'button' | 'submit' | 'reset';
     variant?: 'primary' | 'neutral' | 'plain' | 'switch';
-    size?: 'small' | 'medium';
     icon?: string;
     iconPosition?: 'left' | 'right';
     disabled?: boolean;
@@ -13,7 +12,6 @@ const props = withDefaults(
   {
     type: 'button',
     variant: 'primary',
-    size: 'medium',
     iconPosition: 'left',
     disabled: false,
     inSwitchComponent: false,
@@ -34,7 +32,7 @@ const handleClick = (event: MouseEvent) => {
 <template>
   <router-link v-if="link" :to="link" custom v-slot="{ navigate, href }">
     <button
-      :class="['button', `button--${size}`, `button--${variant}`, { 'button--in-switch': inSwitchComponent }]"
+      :class="['button', `button--${variant}`, { 'button--in-switch': inSwitchComponent }]"
       :type="type"
       :disabled="disabled"
       :href="href"
@@ -45,7 +43,7 @@ const handleClick = (event: MouseEvent) => {
         }
       "
     >
-      <div class="button-container" :style="variant === 'plain' ? 'gap: 10px;' : size === 'small' ? 'gap: 12px;' : ''">
+      <div class="button-container" :style="variant === 'plain' ? 'gap: 10px;' : ''">
         <Icon v-if="icon && iconPosition === 'left'" :name="icon" />
         <slot />
         <Icon v-if="icon && iconPosition === 'right'" :name="icon" />
@@ -54,12 +52,12 @@ const handleClick = (event: MouseEvent) => {
   </router-link>
   <button
     v-else
-    :class="['button', `button--${size}`, `button--${variant}`, { 'button--in-switch': inSwitchComponent }]"
+    :class="['button', `button--${variant}`, { 'button--in-switch': inSwitchComponent }]"
     :type="type"
     :disabled="disabled"
     @click="handleClick"
   >
-    <div class="button-container" :style="variant === 'plain' ? 'gap: 10px;' : size === 'small' ? 'gap: 12px;' : ''">
+    <div class="button-container" :style="variant === 'plain' ? 'gap: 10px;' : ''">
       <Icon v-if="icon && iconPosition === 'left'" :name="icon" />
       <slot />
       <Icon v-if="icon && iconPosition === 'right'" :name="icon" />
@@ -71,16 +69,16 @@ const handleClick = (event: MouseEvent) => {
 .button-container {
   display: flex;
   align-items: center;
-  gap: 30px;
+  gap: 12px;
 }
 
 /* Base styles */
 .button {
   color: var(--gray-100);
-  padding: 12px 26px;
+  padding: 12px 18px;
   border-radius: 8px;
   cursor: pointer;
-  font-size: 16px;
+  font-size: 14px;
 
   transition:
     background-color 0.2s ease-in-out,
@@ -88,12 +86,6 @@ const handleClick = (event: MouseEvent) => {
     color 0.2s ease-in-out,
     padding-left 0.2s ease-in-out,
     padding-right 0.2s ease-in-out;
-}
-
-/* Size variants */
-.button--small {
-  padding: 12px 18px;
-  font-size: 14px;
 }
 
 /* Disabled state */
@@ -160,5 +152,16 @@ const handleClick = (event: MouseEvent) => {
   height: -webkit-fill-available;
   height: -moz-available;
   height: fill-available;
+}
+
+@media (min-width: 1024px) {
+  .button {
+    padding: 12px 26px;
+    font-size: 16px;
+  }
+
+  .button-container {
+    gap: 30px;
+  }
 }
 </style>
