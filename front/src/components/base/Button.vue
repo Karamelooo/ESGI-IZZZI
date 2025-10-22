@@ -1,12 +1,12 @@
 <script lang="ts" setup>
-import { defineProps, defineEmits } from 'vue';
-
 const props = withDefaults(
   defineProps<{
+    link?: string;
     type?: 'button' | 'submit' | 'reset';
     variant?: 'primary' | 'neutral' | 'plain' | 'switch';
     size?: 'small' | 'medium';
     icon?: string;
+    iconPosition?: 'left' | 'right';
     disabled?: boolean;
     inSwitchComponent?: boolean;
   }>(),
@@ -14,6 +14,7 @@ const props = withDefaults(
     type: 'button',
     variant: 'primary',
     size: 'medium',
+    iconPosition: 'left',
     disabled: false,
     inSwitchComponent: false,
   }
@@ -31,15 +32,37 @@ const handleClick = (event: MouseEvent) => {
 </script>
 
 <template>
+  <router-link v-if="link" :to="link" custom v-slot="{ navigate, href }">
+    <button
+      :class="['button', `button--${size}`, `button--${variant}`, { 'button--in-switch': inSwitchComponent }]"
+      :type="type"
+      :disabled="disabled"
+      :href="href"
+      @click="
+        (event) => {
+          handleClick(event);
+          navigate(event);
+        }
+      "
+    >
+      <div class="button-container" :style="variant === 'plain' ? 'gap: 10px;' : size === 'small' ? 'gap: 12px;' : ''">
+        <Icon v-if="icon && iconPosition === 'left'" :name="icon" />
+        <slot />
+        <Icon v-if="icon && iconPosition === 'right'" :name="icon" />
+      </div>
+    </button>
+  </router-link>
   <button
+    v-else
     :class="['button', `button--${size}`, `button--${variant}`, { 'button--in-switch': inSwitchComponent }]"
     :type="type"
     :disabled="disabled"
     @click="handleClick"
   >
-    <div class="button-container">
+    <div class="button-container" :style="variant === 'plain' ? 'gap: 10px;' : size === 'small' ? 'gap: 12px;' : ''">
+      <Icon v-if="icon && iconPosition === 'left'" :name="icon" />
       <slot />
-      <Icon v-if="icon" :name="icon" />
+      <Icon v-if="icon && iconPosition === 'right'" :name="icon" />
     </div>
   </button>
 </template>
@@ -47,8 +70,8 @@ const handleClick = (event: MouseEvent) => {
 <style scoped>
 .button-container {
   display: flex;
-  gap: 16px;
   align-items: center;
+  gap: 30px;
 }
 
 /* Base styles */
@@ -69,7 +92,7 @@ const handleClick = (event: MouseEvent) => {
 
 /* Size variants */
 .button--small {
-  padding: 8px 16px;
+  padding: 12px 18px;
   font-size: 14px;
 }
 
@@ -111,6 +134,7 @@ const handleClick = (event: MouseEvent) => {
 .button--plain {
   background-color: transparent;
   border: none;
+  border-radius: 0;
   padding: 0;
 }
 
@@ -131,6 +155,10 @@ const handleClick = (event: MouseEvent) => {
 }
 
 .button--plain.button--in-switch {
+  padding: 0 30px;
   border-radius: 0;
+  height: -webkit-fill-available;
+  height: -moz-available;
+  height: fill-available;
 }
 </style>

@@ -1,5 +1,5 @@
 <script lang="ts" setup></script>
 
-<template></template>
+<template><p>Pricing</p></template>
 
 <style scoped></style>

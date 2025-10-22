@@ -5,10 +5,9 @@
   --primary: #ffe552;
   --secondary: #fff9d8;
 
-  /* Status */
-  --success: #4caf50;
-  --error: #e53935;
-  --warning: #ff9800;
+  /* Black & White */
+  --black: #000000;
+  --white: #ffffff;
 
   /* Grayscale */
   --gray-2: #fbfbfb;
@@ -16,6 +15,16 @@
   --gray-10: #eaeae9;
   --gray-15: #e0e0e0;
   --gray-100: #2f2e2c;
+
+  /* Colors */
+  --dark-orange: #f26103;
+  --white: #fff;
+  --black: #000;
+
+  /* Status */
+  --success: #4caf50;
+  --error: #e53935;
+  --warning: #ff9800;
 }
 
 *,
@@ -31,12 +40,18 @@ body {
   height: 100%;
   width: 100%;
   color: var(--gray-100);
+  background-color: var(--gray-5);
   font-family: 'Poppins', sans-serif;
 }
 
 ul,
 ol {
   list-style: none;
+}
+
+p,
+span {
+  line-height: 1;
 }
 
 a {
@@ -62,4 +77,13 @@ svg {
   display: block;
   max-width: 100%;
   height: auto;
+}
+
+a,
+a:visited,
+a:hover,
+a:active {
+  color: var(--black);
+  text-decoration: underline;
+  font-weight: 300;
 }
