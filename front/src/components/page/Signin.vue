@@ -28,10 +28,10 @@ const passwordInput = ref('');
     </form>
     <a href="#">Mot de passe oublié ?</a>
     <br></br>
-    <Button size="small" icon="Arrow" iconPosition="right">Se connecter</Button>
+    <Button icon="Arrow" iconPosition="right">Se connecter</Button>
     <div class="login-separator">Ou</div>
     <!-- TODO: implémenter bouton widget Google -->
-    <Button size="small" icon="Arrow" variant="neutral" iconPosition="right">Se connecter avec Google</Button>
+    <Button icon="Arrow" variant="neutral" iconPosition="right">Se connecter avec Google</Button>
     <p class="no-account">Pas encore de compte ? <a href="#">Inscription</a></p>
 </template>
 
