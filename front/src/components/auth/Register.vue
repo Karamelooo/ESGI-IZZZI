@@ -6,11 +6,10 @@ const emailInput = ref('');
 const passwordInput = ref('');
 const lastnameInput = ref('');
 const firstnameInput = ref('');
-
 </script>
 
 <template>
-<form>
+  <form class="auth-form">
     <Input
       v-model="emailInput"
       type="text"
@@ -43,15 +42,13 @@ const firstnameInput = ref('');
       placeholder="Votre mot de passe"
       :required="false"
     />
-    </form>
-    <a href="#">Mot de passe oublié ?</a>
-    <br></br>
-    <Button icon="Arrow" iconPosition="right">Créer un compte</Button>
-    <div class="login-separator">Ou</div>
-    <!-- TODO: implémenter bouton widget Google -->
-    <Button icon="Arrow" variant="neutral" iconPosition="right">Se connecter avec Google</Button>
-    <p class="no-account">Vous avez déjà un compte ? <a href="#">Inscription</a></p>
+  </form>
+
+  <a href="#">Mot de passe oublié ?</a>
+  <Button icon="Arrow" iconPosition="right">Créer un compte</Button>
+  <div class="login-separator">Ou</div>
+  <Button icon="Arrow" variant="neutral" iconPosition="right">Se connecter avec Google</Button>
+  <p class="no-account">Vous avez déjà un compte ? <a href="#">Inscription</a></p>
 </template>
 
-<style>
-</style>
+<style scoped></style>

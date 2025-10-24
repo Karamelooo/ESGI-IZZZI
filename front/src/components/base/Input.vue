@@ -9,6 +9,8 @@ type Rule =
   | { type: 'hasSymbol'; message?: string }
   | { type: 'email'; message?: string };
 
+type Link = { label: string; link?: string };
+
 const ALLOWED_TYPES = ['text', 'password', 'email', 'number', 'search', 'tel', 'url', 'textarea'];
 
 const props = withDefaults(
@@ -24,6 +26,7 @@ const props = withDefaults(
     iconLeft?: string;
     iconRight?: string;
     rules?: Rule[];
+    links?: Link[];
   }>(),
   {
     type: 'text',
@@ -58,6 +61,7 @@ const isTextArea = computed(() => normalizedType.value === 'textarea');
 const emit = defineEmits<{
   (e: 'update:modelValue', value: string | number): void;
   (e: 'focus', event: FocusEvent): void;
+  (e: 'link-click', link: Link): void;
 }>();
 
 function onInput(event: Event) {
@@ -205,6 +209,13 @@ const wrapperClass = computed(() => ({
         • {{ rule.message }}
       </li>
     </ul>
+
+    <ul v-if="links && links.length" class="input-links">
+      <li v-for="(link, index) in links" :key="index">
+        <a v-if="link.link" :href="link.link">{{ link.label }}</a>
+        <span v-else @click="$emit('link-click', link)">{{ link.label }}</span>
+      </li>
+    </ul>
   </div>
 </template>
 
@@ -277,12 +288,29 @@ textarea.input {
   user-select: none;
 }
 
-.input-rules {
+.input-rules,
+.input-links {
   display: flex;
   align-items: center;
   gap: 24px;
   font-size: 12px;
   color: var(--gray-60);
+}
+
+.input-links {
+  justify-content: end;
+  font-size: 14px;
+}
+
+.input-links a,
+.input-links span {
+  font-weight: 400;
+  color: var(--gray-100);
+}
+
+.input-links span {
+  text-decoration: underline;
+  cursor: pointer;
 }
 
 .input-rule--error {

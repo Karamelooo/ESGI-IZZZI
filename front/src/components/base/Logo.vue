@@ -11,7 +11,7 @@ type LogoSize = keyof typeof LOGO_SIZES;
 
 const props = withDefaults(
   defineProps<{
-    size?: LogoSize;
+    size?: LogoSize | number;
     alt?: string;
     linkToHome?: boolean;
   }>(),
@@ -22,7 +22,10 @@ const props = withDefaults(
   }
 );
 
-const computedWidth = computed(() => LOGO_SIZES[props.size]);
+const computedWidth = computed(() => {
+  if (typeof props.size === 'number') return props.size;
+  return LOGO_SIZES[props.size] ?? LOGO_SIZES.regular;
+});
 </script>
 
 <template>
