@@ -1,11 +1,16 @@
 <script setup lang="ts">
+import { ref } from 'vue';
 import Input from '../../components/base/Input.vue';
 import Button from '../../components/base/Button.vue';
-import { ref } from 'vue';
+
+const emit = defineEmits<{
+  (e: 'login'): void;
+}>();
+
 const emailInput = ref('');
 const passwordInput = ref('');
-const lastnameInput = ref('');
-const firstnameInput = ref('');
+const lastNameInput = ref('');
+const firstNameInput = ref('');
 </script>
 
 <template>
@@ -18,8 +23,9 @@ const firstnameInput = ref('');
       placeholder="Entrez votre email"
       :required="false"
     />
+
     <Input
-      v-model="lastnameInput"
+      v-model="lastNameInput"
       type="text"
       label="Nom"
       name="lastname"
@@ -27,9 +33,9 @@ const firstnameInput = ref('');
       :required="false"
     />
     <Input
-      v-model="firstnameInput"
+      v-model="firstNameInput"
       type="text"
-      label="Nom"
+      label="Prénom"
       name="firstname"
       placeholder="Entrez votre prénom"
       :required="false"
@@ -42,13 +48,20 @@ const firstnameInput = ref('');
       placeholder="Votre mot de passe"
       :required="false"
     />
-  </form>
 
-  <a href="#">Mot de passe oublié ?</a>
-  <Button icon="Arrow" iconPosition="right">Créer un compte</Button>
-  <div class="login-separator">Ou</div>
-  <Button icon="Arrow" variant="neutral" iconPosition="right">Se connecter avec Google</Button>
-  <p class="no-account">Vous avez déjà un compte ? <a href="#">Inscription</a></p>
+    <div class="auth-actions">
+      <Button icon="Arrow" iconPosition="right">Créer un compte</Button>
+      <div class="separator">Ou</div>
+      <Button icon="Arrow" variant="neutral" iconPosition="right">Se connecter avec Google</Button>
+    </div>
+
+    <hr />
+
+    <span>
+      Vous avez déjà un compte ?
+      <span class="auth-action-link" @click="$emit('login')">Connexion</span>
+    </span>
+  </form>
 </template>
 
 <style scoped></style>

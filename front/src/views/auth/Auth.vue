@@ -7,6 +7,11 @@ function handleForgotPassword() {
   activePage.value = 'forgot-password';
 }
 
+function handleLogin() {
+  activePage.value = 'auth';
+  activeTab.value = 0;
+}
+
 function handleRegister() {
   activePage.value = 'auth';
   activeTab.value = 1;
@@ -20,7 +25,7 @@ const activeTab = ref(0);
   <main class="auth-main">
     <Logo :size="130" />
 
-    <Card v-if="activePage === 'auth'" :centered="true">
+    <Card v-if="activePage === 'auth'" :centered="true" class="auth">
       <SwitchTabs v-model="activeTab" :tabs="[{ name: 'Se connecter' }, { name: 'S\'inscrire' }]" />
       <SwitchPanels :activeTab="activeTab">
         <template #tab-0>
@@ -28,7 +33,7 @@ const activeTab = ref(0);
         </template>
 
         <template #tab-1>
-          <Register />
+          <Register @login="handleLogin" />
         </template>
       </SwitchPanels>
     </Card>
@@ -73,5 +78,17 @@ const activeTab = ref(0);
 .auth-form .separator {
   font-family: 'Mochiy Pop One';
   font-size: 1.15rem;
+}
+
+.auth-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+
+.auth-action-link {
+  text-decoration: underline;
+  cursor: pointer;
 }
 </style>

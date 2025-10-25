@@ -59,6 +59,12 @@ a {
   color: inherit;
 }
 
+hr {
+  width: 100%;
+  border: none;
+  border-top: 1px solid var(--gray-10);
+}
+
 button,
 input,
 textarea,

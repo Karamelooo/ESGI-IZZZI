@@ -34,29 +34,19 @@ const passwordInput = ref('');
       @link-click="$emit('forgot-password')"
     />
 
-    <div class="actions">
+    <div class="auth-actions">
       <Button icon="Arrow" iconPosition="right">Se connecter</Button>
       <div class="separator">Ou</div>
       <Button icon="Arrow" variant="neutral" iconPosition="right">Se connecter avec Google</Button>
     </div>
 
+    <hr />
+
     <span>
       Pas encore de compte ?
-      <span class="register-link" @click="$emit('register')">Inscription</span>
+      <span class="auth-action-link" @click="$emit('register')">Inscription</span>
     </span>
   </form>
 </template>
 
-<style scoped>
-.actions {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 16px;
-}
-
-.register-link {
-  text-decoration: underline;
-  cursor: pointer;
-}
-</style>
+<style scoped></style>
