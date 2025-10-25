@@ -14,7 +14,7 @@ const firstNameInput = ref('');
 </script>
 
 <template>
-  <form class="auth-form">
+  <form class="auth-form auth-form--centered">
     <Input
       v-model="emailInput"
       type="text"

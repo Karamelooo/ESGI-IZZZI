@@ -11,8 +11,6 @@ const props = withDefaults(
     borderColor: 'var(--gray-10)',
     backgroundColor: 'var(--white)',
     centered: false,
-    padding: 48,
-    spacing: 48,
   }
 );
 </script>
@@ -22,10 +20,10 @@ const props = withDefaults(
     class="card"
     :style="{
       border: `1px solid ${borderColor}`,
-      backgroundColor: backgroundColor,
+      backgroundColor,
       alignItems: centered ? 'center' : 'stretch',
-      padding: `${padding}px`,
-      gap: `${spacing}px`,
+      padding: padding && `${padding}px`,
+      gap: spacing && `${spacing}px`,
     }"
   >
     <slot></slot>
@@ -36,5 +34,14 @@ const props = withDefaults(
 .card {
   display: flex;
   flex-direction: column;
+  padding: 48px;
+  gap: 48px;
+  border-radius: 8px;
+}
+
+@media (max-width: 600px) {
+  .card {
+    padding: 16px;
+  }
 }
 </style>

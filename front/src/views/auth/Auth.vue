@@ -1,18 +1,19 @@
 <script lang="ts" setup>
 import { ref } from 'vue';
-import Login from '../../components/auth/Login.vue';
-import Register from '../../components/auth/Register.vue';
+import ForgotPassword from '@components/auth/ForgotPassword.vue';
+import Login from '@components/auth/Login.vue';
+import Register from '@components/auth/Register.vue';
 
-function handleForgotPassword() {
+function goToForgotPassword() {
   activePage.value = 'forgot-password';
 }
 
-function handleLogin() {
+function goToLogin() {
   activePage.value = 'auth';
   activeTab.value = 0;
 }
 
-function handleRegister() {
+function goToRegister() {
   activePage.value = 'auth';
   activeTab.value = 1;
 }
@@ -25,21 +26,21 @@ const activeTab = ref(0);
   <main class="auth-main">
     <Logo :size="130" />
 
-    <Card v-if="activePage === 'auth'" :centered="true" class="auth">
+    <Card v-if="activePage === 'auth'" :centered="true" :fullWidth="true">
       <SwitchTabs v-model="activeTab" :tabs="[{ name: 'Se connecter' }, { name: 'S\'inscrire' }]" />
-      <SwitchPanels :activeTab="activeTab">
+      <SwitchPanels :activeTab="activeTab" class="switch-panels">
         <template #tab-0>
-          <Login @forgot-password="handleForgotPassword" @register="handleRegister" />
+          <Login @forgot-password="goToForgotPassword" @register="goToRegister" />
         </template>
 
         <template #tab-1>
-          <Register @login="handleLogin" />
+          <Register @login="goToLogin" />
         </template>
       </SwitchPanels>
     </Card>
 
     <Card v-if="activePage === 'forgot-password'">
-      <span>Mot de passe oublié</span>
+      <ForgotPassword @login="goToLogin" />
     </Card>
   </main>
 </template>
@@ -62,9 +63,12 @@ const activeTab = ref(0);
 .auth-form {
   display: flex;
   flex-direction: column;
-  align-items: center;
   gap: 24px;
   width: 438px;
+}
+
+.auth-form--centered {
+  align-items: center;
 }
 
 .auth-form .input-wrapper {
@@ -72,6 +76,10 @@ const activeTab = ref(0);
 }
 
 .auth-form .button {
+  margin: 0;
+}
+
+.auth-form--centered .button {
   margin: 0 auto;
 }
 
@@ -90,5 +98,24 @@ const activeTab = ref(0);
 .auth-action-link {
   text-decoration: underline;
   cursor: pointer;
+}
+
+@media (max-width: 600px) {
+  .auth-main {
+    margin: 36px 16px;
+    justify-content: flex-start;
+  }
+
+  .auth-main .card {
+    width: 100%;
+  }
+
+  .auth-main .switch-panels {
+    width: 100%;
+  }
+
+  .auth-form {
+    width: 100%;
+  }
 }
 </style>

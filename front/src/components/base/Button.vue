@@ -155,14 +155,9 @@ const handleClick = (event: MouseEvent) => {
   height: fill-available;
 }
 
-@media (min-width: 1024px) {
-  .button {
-    padding: 12px 26px;
-    font-size: 16px;
-  }
-
-  .button-container {
-    gap: 30px;
+@media (max-width: 600px) {
+  .button--in-switch {
+    padding: 12px 36px;
   }
 }
 </style>
