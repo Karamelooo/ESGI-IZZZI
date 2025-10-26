@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script lang="ts" setup>
 const props = withDefaults(
   defineProps<{
     name: string;
@@ -16,7 +16,7 @@ const props = withDefaults(
   <div
     class="icon"
     :style="{
-      '--icon-url': `url(src/assets/svg/icons/${props.name}.svg)`,
+      '--icon-url': `url(/src/assets/svg/icons/${props.name}.svg)`,
       '--icon-color': props.color,
       '--icon-size': props.size,
     }"

@@ -7,7 +7,10 @@ type Rule =
   | { type: 'hasUppercase'; message?: string }
   | { type: 'hasDigit'; message?: string }
   | { type: 'hasSymbol'; message?: string }
-  | { type: 'email'; message?: string };
+  | { type: 'email'; message?: string }
+  | { type: 'matchValue'; value: string | number; message: string };
+
+type Link = { label: string; link?: string };
 
 const ALLOWED_TYPES = ['text', 'password', 'email', 'number', 'search', 'tel', 'url', 'textarea'];
 
@@ -24,6 +27,7 @@ const props = withDefaults(
     iconLeft?: string;
     iconRight?: string;
     rules?: Rule[];
+    links?: Link[];
   }>(),
   {
     type: 'text',
@@ -58,6 +62,7 @@ const isTextArea = computed(() => normalizedType.value === 'textarea');
 const emit = defineEmits<{
   (e: 'update:modelValue', value: string | number): void;
   (e: 'focus', event: FocusEvent): void;
+  (e: 'link-click', link: Link): void;
 }>();
 
 function onInput(event: Event) {
@@ -93,33 +98,45 @@ const rulesResults = computed(() => {
     switch (rule.type) {
       case 'minLength':
         return {
+          type: 'minLength',
           valid: value.length >= rule.value,
           message: rule.message ?? `${rule.value} caractère${rule.value > 1 ? 's' : ''} min.`,
         };
       case 'maxLength':
         return {
+          type: 'maxLength',
           valid: value.length <= rule.value,
           message: rule.message ?? `${rule.value} caractère${rule.value > 1 ? 's' : ''} max.`,
         };
       case 'hasUppercase':
         return {
+          type: 'hasUppercase',
           valid: /[A-Z]/.test(value),
           message: rule.message ?? `Majuscule requise`,
         };
       case 'hasDigit':
         return {
+          type: 'hasDigit',
           valid: /[0-9]/.test(value),
           message: rule.message ?? `Chiffre requis`,
         };
       case 'hasSymbol':
         return {
+          type: 'hasSymbol',
           valid: /[!@#$%^&*(),.?":{}|<>_\-+=~`\\\/[\];']/g.test(value),
           message: rule.message ?? `Symbole requis`,
         };
       case 'email':
         return {
+          type: 'email',
           valid: /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value),
           message: rule.message ?? 'Email valide',
+        };
+      case 'matchValue':
+        return {
+          type: 'matchValue',
+          valid: value === String(rule.value),
+          message: rule.message ?? 'Les valeurs ne correspondent pas.',
         };
       default:
         return { valid: true, message: '' };
@@ -201,8 +218,22 @@ const wrapperClass = computed(() => ({
     <div v-if="error" class="input-error">{{ error }}</div>
 
     <ul v-if="rulesResults.length" class="input-rules">
-      <li v-for="(rule, i) in rulesResults" :key="i" :class="{ 'input-rule--error': hasBeenTouched && !rule.valid }">
+      <li
+        v-for="(rule, i) in rulesResults"
+        :key="i"
+        :class="{
+          'input-rule--error': hasBeenTouched && !rule.valid,
+          'input-rule--hidden': (!hasBeenTouched || rule.valid) && rule.type === 'matchValue',
+        }"
+      >
         • {{ rule.message }}
+      </li>
+    </ul>
+
+    <ul v-if="links && links.length" class="input-links">
+      <li v-for="(link, index) in links" :key="index">
+        <a v-if="link.link" :href="link.link">{{ link.label }}</a>
+        <span v-else @click="$emit('link-click', link)">{{ link.label }}</span>
       </li>
     </ul>
   </div>
@@ -277,7 +308,8 @@ textarea.input {
   user-select: none;
 }
 
-.input-rules {
+.input-rules,
+.input-links {
   display: flex;
   align-items: center;
   gap: 24px;
@@ -285,7 +317,36 @@ textarea.input {
   color: var(--gray-60);
 }
 
+.input-links {
+  justify-content: end;
+  font-size: 14px;
+}
+
+.input-links a,
+.input-links span {
+  font-weight: 400;
+  color: var(--gray-100);
+}
+
+.input-links span {
+  text-decoration: underline;
+  cursor: pointer;
+}
+
 .input-rule--error {
   color: var(--error);
+}
+
+.input-rule--hidden {
+  display: none;
+}
+
+@media (max-width: 600px) {
+  .input-rules,
+  .input-links {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 2px;
+  }
 }
 </style>
