@@ -7,7 +7,8 @@ type Rule =
   | { type: 'hasUppercase'; message?: string }
   | { type: 'hasDigit'; message?: string }
   | { type: 'hasSymbol'; message?: string }
-  | { type: 'email'; message?: string };
+  | { type: 'email'; message?: string }
+  | { type: 'matchValue'; value: string | number; message: string };
 
 type Link = { label: string; link?: string };
 
@@ -97,33 +98,45 @@ const rulesResults = computed(() => {
     switch (rule.type) {
       case 'minLength':
         return {
+          type: 'minLength',
           valid: value.length >= rule.value,
           message: rule.message ?? `${rule.value} caractère${rule.value > 1 ? 's' : ''} min.`,
         };
       case 'maxLength':
         return {
+          type: 'maxLength',
           valid: value.length <= rule.value,
           message: rule.message ?? `${rule.value} caractère${rule.value > 1 ? 's' : ''} max.`,
         };
       case 'hasUppercase':
         return {
+          type: 'hasUppercase',
           valid: /[A-Z]/.test(value),
           message: rule.message ?? `Majuscule requise`,
         };
       case 'hasDigit':
         return {
+          type: 'hasDigit',
           valid: /[0-9]/.test(value),
           message: rule.message ?? `Chiffre requis`,
         };
       case 'hasSymbol':
         return {
+          type: 'hasSymbol',
           valid: /[!@#$%^&*(),.?":{}|<>_\-+=~`\\\/[\];']/g.test(value),
           message: rule.message ?? `Symbole requis`,
         };
       case 'email':
         return {
+          type: 'email',
           valid: /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value),
           message: rule.message ?? 'Email valide',
+        };
+      case 'matchValue':
+        return {
+          type: 'matchValue',
+          valid: value === String(rule.value),
+          message: rule.message ?? 'Les valeurs ne correspondent pas.',
         };
       default:
         return { valid: true, message: '' };
@@ -205,7 +218,14 @@ const wrapperClass = computed(() => ({
     <div v-if="error" class="input-error">{{ error }}</div>
 
     <ul v-if="rulesResults.length" class="input-rules">
-      <li v-for="(rule, i) in rulesResults" :key="i" :class="{ 'input-rule--error': hasBeenTouched && !rule.valid }">
+      <li
+        v-for="(rule, i) in rulesResults"
+        :key="i"
+        :class="{
+          'input-rule--error': hasBeenTouched && !rule.valid,
+          'input-rule--hidden': (!hasBeenTouched || rule.valid) && rule.type === 'matchValue',
+        }"
+      >
         • {{ rule.message }}
       </li>
     </ul>
@@ -315,5 +335,18 @@ textarea.input {
 
 .input-rule--error {
   color: var(--error);
+}
+
+.input-rule--hidden {
+  display: none;
+}
+
+@media (max-width: 600px) {
+  .input-rules,
+  .input-links {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 2px;
+  }
 }
 </style>

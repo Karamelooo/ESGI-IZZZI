@@ -1,24 +1,23 @@
 <script lang="ts" setup>
 import { ref } from 'vue';
-import ForgotPassword from '@components/auth/ForgotPassword.vue';
+import { useRouter } from 'vue-router';
 import Login from '@components/auth/Login.vue';
 import Register from '@components/auth/Register.vue';
 
+const router = useRouter();
+
 function goToForgotPassword() {
-  activePage.value = 'forgot-password';
+  router.push('/auth/forgot-password');
 }
 
 function goToLogin() {
-  activePage.value = 'auth';
   activeTab.value = 0;
 }
 
 function goToRegister() {
-  activePage.value = 'auth';
   activeTab.value = 1;
 }
 
-const activePage = ref('auth');
 const activeTab = ref(0);
 </script>
 
@@ -26,9 +25,9 @@ const activeTab = ref(0);
   <main class="auth-main">
     <Logo :size="130" />
 
-    <Card v-if="activePage === 'auth'" :centered="true" :fullWidth="true">
+    <Card :centered="true">
       <SwitchTabs v-model="activeTab" :tabs="[{ name: 'Se connecter' }, { name: 'S\'inscrire' }]" />
-      <SwitchPanels :activeTab="activeTab" class="switch-panels">
+      <SwitchPanels :activeTab="activeTab" v-bind="activeTab === 1 ? { maxHeight: '47vh' } : {}" class="switch-panels">
         <template #tab-0>
           <Login @forgot-password="goToForgotPassword" @register="goToRegister" />
         </template>
@@ -37,10 +36,6 @@ const activeTab = ref(0);
           <Register @login="goToLogin" />
         </template>
       </SwitchPanels>
-    </Card>
-
-    <Card v-if="activePage === 'forgot-password'">
-      <ForgotPassword @login="goToLogin" />
     </Card>
   </main>
 </template>

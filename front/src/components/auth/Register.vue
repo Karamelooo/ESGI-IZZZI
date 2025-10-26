@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script lang="ts" setup>
 import { ref } from 'vue';
 import Input from '../../components/base/Input.vue';
 import Button from '../../components/base/Button.vue';

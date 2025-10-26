@@ -1,17 +1,18 @@
 <script lang="ts" setup>
 const props = defineProps<{
   activeTab: number;
+  maxHeight?: string;
 }>();
 </script>
 
 <template>
-  <div class="switch-content">
+  <div :class="{ scrollable: maxHeight }" :style="{ maxHeight: maxHeight }">
     <slot :name="`tab-${activeTab}`"></slot>
   </div>
 </template>
 
 <style scoped>
-.switch-content {
-  margin-top: 12px;
+.scrollable {
+  overflow-y: auto;
 }
 </style>

@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script lang="ts" setup>
 import { useToast } from '@composables/useToast';
 
 const toast = useToast();
