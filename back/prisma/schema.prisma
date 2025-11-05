@@ -12,5 +12,5 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
+  url      = "postgresql://postgres:password@db:5432/izzzi?schema=public"
 }
