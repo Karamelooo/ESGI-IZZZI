@@ -6,12 +6,11 @@
 
 generator client {
   provider = "prisma-client-js"
-  output   = "../generated/prisma"
+  previewFeatures = ["postgresqlExtensions", "fullTextSearchPostgres", "views", "driverAdapters", "prismaSchemaFolder"]
+  binaryTargets   = ["native"]
 }
 
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
-
-// import bellow all of the prisma schema like 'import "./user.prisma" '
