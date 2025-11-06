@@ -1,80 +1,55 @@
 import {
-  Body,
   Controller,
-  Delete,
   Get,
-  Param,
-  Patch,
   Post,
+  Patch,
+  Delete,
+  Param,
+  Body,
+  HttpCode,
+  ParseIntPipe,
 } from '@nestjs/common';
+import { User } from '@prisma/client';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import {
-  ApiNotFoundResponse,
-  ApiOkResponse,
-  ApiOperation,
-  ApiTags,
-} from '@nestjs/swagger';
 
-@ApiTags('users')
-@Controller('/users')
+@Controller('users')
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
-  @Get('me')
-  @ApiOperation({
-    summary: "Récuperer les informations de l'utilisateur actuel",
-  })
-  @ApiOkResponse({
-    type: Object,
-    description: 'Informations de l’utilisateur actuel récupérées avec succès',
-  })
-  @ApiNotFoundResponse({
-    description: 'Utilisateur non trouvé',
-  })
-  getCurrentUser() {
-    // Placeholder: requires auth context to provide current user
-    return this.userService.getCurrentUser();
-  }
-
-  @Post()
-  @ApiOperation({ summary: 'Créer un utilisateur' })
-  @ApiOkResponse({ description: 'Utilisateur créer avec succes' })
-  create(@Body() dto: CreateUserDto) {
-    return this.userService.create(dto);
-  }
-
   @Get()
-  @ApiOperation({ summary: "Liste d'utilisateurs" })
-  @ApiOkResponse({
-    description: 'Liste des utilisateurs récupérée avec succès',
-  })
-  findAll() {
+  async findAll(): Promise<User[]> {
     return this.userService.findAll();
   }
 
   @Get(':id')
-  @ApiOperation({ summary: 'Récupérer un utilisateur par ID' })
-  @ApiOkResponse({ description: 'Utilisateur récupéré avec succès' })
-  @ApiNotFoundResponse({ description: 'Utilisateur non trouvé' })
-  findOne(@Param('id') id: string) {
+  async findOne(@Param('id', ParseIntPipe) id: number): Promise<User> {
     return this.userService.findOne(id);
   }
 
+  @Post()
+  @HttpCode(201)
+  async create(@Body() createUserDto: CreateUserDto): Promise<User> {
+    return this.userService.create(createUserDto);
+  }
+
   @Patch(':id')
-  @ApiOperation({ summary: 'Mettre à jour un utilisateur' })
-  @ApiOkResponse({ description: 'Utilisateur mis à jour avec succès' })
-  @ApiNotFoundResponse({ description: 'Utilisateur non trouvé' })
-  update(@Param('id') id: string, @Body() dto: UpdateUserDto) {
-    return this.userService.update(id, dto);
+  async update(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() updateUserDto: UpdateUserDto,
+  ): Promise<User> {
+    return this.userService.update(id, updateUserDto);
   }
 
   @Delete(':id')
-  @ApiOperation({ summary: 'Supprimer un utilisateur' })
-  @ApiOkResponse({ description: 'Utilisateur supprimé avec succès' })
-  @ApiNotFoundResponse({ description: 'Utilisateur non trouvé' })
-  remove(@Param('id') id: string) {
-    return this.userService.remove(id);
+  @HttpCode(204)
+  async remove(@Param('id', ParseIntPipe) id: number): Promise<void> {
+    await this.userService.remove(id);
+  }
+
+  @Patch(':id/restore')
+  async restore(@Param('id', ParseIntPipe) id: number): Promise<User> {
+    return this.userService.restore(id);
   }
 }

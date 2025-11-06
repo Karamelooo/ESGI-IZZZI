@@ -1,0 +1,17 @@
+model User {
+  id            Int    @id @default(autoincrement())
+  firstName     String
+  lastName      String
+  email         String @unique
+  passwordHash  String
+  institutionId Int
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+
+  institution Institution @relation(fields: [institutionId], references: [id])
+
+  @@index([email])
+  @@index([institutionId])
+}
