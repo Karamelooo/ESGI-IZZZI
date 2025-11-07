@@ -1,6 +1,8 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
-import { Institution, Prisma } from '@prisma/client';
+import { Institution } from '@prisma/client';
+import { CreateInstitutionDto } from './dto/create-institution.dto';
+import { UpdateInstitutionDto } from './dto/update-institution.dto';
 
 @Injectable()
 export class InstitutionService {
@@ -9,25 +11,21 @@ export class InstitutionService {
   async findAll(): Promise<Institution[]> {
     return this.prisma.institution.findMany({
       where: { deletedAt: null },
+      orderBy: { id: 'asc' },
     });
   }
 
-  async findOne(id: number): Promise<Institution> {
-    const institution = await this.prisma.institution.findFirst({
+  async findOne(id: number): Promise<Institution | null> {
+    return this.prisma.institution.findFirst({
       where: { id, deletedAt: null },
     });
-    if (!institution) throw new NotFoundException('Institution not found');
-    return institution;
   }
 
-  async create(data: Prisma.InstitutionCreateInput): Promise<Institution> {
+  async create(data: CreateInstitutionDto): Promise<Institution> {
     return this.prisma.institution.create({ data });
   }
 
-  async update(
-    id: number,
-    data: Prisma.InstitutionUpdateInput,
-  ): Promise<Institution> {
+  async update(id: number, data: UpdateInstitutionDto): Promise<Institution> {
     const institution = await this.prisma.institution.findFirst({
       where: { id, deletedAt: null },
     });
@@ -38,12 +36,12 @@ export class InstitutionService {
     });
   }
 
-  async remove(id: number): Promise<Institution> {
+  async remove(id: number): Promise<void> {
     const institution = await this.prisma.institution.findFirst({
       where: { id, deletedAt: null },
     });
     if (!institution) throw new NotFoundException('Institution not found');
-    return this.prisma.institution.update({
+    await this.prisma.institution.update({
       where: { id },
       data: { deletedAt: new Date() },
     });
