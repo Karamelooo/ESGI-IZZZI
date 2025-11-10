@@ -3,7 +3,7 @@ model User {
   firstName     String
   lastName      String
   email         String @unique
-  passwordHash  String
+  password      String
   institutionId Int
 
   createdAt DateTime  @default(now())

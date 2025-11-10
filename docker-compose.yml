@@ -19,11 +19,14 @@ services:
       context: ./back
     ports:
       - "3500:3500"
+      - "5555:5555"
     volumes:
       - ./back:/app:delegated
       - /app/node_modules
     environment:
       - CHOKIDAR_USEPOLLING=true
+    env_file:
+      - ./back/.env.docker
     command: sh -c "npm ci && npm run dev"
     depends_on:
       - db

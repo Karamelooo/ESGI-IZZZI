@@ -1,66 +1,114 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+  ForbiddenException,
+} from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
-import { User, Prisma } from '@prisma/client';
+import { User } from '@prisma/client';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { UpdatePasswordDto } from './dto/update-password.dto';
+import { UserPublic } from './dto/user-public.dto';
 import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class UserService {
+  userPublicFields = {
+    id: true,
+    firstName: true,
+    lastName: true,
+    email: true,
+    institutionId: true,
+    createdAt: true,
+    updatedAt: true,
+    deletedAt: true,
+  };
+
   constructor(private prisma: PrismaService) {}
 
-  async findAll(): Promise<User[]> {
+  async findAll(): Promise<UserPublic[]> {
     return this.prisma.user.findMany({
       where: { deletedAt: null },
+      orderBy: { id: 'asc' },
+      select: this.userPublicFields,
     });
   }
 
-  async findOne(id: number): Promise<User> {
-    const user = await this.prisma.user.findFirst({
+  async findOne(id: number): Promise<UserPublic | null> {
+    return this.prisma.user.findFirst({
+      where: { id, deletedAt: null },
+      select: this.userPublicFields,
+    });
+  }
+
+  async findOneWithPassword(id: number): Promise<User | null> {
+    return this.prisma.user.findFirst({
       where: { id, deletedAt: null },
     });
-    if (!user) throw new NotFoundException('User not found');
-    return user;
   }
 
-  async create(data: CreateUserDto): Promise<User> {
-    const hash = await bcrypt.hash(data.password as string, 10);
-    return this.prisma.user.create({
+  async create(data: CreateUserDto): Promise<UserPublic> {
+    const emailExists = await this.prisma.user.findUnique({
+      where: { email: data.email },
+    });
+    if (emailExists) throw new BadRequestException('Email already in use');
+    const hash = await bcrypt.hash(data.password, 10);
+    const user = await this.prisma.user.create({
       data: {
         ...data,
-        passwordHash: hash,
+        password: hash,
       },
     });
+    const { password, ...userPublic } = user;
+    return userPublic;
   }
 
-  async update(id: number, data: UpdateUserDto): Promise<User> {
-    const user = await this.prisma.user.findFirst({
-      where: { id, deletedAt: null },
-    });
+  async update(id: number, data: UpdateUserDto): Promise<UserPublic> {
+    const user = await this.findOne(id);
     if (!user) throw new NotFoundException('User not found');
-    if ((data as any).password) {
-      const hash = await bcrypt.hash((data as any).password, 10);
-      data.password = hash;
-      delete (data as any).password;
-    }
     return this.prisma.user.update({
       where: { id },
       data,
+      select: this.userPublicFields,
     });
   }
 
-  async remove(id: number): Promise<void> {
-    const user = await this.prisma.user.findFirst({
-      where: { id, deletedAt: null },
-    });
+  async updatePassword(
+    id: number,
+    data: UpdatePasswordDto,
+  ): Promise<UserPublic> {
+    const user = await this.findOneWithPassword(id);
     if (!user) throw new NotFoundException('User not found');
-    await this.prisma.user.update({
+    const currentPassword = await bcrypt.hash(data.currentPassword, 10);
+    console.log(currentPassword);
+    console.log(user);
+    const passwordValid = await bcrypt.compare(
+      data.currentPassword,
+      user.password,
+    );
+    if (!passwordValid) {
+      throw new ForbiddenException('Current password is incorrect');
+    }
+    const hash = await bcrypt.hash(data.newPassword, 10);
+    return this.prisma.user.update({
+      where: { id },
+      data: { password: hash },
+      select: this.userPublicFields,
+    });
+  }
+
+  async remove(id: number): Promise<UserPublic> {
+    const user = await this.findOne(id);
+    if (!user) throw new NotFoundException('User not found or already deleted');
+    return this.prisma.user.update({
       where: { id },
       data: { deletedAt: new Date() },
+      select: this.userPublicFields,
     });
   }
 
-  async restore(id: number): Promise<User> {
+  async restore(id: number): Promise<UserPublic> {
     const user = await this.prisma.user.findFirst({
       where: { id, deletedAt: { not: null } },
     });
@@ -68,6 +116,7 @@ export class UserService {
     return this.prisma.user.update({
       where: { id },
       data: { deletedAt: null },
+      select: this.userPublicFields,
     });
   }
 }

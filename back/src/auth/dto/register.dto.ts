@@ -1,13 +1,13 @@
 import {
+  IsEmail,
   IsNotEmpty,
   MinLength,
-  MaxLength,
-  IsEmail,
   Matches,
+  MaxLength,
   IsInt,
 } from 'class-validator';
 
-export class CreateUserDto {
+export class RegisterDto {
   @IsNotEmpty()
   @MinLength(1)
   @MaxLength(50)
