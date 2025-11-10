@@ -16,6 +16,8 @@ import {
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { UpdatePasswordDto } from './dto/update-password.dto';
+import { UserPublic } from './dto/user-public.dto';
 import { User } from '@prisma/client';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
@@ -28,7 +30,7 @@ export class UserController {
   @Get()
   @ApiOperation({ summary: 'Get all users' })
   @ApiResponse({ status: 200, description: 'List of users' })
-  async findAll(): Promise<User[]> {
+  async findAll(): Promise<UserPublic[]> {
     return this.userService.findAll();
   }
 
@@ -36,16 +38,10 @@ export class UserController {
   @ApiOperation({ summary: 'Get one user by id' })
   @ApiResponse({ status: 200, description: 'User found' })
   @ApiResponse({ status: 404, description: 'User not found' })
-  async findOne(@Param('id', ParseIntPipe) id: number): Promise<User> {
+  async findOne(@Param('id', ParseIntPipe) id: number): Promise<UserPublic> {
     const user = await this.userService.findOne(id);
     if (!user) throw new NotFoundException('User not found');
     return user;
-  }
-
-  @UseGuards(JwtAuthGuard)
-  @Get('profile')
-  async getProfile(@Req() req): Promise<User> {
-    return req.user;
   }
 
   @Post()
@@ -54,7 +50,7 @@ export class UserController {
   @ApiResponse({ status: 201, description: 'User created' })
   @ApiResponse({ status: 400, description: 'Bad request' })
   @UsePipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }))
-  async create(@Body() createUserDto: CreateUserDto): Promise<User> {
+  async create(@Body() createUserDto: CreateUserDto): Promise<UserPublic> {
     return this.userService.create(createUserDto);
   }
 
@@ -67,10 +63,24 @@ export class UserController {
   async update(
     @Param('id', ParseIntPipe) id: number,
     @Body() updateUserDto: UpdateUserDto,
-  ): Promise<User> {
+  ): Promise<UserPublic> {
     const user = await this.userService.findOne(id);
     if (!user) throw new NotFoundException('User not found');
     return this.userService.update(id, updateUserDto);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Patch(':id/update-password')
+  @ApiOperation({ summary: 'Change user password' })
+  @ApiResponse({ status: 200, description: 'Password updated' })
+  @ApiResponse({ status: 400, description: 'Bad request' })
+  @ApiResponse({ status: 404, description: 'User not found' })
+  @UsePipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }))
+  async updatePassword(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() updatePasswordDto: UpdatePasswordDto,
+  ): Promise<UserPublic> {
+    return this.userService.updatePassword(id, updatePasswordDto);
   }
 
   @UseGuards(JwtAuthGuard)
@@ -78,9 +88,7 @@ export class UserController {
   @ApiOperation({ summary: 'Soft delete user' })
   @ApiResponse({ status: 200, description: 'User soft deleted' })
   @ApiResponse({ status: 404, description: 'User not found' })
-  async remove(@Param('id', ParseIntPipe) id: number): Promise<User> {
-    const user = await this.userService.findOne(id);
-    if (!user) throw new NotFoundException('User not found');
+  async remove(@Param('id', ParseIntPipe) id: number): Promise<UserPublic> {
     return this.userService.remove(id);
   }
 
@@ -89,9 +97,7 @@ export class UserController {
   @ApiOperation({ summary: 'Restore soft deleted user' })
   @ApiResponse({ status: 200, description: 'User restored' })
   @ApiResponse({ status: 404, description: 'User not found' })
-  async restore(@Param('id', ParseIntPipe) id: number): Promise<User> {
-    const user = await this.userService.findOne(id);
-    if (!user) throw new NotFoundException('User not found');
+  async restore(@Param('id', ParseIntPipe) id: number): Promise<UserPublic> {
     return this.userService.restore(id);
   }
 }

@@ -26,9 +26,7 @@ export class InstitutionService {
   }
 
   async update(id: number, data: UpdateInstitutionDto): Promise<Institution> {
-    const institution = await this.prisma.institution.findFirst({
-      where: { id, deletedAt: null },
-    });
+    const institution = await this.findOne(id);
     if (!institution) throw new NotFoundException('Institution not found');
     return this.prisma.institution.update({
       where: { id },
@@ -37,9 +35,7 @@ export class InstitutionService {
   }
 
   async remove(id: number): Promise<void> {
-    const institution = await this.prisma.institution.findFirst({
-      where: { id, deletedAt: null },
-    });
+    const institution = await this.findOne(id);
     if (!institution) throw new NotFoundException('Institution not found');
     await this.prisma.institution.update({
       where: { id },

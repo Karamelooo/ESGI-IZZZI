@@ -1,31 +1,35 @@
 import {
-  IsString,
   IsEmail,
+  IsNotEmpty,
   MinLength,
+  Matches,
   MaxLength,
   IsInt,
-  IsNotEmpty,
 } from 'class-validator';
 
 export class RegisterDto {
-  @IsString()
   @IsNotEmpty()
-  @MaxLength(255)
+  @MinLength(1)
+  @MaxLength(50)
   firstName: string;
 
-  @IsString()
   @IsNotEmpty()
-  @MaxLength(255)
+  @MinLength(1)
+  @MaxLength(50)
   lastName: string;
 
   @IsEmail()
+  @IsNotEmpty()
   @MaxLength(255)
   email: string;
 
-  @IsString()
+  @IsNotEmpty()
   @MinLength(8)
+  @MaxLength(128)
+  @Matches(/^(?=.*[a-zA-Z])(?=.*\d)[A-Za-z\d\S]{8,}$/)
   password: string;
 
   @IsInt()
+  @IsNotEmpty()
   institutionId: number;
 }
