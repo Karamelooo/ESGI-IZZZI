@@ -2,7 +2,7 @@
 import Input from '../base/Input.vue';
 import RadioGroup from './RadioGroup.vue';
 import CheckBoxGroup from './CheckBoxGroup.vue';
-import type { Question } from '@/types/survey';
+import type { Question } from '../../types/survey';
 import { computed } from 'vue';
 
 const props = defineProps<{
@@ -38,10 +38,13 @@ function generateScaleOptions(min: number, max: number) {
 
 <template>
   <div v-for="q in questions" :key="q.id" class="question-item">
-    <label class="question-label">{{ q.label }}</label>
+    <label class="question-label"
+      ><h3>{{ q.label }}</h3></label
+    >
 
     <Input
       v-if="q.type === 'text'"
+      :type="'textarea'"
       :model-value="(responses[q.id] as string) ?? ''"
       @update:model-value="(v) => setAnswer(q.id, v)"
       :label="q.label"
@@ -75,4 +78,8 @@ function generateScaleOptions(min: number, max: number) {
   </div>
 </template>
 
-<style scoped></style>
+<style scoped>
+.survey-card h3 {
+  padding-bottom: 1rem;
+}
+</style>

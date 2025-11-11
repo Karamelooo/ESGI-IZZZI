@@ -84,23 +84,99 @@ const Formation = 'Narratiiv (IICP)';
 
 <template>
   <main>
-    <Logo />
-    <h1>{{ Matiere }}</h1>
-    <div>{{ Formation }}</div>
-    <div>{{ Classe }}</div>
-    <p>
-      Soit sincère, sinon ça ne sert à rien.
-      <br />
-      <br />
-      C’est grâce à vous retours que nous pouvons améliorer les interventions et coller le plus possible à vos attentes.
-    </p>
-    <Card> <Survey :questions="ListQuestionsCours" /> </Card>
-    <Card> <Survey :questions="ListQuestionsIntervenant" /> </Card>
+    <section id="survey-info">
+      <Logo />
+      <h2>{{ Matiere }}</h2>
+      <div id="survey-cadre">
+        <div>
+          <Icon name="School" /><strong>{{ Formation }}</strong>
+        </div>
+        <hr />
+        <div>
+          <Icon name="People" /><strong>{{ Classe }}</strong>
+        </div>
+      </div>
+      <p>
+        Soit sincère, sinon ça ne sert à rien.
+        <br />
+        <br />
+        C’est grâce à vous retours que nous pouvons améliorer les interventions et coller le plus possible à vos
+        attentes.
+      </p>
+    </section>
+    <section id="survey">
+      <Card id="survey-class" class="survey-card">
+        <h2>Le cours</h2>
+        <p>Juste quelques questions sur le cours</p>
+        <Survey :questions="ListQuestionsCours" />
+      </Card>
+      <Card id="survey-inter" class="survey-card">
+        <h2>Votre intervenant</h2>
+        <p>Maintenant, quelques questions sur l’intervenant et après on a fini.</p>
+        <Survey :questions="ListQuestionsIntervenant" />
+      </Card>
+      <Button icon="Arrow" iconPosition="right" id="survey-send">Envoyer</Button>
+      <p id="survey-paragraphe">Ce formulaire est diffusé par <b>IZZZI</b></p>
+    </section>
   </main>
 </template>
 
 <style scoped>
 main {
-  background-color: var(--gray-15);
+  background-color: var(--gray-5);
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+  padding-top: 6.25rem;
+}
+
+#survey-info {
+  width: 415px;
+}
+
+#survey-info .logo {
+  margin-bottom: 5rem;
+}
+
+#survey {
+  width: 652px;
+}
+
+.survey-card {
+  margin-bottom: 1.75rem;
+  padding: 5rem;
+}
+
+#survey-send {
+  margin-bottom: 1.75rem;
+}
+
+strong,
+#survey-paragraphe {
+  font-size: 0.75rem;
+}
+
+#survey-cadre {
+  border: 1px solid var(--gray-15);
+  width: auto;
+  display: inline-flex;
+  gap: 0.75rem;
+  border-radius: 8px;
+  padding: 0.75rem 1.25rem;
+  margin: 1.875rem 0;
+}
+
+#survey-cadre div {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+#survey-cadre hr {
+  display: inline-block;
+  width: 1rem;
+  transform: rotate(90deg);
+  position: relative;
+  left: -0.75rem;
 }
 </style>
