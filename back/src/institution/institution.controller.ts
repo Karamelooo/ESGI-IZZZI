@@ -3,11 +3,12 @@ import {
   Controller,
   Get,
   HttpCode,
-  NotFoundException,
   Param,
   ParseIntPipe,
   Patch,
   Post,
+  Query,
+  UseGuards,
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
@@ -15,7 +16,8 @@ import { InstitutionService } from './institution.service';
 import { CreateInstitutionDto } from './dto/create-institution.dto';
 import { UpdateInstitutionDto } from './dto/update-institution.dto';
 import { Institution } from '@prisma/client';
-import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { ApiTags, ApiOperation } from '@nestjs/swagger';
 
 @ApiTags('institutions')
 @Controller('institutions')
@@ -24,26 +26,24 @@ export class InstitutionController {
 
   @Get()
   @ApiOperation({ summary: 'Get all institutions' })
-  @ApiResponse({ status: 200, description: 'List of institutions' })
-  async findAll(): Promise<Institution[]> {
-    return this.institutionService.findAll();
+  async findAll(
+    @Query('withDeleted') withDeleted?: string,
+  ): Promise<Institution[]> {
+    return this.institutionService.findAll(withDeleted === 'true');
   }
 
   @Get(':id')
   @ApiOperation({ summary: 'Get an institution by id' })
-  @ApiResponse({ status: 200, description: 'Institution found' })
-  @ApiResponse({ status: 404, description: 'Institution not found' })
-  async findOne(@Param('id', ParseIntPipe) id: number): Promise<Institution> {
-    const institution = await this.institutionService.findOne(id);
-    if (!institution) throw new NotFoundException('Institution not found');
-    return institution;
+  async findOne(
+    @Param('id', ParseIntPipe) id: number,
+    @Query('withDeleted') withDeleted?: string,
+  ): Promise<Institution | null> {
+    return this.institutionService.findOne(id, withDeleted === 'true');
   }
 
   @Post()
   @HttpCode(201)
   @ApiOperation({ summary: 'Create a new institution' })
-  @ApiResponse({ status: 201, description: 'Institution created' })
-  @ApiResponse({ status: 400, description: 'Bad request' })
   @UsePipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }))
   async create(
     @Body() createInstitutionDto: CreateInstitutionDto,
@@ -51,11 +51,9 @@ export class InstitutionController {
     return this.institutionService.create(createInstitutionDto);
   }
 
+  @UseGuards(JwtAuthGuard)
   @Patch(':id')
   @ApiOperation({ summary: 'Update institution by id' })
-  @ApiResponse({ status: 200, description: 'Institution updated' })
-  @ApiResponse({ status: 404, description: 'Institution not found' })
-  @ApiResponse({ status: 400, description: 'Bad request' })
   @UsePipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }))
   async update(
     @Param('id', ParseIntPipe) id: number,
@@ -64,10 +62,9 @@ export class InstitutionController {
     return this.institutionService.update(id, updateInstitutionDto);
   }
 
+  @UseGuards(JwtAuthGuard)
   @Patch(':id/remove')
   @ApiOperation({ summary: 'Soft delete institution' })
-  @ApiResponse({ status: 200, description: 'Institution soft deleted' })
-  @ApiResponse({ status: 404, description: 'Institution not found' })
   async remove(
     @Param('id', ParseIntPipe) id: number,
   ): Promise<{ success: boolean }> {
@@ -75,10 +72,9 @@ export class InstitutionController {
     return { success: true };
   }
 
+  @UseGuards(JwtAuthGuard)
   @Patch(':id/restore')
   @ApiOperation({ summary: 'Restore soft deleted institution' })
-  @ApiResponse({ status: 200, description: 'Institution restored' })
-  @ApiResponse({ status: 404, description: 'Institution not found' })
   async restore(@Param('id', ParseIntPipe) id: number): Promise<Institution> {
     return this.institutionService.restore(id);
   }
