@@ -7,7 +7,6 @@ import {
   ValidationPipe,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { LoginDto } from './dto/login.dto';
 import { RegisterDto } from './dto/register.dto';
 import { ApiTags, ApiOperation } from '@nestjs/swagger';
 
@@ -20,7 +19,7 @@ export class AuthController {
   @HttpCode(200)
   @ApiOperation({ summary: 'Login with email and password' })
   @UsePipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }))
-  async login(@Body() loginDto: LoginDto) {
+  async login(@Body() loginDto: any) {
     return this.authService.login(loginDto);
   }
 

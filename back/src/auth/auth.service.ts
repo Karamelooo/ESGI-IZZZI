@@ -18,12 +18,13 @@ export class AuthService {
   ) {}
 
   async validateUser(email: string, password: string): Promise<User> {
-    const user = await this.prisma.user.findFirst({
+    const user = await this.prisma.user.findUnique({
       where: { email, deletedAt: null },
     });
-    if (!user) throw new UnauthorizedException('Invalid credentials');
+    if (!user) throw new UnauthorizedException('Identifiants invalides');
     const valid = await bcrypt.compare(password, user.password);
-    if (!valid) throw new UnauthorizedException('Invalid credentials');
+    if (!user || !valid)
+      throw new UnauthorizedException('Identifiants invalides');
     return user;
   }
 
@@ -43,7 +44,7 @@ export class AuthService {
     const exists = await this.prisma.user.findUnique({
       where: { email: registerDto.email },
     });
-    if (exists) throw new BadRequestException('Email already in use');
+    if (exists) throw new BadRequestException('Cet email est déjà utilisé');
     const hash = await bcrypt.hash(registerDto.password, 10);
     const user = await this.prisma.user.create({
       data: {
