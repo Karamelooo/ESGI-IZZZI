@@ -4,6 +4,7 @@ import { useRouter } from 'vue-router';
 import Input from '@components/base/Input.vue';
 import Button from '@components/base/Button.vue';
 import { login } from '@api/auth.ts';
+import { useAuthStore } from '@stores/auth';
 
 const emit = defineEmits<{
   (e: 'forgot-password'): void;
@@ -11,10 +12,10 @@ const emit = defineEmits<{
 }>();
 
 const router = useRouter();
+const authStore = useAuthStore();
 
 const emailInput = ref('');
 const passwordInput = ref('');
-
 const loadingState = ref(false);
 const errorMessages = ref<string[]>([]);
 
@@ -24,17 +25,14 @@ async function onSubmit(event: Event) {
   errorMessages.value = [];
 
   try {
-    const data: any = await login({
+    const data = await login({
       email: emailInput.value,
       password: passwordInput.value,
     });
-
-    localStorage.setItem('access_token', data.access_token);
-
+    authStore.setAccessToken(data.accessToken);
     loadingState.value = false;
     router.push('/classes');
   } catch (error: any) {
-    console.error(error);
     loadingState.value = false;
     if (error?.response?.data?.message) {
       errorMessages.value = Array.isArray(error.response.data.message)

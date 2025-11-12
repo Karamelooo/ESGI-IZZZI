@@ -19,12 +19,9 @@ export class InstitutionService {
     id: number,
     withDeleted: boolean = false,
   ): Promise<Institution | null> {
-    const where: any = { id };
-    if (!withDeleted) where.deletedAt = null;
-
-    const institution = await this.prisma.institution.findUnique({ where });
-    if (!institution) throw new NotFoundException('Établissement non trouvé');
-
+    const where: any = { id, ...(withDeleted ? {} : { deletedAt: null }) };
+    const institution = await this.prisma.institution.findFirst({ where });
+    if (!institution) throw new NotFoundException('Institution not found');
     return institution;
   }
 
@@ -34,15 +31,13 @@ export class InstitutionService {
 
   async update(id: number, data: UpdateInstitutionDto): Promise<Institution> {
     const institution = await this.findOne(id);
-    if (!institution) throw new NotFoundException('Établissement non trouvé');
-
+    if (!institution) throw new NotFoundException('Institution not found');
     return this.prisma.institution.update({ where: { id }, data });
   }
 
   async remove(id: number): Promise<Institution> {
     const institution = await this.findOne(id);
-    if (!institution) throw new NotFoundException('Établissement non trouvé');
-
+    if (!institution) throw new NotFoundException('Institution not found');
     return this.prisma.institution.update({
       where: { id },
       data: { deletedAt: new Date() },
@@ -50,12 +45,11 @@ export class InstitutionService {
   }
 
   async restore(id: number): Promise<Institution> {
-    const institution = await this.prisma.institution.findUnique({
+    const institution = await this.prisma.institution.findFirst({
       where: { id, deletedAt: { not: null } },
     });
     if (!institution)
-      throw new NotFoundException('Établissement non trouvé ou non supprimé');
-
+      throw new NotFoundException('Institution not found or not removed');
     return this.prisma.institution.update({
       where: { id },
       data: { deletedAt: null },

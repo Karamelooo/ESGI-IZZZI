@@ -3,48 +3,79 @@ import {
   Controller,
   HttpCode,
   Post,
-  Req,
+  Res,
   UseGuards,
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
-import { ApiTags, ApiOperation } from '@nestjs/swagger';
+import type { Response } from 'express';
 import { AuthService } from './auth.service';
-import { LoginDto } from './dto/login.dto';
 import { RegisterDto } from './dto/register.dto';
-import { JwtAuthGuard } from './jwt-auth.guard';
+import { LoginDto } from './dto/login.dto';
+import { AccessTokenGuard } from './guards/access-token.guard';
+import { RefreshTokenGuard } from './guards/refresh-token.guard';
+import { CurrentUser } from './decorators/current-user.decorator';
 
-@ApiTags('auth')
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
-  @Post('login')
-  @HttpCode(200)
-  @ApiOperation({ summary: 'Login with email and password' })
-  @UsePipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }))
-  async login(@Body() loginDto: any) {
-    return this.authService.login(loginDto);
-  }
-
   @Post('register')
   @HttpCode(201)
-  @ApiOperation({ summary: 'Register a new user' })
   @UsePipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }))
-  async register(@Body() registerDto: RegisterDto) {
-    return this.authService.register(registerDto);
+  async register(@Body() dto: RegisterDto, @Res() res: Response) {
+    const tokens = await this.authService.register(dto);
+    this.setRefreshCookie(res, tokens.refreshToken);
+    return res.json({ accessToken: tokens.accessToken });
+  }
+
+  @Post('login')
+  @HttpCode(200)
+  @UsePipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }))
+  async login(@Body() dto: any, @Res() res: Response) {
+    const tokens = await this.authService.login(dto);
+    this.setRefreshCookie(res, tokens.refreshToken);
+    return res.json({ accessToken: tokens.accessToken });
   }
 
   @Post('refresh')
-  async refresh(@Body('refreshToken') refreshToken: string) {
-    return this.authService.refreshTokenFlow(refreshToken);
+  @UseGuards(RefreshTokenGuard)
+  async refresh(@CurrentUser() data: any, @Res() res: Response) {
+    const tokens = await this.authService.refreshFromGuard(
+      data.payload,
+      data.refreshToken as string,
+    );
+    this.setRefreshCookie(res, tokens.refreshToken);
+    return res.json({ accessToken: tokens.accessToken });
   }
 
-  @UseGuards(JwtAuthGuard)
   @Post('logout')
-  @ApiOperation({ summary: 'Logout the current user' })
-  async logout(@Req() req: any) {
-    await this.authService.logout(req.user.sub);
-    return { message: 'Déconnexion réussie' };
+  @UseGuards(AccessTokenGuard)
+  async logout(@CurrentUser() payload: any, @Res() res: Response) {
+    await this.authService.logout(Number(payload.sub));
+    this.clearRefreshCookie(res);
+    return res.json({ message: 'Logout successful' });
+  }
+
+  @Post('logout-all')
+  @UseGuards(AccessTokenGuard)
+  async logoutAll(@CurrentUser() payload: any, @Res() res: Response) {
+    await this.authService.invalidateAllSessions(Number(payload.sub));
+    this.clearRefreshCookie(res);
+    return res.json({ message: 'Global logout successful' });
+  }
+
+  private setRefreshCookie(res: Response, token: string) {
+    res.cookie('refresh_token', token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'strict',
+      path: '/auth/refresh',
+      maxAge: 1000 * 60 * 60 * 24 * 30,
+    });
+  }
+
+  private clearRefreshCookie(res: Response) {
+    res.clearCookie('refresh_token', { path: '/auth/refresh' });
   }
 }

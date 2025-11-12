@@ -1,4 +1,4 @@
-import { useTypedApi } from '@api/helper';
+import { useTypedApi } from './helper';
 
 export interface LoginPayload {
   email: string;

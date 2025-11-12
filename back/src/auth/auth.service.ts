@@ -1,113 +1,141 @@
 import {
   Injectable,
-  UnauthorizedException,
   BadRequestException,
   ForbiddenException,
+  UnauthorizedException,
 } from '@nestjs/common';
-import { JwtService } from '@nestjs/jwt';
+import { JwtService, JwtSignOptions } from '@nestjs/jwt';
 import { PrismaService } from '../prisma/prisma.service';
-import { UserService } from '../user/user.service';
-import { LoginDto } from './dto/login.dto';
 import { RegisterDto } from './dto/register.dto';
-import { User } from '@prisma/client';
-import * as bcrypt from 'bcrypt';
+import { LoginDto } from './dto/login.dto';
+import { Tokens, AppJwtPayload } from './auth.types';
+import * as argon2 from 'argon2';
 
 @Injectable()
 export class AuthService {
   constructor(
     private readonly prisma: PrismaService,
-    private readonly jwtService: JwtService,
-    private readonly userService: UserService,
+    private readonly jwt: JwtService,
   ) {}
 
-  async validateUser(email: string, password: string): Promise<User> {
-    const user = await this.prisma.user.findUnique({
-      where: { email, deletedAt: null },
+  async register(dto: RegisterDto): Promise<Tokens> {
+    const existing = await this.prisma.user.findFirst({
+      where: { email: dto.email, deletedAt: null },
     });
-    if (!user) throw new UnauthorizedException('Identifiants invalides');
-    const valid = await bcrypt.compare(password, user.password);
-    if (!user || !valid)
-      throw new UnauthorizedException('Identifiants invalides');
-    return user;
-  }
-
-  async login(loginDto: LoginDto) {
-    const user = await this.validateUser(loginDto.email, loginDto.password);
-    const tokens = this.getTokens(user.id, user.email, user.institutionId);
-    await this.updateRefreshToken(user.id, tokens.refreshToken);
-    return tokens;
-  }
-
-  async register(registerDto: RegisterDto) {
-    const exists = await this.prisma.user.findUnique({
-      where: { email: registerDto.email },
-    });
-    if (exists) throw new BadRequestException('Email déjà utilisé');
-    const hash = await bcrypt.hash(registerDto.password, 10);
+    if (existing) throw new BadRequestException('Email already used');
+    const passwordHash = await argon2.hash(dto.password);
     const user = await this.prisma.user.create({
       data: {
-        firstName: registerDto.firstName,
-        lastName: registerDto.lastName,
-        email: registerDto.email,
-        password: hash,
-        institutionId: registerDto.institutionId,
+        firstName: dto.firstName,
+        lastName: dto.lastName,
+        email: dto.email,
+        password: passwordHash,
+        institutionId: dto.institutionId,
+        refreshTokenVersion: 0,
       },
     });
-    const tokens = this.getTokens(user.id, user.email, user.institutionId);
-    await this.updateRefreshToken(user.id, tokens.refreshToken);
+    const tokens = await this.issueTokens(
+      user.id,
+      user.email,
+      user.institutionId,
+      user.refreshTokenVersion,
+    );
+    await this.storeRefreshToken(user.id, tokens.refreshToken);
     return tokens;
   }
 
-  async logout(userId: number) {
+  async login(dto: LoginDto): Promise<Tokens> {
+    const user = await this.prisma.user.findFirst({
+      where: { email: dto.email, deletedAt: null },
+    });
+    if (!user) throw new UnauthorizedException('Invalid credentials');
+    const valid = await argon2.verify(user.password, dto.password);
+    if (!valid) throw new UnauthorizedException('Invalid credentials');
+    const tokens = await this.issueTokens(
+      user.id,
+      user.email,
+      user.institutionId,
+      user.refreshTokenVersion,
+    );
+    await this.storeRefreshToken(user.id, tokens.refreshToken);
+    return tokens;
+  }
+
+  async logout(userId: number): Promise<void> {
     await this.prisma.user.update({
       where: { id: userId },
       data: { hashedRefreshToken: null },
     });
   }
 
-  getTokens(userId: number, email: string, institutionId: number) {
-    const payload = { sub: userId, email, institutionId };
-    const accessToken = this.jwtService.sign(payload, {
-      secret: process.env.JWT_ACCESS_SECRET,
-      expiresIn: '15m',
-    });
-    const refreshToken = this.jwtService.sign(payload, {
-      secret: process.env.JWT_REFRESH_SECRET,
-      expiresIn: '30d',
-    });
-    return { accessToken, refreshToken };
+  async rotateRefreshToken(
+    userId: number,
+    oldRefreshToken: string,
+  ): Promise<Tokens> {
+    const user = await this.prisma.user.findUnique({ where: { id: userId } });
+    if (!user || !user.hashedRefreshToken)
+      throw new ForbiddenException('Access denied');
+    const matches = await argon2.verify(
+      user.hashedRefreshToken,
+      oldRefreshToken,
+    );
+    if (!matches) throw new ForbiddenException('Access denied');
+    const tokens = await this.issueTokens(
+      user.id,
+      user.email,
+      user.institutionId,
+      user.refreshTokenVersion,
+    );
+    await this.storeRefreshToken(user.id, tokens.refreshToken);
+    return tokens;
   }
 
-  async updateRefreshToken(userId: number, refreshToken: string) {
-    const hash = await bcrypt.hash(refreshToken, 10);
+  async storeRefreshToken(userId: number, refreshToken: string): Promise<void> {
+    const hash = await argon2.hash(refreshToken);
     await this.prisma.user.update({
       where: { id: userId },
       data: { hashedRefreshToken: hash },
     });
   }
 
-  async refreshTokens(userId: number, refreshToken: string) {
-    const user = await this.userService.findOne(userId);
-    if (!user || !user.hashedRefreshToken)
-      throw new ForbiddenException('Accès refusé');
-    const refreshTokenMatches = await bcrypt.compare(
-      refreshToken,
-      user.hashedRefreshToken,
-    );
-    if (!refreshTokenMatches) throw new ForbiddenException('Accès refusé');
-    const tokens = this.getTokens(user.id, user.email, user.institutionId);
-    await this.updateRefreshToken(user.id, tokens.refreshToken);
-    return tokens;
+  async issueTokens(
+    userId: number,
+    email: string,
+    institutionId: number,
+    rtv: number,
+  ): Promise<Tokens> {
+    const payload: any = { sub: String(userId), email, institutionId, rtv };
+    const accessSecret = process.env.JWT_ACCESS_SECRET;
+    const refreshSecret = process.env.JWT_REFRESH_SECRET;
+    if (!accessSecret || !refreshSecret)
+      throw new Error('JWT secrets are not defined');
+    const accessToken = await this.jwt.signAsync(payload, {
+      secret: accessSecret,
+      expiresIn: process.env.JWT_ACCESS_EXPIRES ?? '15m',
+    } as JwtSignOptions);
+    const refreshToken = await this.jwt.signAsync(payload, {
+      secret: refreshSecret,
+      expiresIn: process.env.JWT_REFRESH_EXPIRES ?? '30d',
+    } as JwtSignOptions);
+    return { accessToken, refreshToken };
   }
 
-  async refreshTokenFlow(refreshToken: string) {
-    try {
-      const payload = this.jwtService.verify(refreshToken, {
-        secret: process.env.JWT_REFRESH_SECRET,
-      });
-      return this.refreshTokens(payload.sub, refreshToken);
-    } catch {
-      throw new ForbiddenException('Jeton de rafraîchissement invalide');
-    }
+  async refreshFromGuard(
+    payload: AppJwtPayload,
+    refreshToken: string,
+  ): Promise<Tokens> {
+    return this.rotateRefreshToken(Number(payload.sub), refreshToken);
+  }
+
+  async invalidateAllSessions(userId: number): Promise<void> {
+    const user = await this.prisma.user.findUnique({ where: { id: userId } });
+    if (!user) return;
+    await this.prisma.user.update({
+      where: { id: userId },
+      data: {
+        hashedRefreshToken: null,
+        refreshTokenVersion: user.refreshTokenVersion + 1,
+      },
+    });
   }
 }
