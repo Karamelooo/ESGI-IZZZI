@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import { ref } from 'vue';
+import { useRouter } from 'vue-router';
 import Input from '@components/base/Input.vue';
 import Button from '@components/base/Button.vue';
 import { login } from '@api/auth.ts';
@@ -8,6 +9,8 @@ const emit = defineEmits<{
   (e: 'forgot-password'): void;
   (e: 'register'): void;
 }>();
+
+const router = useRouter();
 
 const emailInput = ref('');
 const passwordInput = ref('');
@@ -25,16 +28,20 @@ async function onSubmit(event: Event) {
       email: emailInput.value,
       password: passwordInput.value,
     });
+
+    localStorage.setItem('access_token', data.access_token);
+
     loadingState.value = false;
-    console.log(data);
+    router.push('/classes');
   } catch (error: any) {
+    console.error(error);
     loadingState.value = false;
     if (error?.response?.data?.message) {
       errorMessages.value = Array.isArray(error.response.data.message)
         ? error.response.data.message
         : [error.response.data.message];
     } else {
-      errorMessages.value = ['Une erreur est survenue'];
+      errorMessages.value = ['Une erreur inconnue est survenue'];
     }
   }
 }

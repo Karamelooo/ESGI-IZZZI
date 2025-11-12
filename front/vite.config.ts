@@ -21,6 +21,7 @@ export default defineConfig(({ mode }) => {
         '@views': path.resolve(__dirname, 'src/views'),
         '@router': path.resolve(__dirname, 'src/router'),
         '@api': path.resolve(__dirname, 'src/api'),
+        '@stores': path.resolve(__dirname, 'src/stores'),
       },
     },
     server: {
