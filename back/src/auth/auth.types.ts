@@ -2,7 +2,7 @@ export interface AppJwtPayload {
   sub: string;
   email: string;
   institutionId: number;
-  rtv: number;
+  refreshTokenVersion: number;
 }
 
 export interface Tokens {

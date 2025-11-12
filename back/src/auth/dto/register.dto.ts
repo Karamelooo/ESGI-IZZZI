@@ -1,13 +1,17 @@
 import {
   IsEmail,
   IsNotEmpty,
-  MinLength,
   Matches,
   MaxLength,
-  IsInt,
+  MinLength,
 } from 'class-validator';
 
 export class RegisterDto {
+  @IsNotEmpty({ message: "Nom d'école requis" })
+  @MinLength(2, { message: "Nom d'école de 1 caractère min" })
+  @MaxLength(10, { message: "Nom d'école de 100 caractères max" })
+  institutionName: string;
+
   @IsNotEmpty({ message: 'Prénom requis' })
   @MinLength(1, { message: 'Prénom de 1 caractère min' })
   @MaxLength(50, { message: 'Prénom de 50 caractères max' })
@@ -30,8 +34,4 @@ export class RegisterDto {
     message: 'Mot de passe alphanumérique',
   })
   password: string;
-
-  @IsInt()
-  @IsNotEmpty()
-  institutionId: number;
 }

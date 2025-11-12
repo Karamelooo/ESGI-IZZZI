@@ -32,7 +32,7 @@ export class AuthController {
   @Post('login')
   @HttpCode(200)
   @UsePipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }))
-  async login(@Body() dto: any, @Res() res: Response) {
+  async login(@Body() dto: LoginDto, @Res() res: Response) {
     const tokens = await this.authService.login(dto);
     this.setRefreshCookie(res, tokens.refreshToken);
     return res.json({ accessToken: tokens.accessToken });
@@ -54,7 +54,7 @@ export class AuthController {
   async logout(@CurrentUser() payload: any, @Res() res: Response) {
     await this.authService.logout(Number(payload.sub));
     this.clearRefreshCookie(res);
-    return res.json({ message: 'Logout successful' });
+    return res.json({ message: 'Déconnexion réussie' });
   }
 
   @Post('logout-all')
@@ -62,7 +62,7 @@ export class AuthController {
   async logoutAll(@CurrentUser() payload: any, @Res() res: Response) {
     await this.authService.invalidateAllSessions(Number(payload.sub));
     this.clearRefreshCookie(res);
-    return res.json({ message: 'Global logout successful' });
+    return res.json({ message: 'Déconnexion globale réussie' });
   }
 
   private setRefreshCookie(res: Response, token: string) {

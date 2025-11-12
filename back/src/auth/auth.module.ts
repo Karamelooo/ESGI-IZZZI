@@ -5,6 +5,8 @@ import jwtConfig from './config/jwt.config';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { PrismaService } from '../prisma/prisma.service';
+import { UserService } from '../user/user.service';
+import { InstitutionService } from '../institution/institution.service';
 import { AccessTokenStrategy } from './strategies/access-token.strategy';
 import { RefreshTokenStrategy } from './strategies/refresh-token.strategy';
 
@@ -17,6 +19,8 @@ import { RefreshTokenStrategy } from './strategies/refresh-token.strategy';
   providers: [
     AuthService,
     PrismaService,
+    UserService,
+    InstitutionService,
     AccessTokenStrategy,
     RefreshTokenStrategy,
   ],

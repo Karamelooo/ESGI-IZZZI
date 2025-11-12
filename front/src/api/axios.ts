@@ -25,13 +25,9 @@ export function useApi(authStore = useAuthStore(), router = useRouter()) {
 
   instance.interceptors.response.use(
     (response) => {
-      console.log('Response:', response);
-      debugger;
       return response;
     },
     async (error) => {
-      console.log('Response Error:', error.response);
-      debugger;
       const originalRequest = error.config;
       if (error.response && error.response.status === 401 && !originalRequest._retry) {
         originalRequest._retry = true;

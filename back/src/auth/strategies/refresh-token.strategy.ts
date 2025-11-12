@@ -32,7 +32,7 @@ export class RefreshTokenStrategy extends PassportStrategy(
         sub: Number(payload.sub),
         email: payload.email,
         institutionId: payload.institutionId,
-        rtv: payload.rtv,
+        refreshTokenVersion: payload.refreshTokenVersion,
       },
       refreshToken: token,
     };

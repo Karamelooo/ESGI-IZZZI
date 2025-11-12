@@ -2,10 +2,11 @@ import {
   Injectable,
   BadRequestException,
   ForbiddenException,
-  UnauthorizedException,
 } from '@nestjs/common';
 import { JwtService, JwtSignOptions } from '@nestjs/jwt';
 import { PrismaService } from '../prisma/prisma.service';
+import { InstitutionService } from '../institution/institution.service';
+import { UserService } from '../user/user.service';
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
 import { Tokens, AppJwtPayload } from './auth.types';
@@ -16,41 +17,43 @@ export class AuthService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly jwt: JwtService,
+    private readonly institutionService: InstitutionService,
+    private readonly userService: UserService,
   ) {}
 
-  async register(dto: RegisterDto): Promise<Tokens> {
-    const existing = await this.prisma.user.findFirst({
-      where: { email: dto.email, deletedAt: null },
+  async register(data: RegisterDto): Promise<Tokens> {
+    const institution = await this.institutionService.create({
+      name: data.institutionName,
     });
-    if (existing) throw new BadRequestException('Email already used');
-    const passwordHash = await argon2.hash(dto.password);
-    const user = await this.prisma.user.create({
-      data: {
-        firstName: dto.firstName,
-        lastName: dto.lastName,
-        email: dto.email,
-        password: passwordHash,
-        institutionId: dto.institutionId,
-        refreshTokenVersion: 0,
-      },
+
+    const user = await this.userService.create({
+      firstName: data.firstName,
+      lastName: data.lastName,
+      email: data.email,
+      password: data.password,
+      institutionId: institution.id,
     });
+
+    const refreshTokenVersion = 0;
+
     const tokens = await this.issueTokens(
       user.id,
       user.email,
       user.institutionId,
-      user.refreshTokenVersion,
+      refreshTokenVersion,
     );
     await this.storeRefreshToken(user.id, tokens.refreshToken);
+
     return tokens;
   }
 
-  async login(dto: LoginDto): Promise<Tokens> {
+  async login(data: LoginDto): Promise<Tokens> {
     const user = await this.prisma.user.findFirst({
-      where: { email: dto.email, deletedAt: null },
+      where: { email: data.email, deletedAt: null },
     });
-    if (!user) throw new UnauthorizedException('Invalid credentials');
-    const valid = await argon2.verify(user.password, dto.password);
-    if (!valid) throw new UnauthorizedException('Invalid credentials');
+    if (!user) throw new BadRequestException('Identifiants invalides');
+    const valid = await argon2.verify(user.password, data.password);
+    if (!valid) throw new BadRequestException('Identifiants invalides');
     const tokens = await this.issueTokens(
       user.id,
       user.email,
@@ -74,12 +77,12 @@ export class AuthService {
   ): Promise<Tokens> {
     const user = await this.prisma.user.findUnique({ where: { id: userId } });
     if (!user || !user.hashedRefreshToken)
-      throw new ForbiddenException('Access denied');
+      throw new ForbiddenException('Accès refusé');
     const matches = await argon2.verify(
       user.hashedRefreshToken,
       oldRefreshToken,
     );
-    if (!matches) throw new ForbiddenException('Access denied');
+    if (!matches) throw new ForbiddenException('Accès refusé');
     const tokens = await this.issueTokens(
       user.id,
       user.email,
@@ -102,13 +105,18 @@ export class AuthService {
     userId: number,
     email: string,
     institutionId: number,
-    rtv: number,
+    refreshTokenVersion: number,
   ): Promise<Tokens> {
-    const payload: any = { sub: String(userId), email, institutionId, rtv };
+    const payload: any = {
+      sub: String(userId),
+      email,
+      institutionId,
+      refreshTokenVersion,
+    };
     const accessSecret = process.env.JWT_ACCESS_SECRET;
     const refreshSecret = process.env.JWT_REFRESH_SECRET;
     if (!accessSecret || !refreshSecret)
-      throw new Error('JWT secrets are not defined');
+      throw new Error('Les secrets JWT ne sont pas définis');
     const accessToken = await this.jwt.signAsync(payload, {
       secret: accessSecret,
       expiresIn: process.env.JWT_ACCESS_EXPIRES ?? '15m',
