@@ -12,13 +12,13 @@ import {
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
+import { ApiTags, ApiOperation } from '@nestjs/swagger';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UpdatePasswordDto } from './dto/update-password.dto';
 import { UserPublic } from './dto/user-public.dto';
-import { JwtAuthGuard } from '../auth/jwt-auth.guard';
-import { ApiTags, ApiOperation } from '@nestjs/swagger';
+import { AccessTokenGuard } from '../auth/guards/access-token.guard';
 
 @ApiTags('users')
 @Controller('users')
@@ -50,7 +50,7 @@ export class UserController {
     return this.userService.create(createUserDto);
   }
 
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(AccessTokenGuard)
   @Patch(':id')
   @ApiOperation({ summary: 'Update user by id' })
   @UsePipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }))
@@ -61,7 +61,7 @@ export class UserController {
     return this.userService.update(id, updateUserDto);
   }
 
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(AccessTokenGuard)
   @Patch(':id/update-password')
   @ApiOperation({ summary: 'Change user password' })
   @UsePipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }))
@@ -72,14 +72,14 @@ export class UserController {
     return this.userService.updatePassword(id, updatePasswordDto);
   }
 
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(AccessTokenGuard)
   @Patch(':id/remove')
   @ApiOperation({ summary: 'Soft delete user' })
   async remove(@Param('id', ParseIntPipe) id: number): Promise<UserPublic> {
     return this.userService.remove(id);
   }
 
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(AccessTokenGuard)
   @Patch(':id/restore')
   @ApiOperation({ summary: 'Restore soft deleted user' })
   async restore(@Param('id', ParseIntPipe) id: number): Promise<UserPublic> {

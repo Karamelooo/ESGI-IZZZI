@@ -1,35 +1,37 @@
 import {
   IsEmail,
   IsNotEmpty,
-  MinLength,
   Matches,
   MaxLength,
-  IsInt,
+  MinLength,
 } from 'class-validator';
 
 export class RegisterDto {
-  @IsNotEmpty()
-  @MinLength(1)
-  @MaxLength(50)
+  @IsNotEmpty({ message: "Nom d'école requis" })
+  @MinLength(2, { message: "Nom d'école de 1 caractère min" })
+  @MaxLength(10, { message: "Nom d'école de 100 caractères max" })
+  institutionName: string;
+
+  @IsNotEmpty({ message: 'Prénom requis' })
+  @MinLength(1, { message: 'Prénom de 1 caractère min' })
+  @MaxLength(50, { message: 'Prénom de 50 caractères max' })
   firstName: string;
 
-  @IsNotEmpty()
-  @MinLength(1)
-  @MaxLength(50)
+  @IsNotEmpty({ message: 'Nom requis' })
+  @MinLength(1, { message: 'Nom de 1 caractère min' })
+  @MaxLength(50, { message: 'Nom de 50 caractères max' })
   lastName: string;
 
-  @IsEmail()
-  @IsNotEmpty()
-  @MaxLength(255)
+  @IsEmail({}, { message: 'Email invalide' })
+  @IsNotEmpty({ message: 'Email requis' })
+  @MaxLength(255, { message: 'Email de 255 caractères max' })
   email: string;
 
-  @IsNotEmpty()
-  @MinLength(8)
-  @MaxLength(128)
-  @Matches(/^(?=.*[a-zA-Z])(?=.*\d)[A-Za-z\d\S]{8,}$/)
+  @IsNotEmpty({ message: 'Mot de passe requis' })
+  @MinLength(8, { message: 'Mot de passe de 8 caractères min' })
+  @MaxLength(128, { message: 'Mot de passe de 128 caractères max' })
+  @Matches(/^(?=.*[a-zA-Z])(?=.*\d)[A-Za-z\d\S]{8,}$/, {
+    message: 'Mot de passe alphanumérique',
+  })
   password: string;
-
-  @IsInt()
-  @IsNotEmpty()
-  institutionId: number;
 }

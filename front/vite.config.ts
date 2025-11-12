@@ -20,6 +20,8 @@ export default defineConfig(({ mode }) => {
         '@composables': path.resolve(__dirname, 'src/composables'),
         '@views': path.resolve(__dirname, 'src/views'),
         '@router': path.resolve(__dirname, 'src/router'),
+        '@api': path.resolve(__dirname, 'src/api'),
+        '@stores': path.resolve(__dirname, 'src/stores'),
       },
     },
     server: {

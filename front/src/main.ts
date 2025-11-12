@@ -1,10 +1,12 @@
 import { createApp } from 'vue';
+import { createPinia } from 'pinia';
 import router from '@router';
 
 import App from '@/App.vue';
 import '@css/main.css';
 
 const app = createApp(App);
+const pinia = createPinia();
 
 const components = {
   ...import.meta.glob('@components/base/*.vue', { eager: true }),
@@ -19,5 +21,6 @@ Object.entries(components as Record<string, { default: any }>).forEach(([path, m
   app.component(componentName, module.default);
 });
 
+app.use(pinia);
 app.use(router);
 app.mount('#app');

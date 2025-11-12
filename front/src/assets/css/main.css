@@ -94,6 +94,17 @@ a:active {
   font-weight: 300;
 }
 
+.form-errors {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.form-errors li {
+  color: var(--error);
+  font-size: 14px;
+}
+
 h1,
 h2,
 h3,

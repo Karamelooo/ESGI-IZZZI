@@ -6,6 +6,7 @@ import UIKit from '@views/public/UIKit.vue';
 import Auth from '@views/auth/Auth.vue';
 import ChangePassword from '@views/auth/ChangePassword.vue';
 import ForgotPassword from '@views/auth/ForgotPassword.vue';
+import ClassesList from '@views/classes/ClassesList.vue';
 import Survey from '@views/public/Survey.vue';
 
 const routes: Array<RouteRecordRaw> = [
@@ -19,6 +20,9 @@ const routes: Array<RouteRecordRaw> = [
   { path: '/auth', name: 'login', component: Auth },
   { path: '/auth/change-password', name: 'change-password', component: ChangePassword },
   { path: '/auth/forgot-password', name: 'forgot-password', component: ForgotPassword },
+
+  /* Classes Routes */
+  { path: '/classes', name: 'classes-list', component: ClassesList },
 ];
 
 const router = createRouter({

@@ -16,7 +16,7 @@ import { InstitutionService } from './institution.service';
 import { CreateInstitutionDto } from './dto/create-institution.dto';
 import { UpdateInstitutionDto } from './dto/update-institution.dto';
 import { Institution } from '@prisma/client';
-import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { AccessTokenGuard } from '../auth/guards/access-token.guard';
 import { ApiTags, ApiOperation } from '@nestjs/swagger';
 
 @ApiTags('institutions')
@@ -51,7 +51,7 @@ export class InstitutionController {
     return this.institutionService.create(createInstitutionDto);
   }
 
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(AccessTokenGuard)
   @Patch(':id')
   @ApiOperation({ summary: 'Update institution by id' })
   @UsePipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }))
@@ -62,7 +62,7 @@ export class InstitutionController {
     return this.institutionService.update(id, updateInstitutionDto);
   }
 
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(AccessTokenGuard)
   @Patch(':id/remove')
   @ApiOperation({ summary: 'Soft delete institution' })
   async remove(
@@ -72,7 +72,7 @@ export class InstitutionController {
     return { success: true };
   }
 
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(AccessTokenGuard)
   @Patch(':id/restore')
   @ApiOperation({ summary: 'Restore soft deleted institution' })
   async restore(@Param('id', ParseIntPipe) id: number): Promise<Institution> {

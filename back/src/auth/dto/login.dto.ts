@@ -1,20 +1,10 @@
-import {
-  IsEmail,
-  IsNotEmpty,
-  MinLength,
-  Matches,
-  MaxLength,
-} from 'class-validator';
+import { IsEmail, IsNotEmpty } from 'class-validator';
 
 export class LoginDto {
-  @IsEmail()
-  @IsNotEmpty()
-  @MaxLength(255)
+  @IsEmail({}, { message: 'Email invalide' })
+  @IsNotEmpty({ message: 'Email requis' })
   email: string;
 
-  @IsNotEmpty()
-  @MinLength(8)
-  @MaxLength(128)
-  @Matches(/^(?=.*[a-zA-Z])(?=.*\d)[A-Za-z\d\S]{8,}$/)
+  @IsNotEmpty({ message: 'Mot de passe requis' })
   password: string;
 }

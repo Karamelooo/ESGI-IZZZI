@@ -3,7 +3,8 @@ export class UserPublic {
   firstName: string;
   lastName: string;
   email: string;
-  institutionId: number | null;
+  hashedRefreshToken?: string | null;
+  institutionId: number;
   createdAt: Date;
   updatedAt: Date;
   deletedAt: Date | null;
