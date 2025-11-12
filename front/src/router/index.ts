@@ -7,12 +7,14 @@ import Auth from '@views/auth/Auth.vue';
 import ChangePassword from '@views/auth/ChangePassword.vue';
 import ForgotPassword from '@views/auth/ForgotPassword.vue';
 import ClassesList from '@views/classes/ClassesList.vue';
+import Survey from '@views/public/Survey.vue';
 
 const routes: Array<RouteRecordRaw> = [
   /* Public Routes */
   { path: '/', name: 'home', component: Home },
   { path: '/pricing', name: 'pricing', component: Pricing },
   { path: '/ui-kit', name: 'ui-kit', component: UIKit },
+  { path: '/survey', name: 'survey', component: Survey },
 
   /* Auth Routes */
   { path: '/auth', name: 'login', component: Auth },

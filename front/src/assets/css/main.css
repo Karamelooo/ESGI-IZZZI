@@ -104,3 +104,28 @@ a:active {
   color: var(--error);
   font-size: 14px;
 }
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: 'Mochiy Pop One';
+}
+
+h1 {
+  font-size: 3.625rem;
+}
+
+h2 {
+  font-size: 2rem;
+}
+
+h3 {
+  font-size: 1.125rem;
+}
+
+h4 {
+  font-size: 0.875rem;
+}
