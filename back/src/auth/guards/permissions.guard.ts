@@ -1,7 +1,7 @@
 import {
+  Injectable,
   CanActivate,
   ExecutionContext,
-  Injectable,
   ForbiddenException,
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
@@ -9,32 +9,33 @@ import { PermissionKey } from '../permissions.constants';
 
 @Injectable()
 export class PermissionsGuard implements CanActivate {
-  constructor(private readonly reflector: Reflector) {}
-
-  forbiddenAccessMessage = 'Accès refusé : permissions insuffisantes.';
+  constructor(private reflector: Reflector) {}
 
   canActivate(context: ExecutionContext): boolean {
-    const required = this.reflector.getAllAndOverride<PermissionKey[]>(
+    const requiredPermissions = this.reflector.get<PermissionKey[]>(
       'permissions',
-      [context.getHandler(), context.getClass()],
+      context.getHandler(),
     );
-    if (!required || required.length === 0) return true;
-
-    const request = context.switchToHttp().getRequest();
-
-    const user = request.user;
-    if (!user || !Array.isArray(user.permissions)) {
-      throw new ForbiddenException(this.forbiddenAccessMessage);
+    if (!requiredPermissions || requiredPermissions.length === 0) {
+      return true;
     }
 
-    const userPermissions = new Set<string>(user.permissions);
-    const hasAllPermissions = required.every((permission) =>
-      userPermissions.has(permission),
-    );
-
-    if (!hasAllPermissions) {
-      throw new ForbiddenException(this.forbiddenAccessMessage);
+    const { user } = context.switchToHttp().getRequest();
+    if (!user || !user.permissions) {
+      throw new ForbiddenException(
+        'Accès refusé : permissions insuffisantes. (1)',
+      );
     }
+
+    const hasPermission = requiredPermissions.every((p) =>
+      user.permissions.includes(p),
+    );
+    if (!hasPermission) {
+      throw new ForbiddenException(
+        'Accès refusé : permissions insuffisantes. (2)',
+      );
+    }
+
     return true;
   }
 }
