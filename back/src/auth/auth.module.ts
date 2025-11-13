@@ -1,29 +1,39 @@
 import { Module } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
-import { ConfigModule } from '@nestjs/config';
-import jwtConfig from './config/jwt.config';
+import { PassportModule } from '@nestjs/passport';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
-import { PrismaService } from '../prisma/prisma.service';
-import { UserService } from '../user/user.service';
-import { InstitutionService } from '../institution/institution.service';
 import { AccessTokenStrategy } from './strategies/access-token.strategy';
-import { RefreshTokenStrategy } from './strategies/refresh-token.strategy';
+import { AccessTokenGuard } from './guards/access-token.guard';
+import { RefreshTokenGuard } from './guards/refresh-token.guard';
+import { PermissionsGuard } from './guards/permissions.guard';
+import { PrismaService } from '../prisma/prisma.service';
+import { InstitutionService } from '../institution/institution.service';
+import { UserService } from '../user/user.service';
 
 @Module({
   imports: [
-    ConfigModule.forRoot({ isGlobal: true, load: [jwtConfig] }),
     JwtModule.register({}),
+    PassportModule.register({ defaultStrategy: 'jwt' }),
   ],
   controllers: [AuthController],
   providers: [
     AuthService,
     PrismaService,
-    UserService,
     InstitutionService,
+    UserService,
     AccessTokenStrategy,
-    RefreshTokenStrategy,
+    AccessTokenGuard,
+    RefreshTokenGuard,
+    PermissionsGuard,
   ],
-  exports: [AuthService],
+  exports: [
+    AuthService,
+    JwtModule,
+    PassportModule,
+    AccessTokenGuard,
+    RefreshTokenGuard,
+    PermissionsGuard,
+  ],
 })
 export class AuthModule {}

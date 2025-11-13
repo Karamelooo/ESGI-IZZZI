@@ -1,7 +1,8 @@
 generator client {
   provider        = "prisma-client-js"
-  previewFeatures = ["postgresqlExtensions", "fullTextSearchPostgres", "views", "driverAdapters", "prismaSchemaFolder"]
+  previewFeatures = ["postgresqlExtensions", "fullTextSearchPostgres", "views"]
   binaryTargets   = ["native"]
+  seed            = "ts-node --transpile-only ./prisma/seed.ts"
 }
 
 datasource db {
