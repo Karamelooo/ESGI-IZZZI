@@ -1,17 +1,11 @@
 import { PrismaClient } from '@prisma/client';
-import {
-  ALL_PERMISSIONS,
-  DEFAULT_ROLES,
-} from '../src/auth/permissions.constants';
+import { PERMISSIONS, DEFAULT_ROLES } from '../src/auth/permissions.constants';
 
 const prisma = new PrismaClient();
 
 async function main() {
   await prisma.permission.createMany({
-    data: ALL_PERMISSIONS.map((permission) => ({
-      key: permission.key,
-      description: permission.description,
-    })),
+    data: PERMISSIONS.map((permission) => ({ key: permission })),
     skipDuplicates: true,
   });
 

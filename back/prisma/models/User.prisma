@@ -1,13 +1,13 @@
 model User {
-  id                  Int     @id @default(autoincrement())
-  firstName           String
-  lastName            String
-  email               String  @unique
-  password            String
-  hashedRefreshToken  String?
-  refreshTokenVersion Int     @default(0)
-  authzVersion        Int     @default(0)
-  institutionId       Int
+  id                   Int     @id @default(autoincrement())
+  firstName            String
+  lastName             String
+  email                String  @unique
+  password             String
+  refreshToken         String?
+  refreshTokenVersion  Int     @default(0)
+  authorizationVersion Int     @default(0)
+  institutionId        Int
 
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
@@ -35,9 +35,8 @@ model Role {
 }
 
 model Permission {
-  id          Int     @id @default(autoincrement())
-  key         String  @unique
-  description String?
+  id  Int    @id @default(autoincrement())
+  key String @unique
 
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt

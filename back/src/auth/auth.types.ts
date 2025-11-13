@@ -3,7 +3,7 @@ export type AppJwtPayload = {
   email: string;
   institutionId: number;
   refreshTokenVersion: number;
-  authzVersion: number;
+  authorizationVersion: number;
   roles: string[];
   permissions: string[];
 };

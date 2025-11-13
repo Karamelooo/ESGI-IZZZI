@@ -22,7 +22,7 @@ export class AccessTokenStrategy extends PassportStrategy(Strategy) {
       email: payload.email,
       roles: payload.roles,
       permissions: payload.permissions,
-      authzVersion: payload.authzVersion,
+      authorizationVersion: payload.authorizationVersion,
       institutionId: payload.institutionId,
     };
   }
