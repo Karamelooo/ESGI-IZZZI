@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
 import { ConfigModule } from '@nestjs/config';
+import { PassportModule } from '@nestjs/passport';
 import jwtConfig from './config/jwt.config';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
@@ -14,6 +15,7 @@ import { RefreshTokenStrategy } from './strategies/refresh-token.strategy';
   imports: [
     ConfigModule.forRoot({ isGlobal: true, load: [jwtConfig] }),
     JwtModule.register({}),
+    PassportModule.register({ defaultStrategy: 'jwt-access' }),
   ],
   controllers: [AuthController],
   providers: [
@@ -24,6 +26,6 @@ import { RefreshTokenStrategy } from './strategies/refresh-token.strategy';
     AccessTokenStrategy,
     RefreshTokenStrategy,
   ],
-  exports: [AuthService],
+  exports: [AuthService, PassportModule],
 })
 export class AuthModule {}

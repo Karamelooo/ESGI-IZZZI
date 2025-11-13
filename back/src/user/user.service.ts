@@ -35,7 +35,20 @@ export class UserService {
     });
   }
 
-  async findOne(
+  private async findOneWhere(
+    where: any,
+    select?: any,
+  ): Promise<UserPublic | User | null> {
+    const user = await this.prisma.user.findFirst({
+      where,
+      ...(select ? { select } : {}),
+    });
+    if (!user) throw new NotFoundException('Utilisateur non trouvé');
+
+    return user;
+  }
+
+  async findOneById(
     userId: number,
     withDeleted: boolean = false,
   ): Promise<UserPublic | null> {
@@ -44,13 +57,25 @@ export class UserService {
       ...(withDeleted ? {} : { deletedAt: null }),
     };
 
-    const user = await this.prisma.user.findFirst({
+    return this.findOneWhere(
       where,
-      select: this.userPublicFields,
-    });
-    if (!user) throw new NotFoundException('Utilisateur non trouvé');
+      this.userPublicFields,
+    ) as Promise<UserPublic>;
+  }
 
-    return user;
+  async findOneByEmail(
+    email: string,
+    withDeleted: boolean = false,
+  ): Promise<UserPublic | null> {
+    const where: any = {
+      email,
+      ...(withDeleted ? {} : { deletedAt: null }),
+    };
+
+    return this.findOneWhere(
+      where,
+      this.userPublicFields,
+    ) as Promise<UserPublic>;
   }
 
   async findOneWithPassword(
@@ -62,10 +87,7 @@ export class UserService {
       ...(withDeleted ? {} : { deletedAt: null }),
     };
 
-    const user = await this.prisma.user.findFirst({ where });
-    if (!user) throw new NotFoundException('Utilisateur non trouvé');
-
-    return user;
+    return this.findOneWhere(where) as Promise<User>;
   }
 
   async create(data: CreateUserDto): Promise<UserPublic> {
@@ -86,7 +108,7 @@ export class UserService {
   }
 
   async update(userId: number, data: UpdateUserDto): Promise<UserPublic> {
-    const user = await this.findOne(userId);
+    const user = await this.findOneById(userId);
     if (!user) throw new NotFoundException('Utilisateur non trouvé');
 
     return this.prisma.user.update({
@@ -120,7 +142,7 @@ export class UserService {
   }
 
   async remove(userId: number): Promise<UserPublic> {
-    const user = await this.findOne(userId);
+    const user = await this.findOneById(userId);
     if (!user)
       throw new NotFoundException('Utilisateur non trouvé ou déjà supprimé');
 

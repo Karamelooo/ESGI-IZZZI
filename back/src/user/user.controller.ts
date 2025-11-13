@@ -45,7 +45,7 @@ export class UserController {
     @Param('id', ParseIntPipe) id: number,
     @Query('withDeleted') withDeleted?: string,
   ): Promise<UserPublic | null> {
-    return this.userService.findOne(id, withDeleted === 'true');
+    return this.userService.findOneById(id, withDeleted === 'true');
   }
 
   @UseGuards(AccessTokenGuard, PermissionsGuard)
@@ -53,7 +53,7 @@ export class UserController {
   @HttpCode(201)
   @ApiOperation({ summary: 'Create a new user' })
   @UsePipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }))
-  @Permissions('users:manage')
+  @Permissions('users:create')
   async create(@Body() createUserDto: CreateUserDto): Promise<UserPublic> {
     return this.userService.create(createUserDto);
   }
@@ -62,7 +62,7 @@ export class UserController {
   @Patch(':id')
   @ApiOperation({ summary: 'Update user by id' })
   @UsePipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }))
-  @Permissions('users:manage')
+  @Permissions('users:update')
   async update(
     @Param('id', ParseIntPipe) id: number,
     @Body() updateUserDto: UpdateUserDto,
@@ -74,7 +74,7 @@ export class UserController {
   @Patch(':id/update-password')
   @ApiOperation({ summary: 'Change user password' })
   @UsePipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }))
-  @Permissions('users:manage')
+  @Permissions('users:update')
   async updatePassword(
     @Param('id', ParseIntPipe) id: number,
     @Body() updatePasswordDto: UpdatePasswordDto,
@@ -85,7 +85,7 @@ export class UserController {
   @UseGuards(AccessTokenGuard, PermissionsGuard)
   @Patch(':id/remove')
   @ApiOperation({ summary: 'Soft delete user' })
-  @Permissions('users:manage')
+  @Permissions('users:delete')
   async remove(@Param('id', ParseIntPipe) id: number): Promise<UserPublic> {
     return this.userService.remove(id);
   }
@@ -93,7 +93,7 @@ export class UserController {
   @UseGuards(AccessTokenGuard, PermissionsGuard)
   @Patch(':id/restore')
   @ApiOperation({ summary: 'Restore soft deleted user' })
-  @Permissions('users:manage')
+  @Permissions('users:delete')
   async restore(@Param('id', ParseIntPipe) id: number): Promise<UserPublic> {
     return this.userService.restore(id);
   }
