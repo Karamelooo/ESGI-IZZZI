@@ -69,6 +69,7 @@ export class UserService {
   }
 
   async create(data: CreateUserDto): Promise<UserPublic> {
+    console.log('Creating user with data:', data);
     if (await this.prisma.user.findUnique({ where: { email: data.email } }))
       throw new BadRequestException('Email déjà utilisé');
 
@@ -78,6 +79,8 @@ export class UserService {
       data: { ...data, password: hash },
     });
     const { password, ...userPublic } = user;
+    console.log('user:', user);
+    console.log('userPublic:', userPublic);
 
     return userPublic;
   }

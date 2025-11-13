@@ -34,6 +34,20 @@ export class AuthService {
       institutionId: institution.id,
     });
 
+    await this.ensureDefaultRolesAndPermissions();
+    const adminRole = await this.prisma.role.findUnique({
+      where: { name: 'admin' },
+    });
+    if (adminRole) {
+      await this.prisma.userRole.create({
+        data: { userId: user.id, roleId: adminRole.id },
+      });
+      await this.prisma.user.update({
+        where: { id: user.id },
+        data: { authzVersion: { increment: 1 } },
+      });
+    }
+
     const refreshTokenVersion = 0;
 
     const tokens = await this.issueTokens(
@@ -107,24 +121,34 @@ export class AuthService {
     institutionId: number,
     refreshTokenVersion: number,
   ): Promise<Tokens> {
-    const payload: any = {
+    const { roles, permissions, authzVersion } =
+      await this.getRolesPermissionsAndVersion(userId);
+
+    const payload: AppJwtPayload = {
       sub: String(userId),
       email,
       institutionId,
       refreshTokenVersion,
+      authzVersion,
+      roles,
+      permissions,
     };
+
     const accessSecret = process.env.JWT_ACCESS_SECRET;
     const refreshSecret = process.env.JWT_REFRESH_SECRET;
     if (!accessSecret || !refreshSecret)
       throw new Error('Les secrets JWT ne sont pas définis');
+
     const accessToken = await this.jwt.signAsync(payload, {
       secret: accessSecret,
       expiresIn: process.env.JWT_ACCESS_EXPIRES ?? '15m',
     } as JwtSignOptions);
+
     const refreshToken = await this.jwt.signAsync(payload, {
       secret: refreshSecret,
       expiresIn: process.env.JWT_REFRESH_EXPIRES ?? '30d',
     } as JwtSignOptions);
+
     return { accessToken, refreshToken };
   }
 
@@ -144,6 +168,118 @@ export class AuthService {
         hashedRefreshToken: null,
         refreshTokenVersion: user.refreshTokenVersion + 1,
       },
+    });
+  }
+
+  private async getRolesPermissionsAndVersion(userId: number): Promise<{
+    roles: string[];
+    permissions: string[];
+    authzVersion: number;
+  }> {
+    const user = await this.prisma.user.findUnique({
+      where: { id: userId },
+      select: { authzVersion: true },
+    });
+    const roles = await this.prisma.role.findMany({
+      where: { userRoles: { some: { userId } } },
+      select: {
+        name: true,
+        rolePermissions: {
+          select: { permission: { select: { key: true } } },
+        },
+      },
+    });
+    const roleNames = roles.map((r) => r.name);
+    const permSet = new Set<string>();
+    for (const r of roles) {
+      for (const rp of r.rolePermissions) {
+        permSet.add(rp.permission.key);
+      }
+    }
+    return {
+      roles: roleNames,
+      permissions: Array.from(permSet.values()),
+      authzVersion: user?.authzVersion ?? 0,
+    };
+  }
+
+  private async ensureDefaultRolesAndPermissions(): Promise<void> {
+    const permissions = await this.prisma.permission.findMany();
+    if (permissions.length > 0) return;
+
+    const keys = [
+      'reviews:create',
+      'reviews:read',
+      'reviews:read_summary',
+      'classes:manage',
+      'subjects:manage',
+      'users:read',
+      'users:manage',
+      'billing:read',
+    ];
+
+    await this.prisma.permission.createMany({
+      data: keys.map((k) => ({ key: k })),
+      skipDuplicates: true,
+    });
+
+    const student = await this.prisma.role.upsert({
+      where: { name: 'student' },
+      update: {},
+      create: { name: 'student', system: true },
+    });
+    const manager = await this.prisma.role.upsert({
+      where: { name: 'manager' },
+      update: {},
+      create: { name: 'manager', system: true },
+    });
+    const admin = await this.prisma.role.upsert({
+      where: { name: 'admin' },
+      update: {},
+      create: { name: 'admin', system: true },
+    });
+
+    const perms = await this.prisma.permission.findMany();
+    const byKey = new Map(perms.map((p) => [p.key, p]));
+
+    const studentKeys = ['reviews:create'];
+    const managerKeys = [
+      'reviews:read',
+      'reviews:read_summary',
+      'classes:manage',
+      'subjects:manage',
+      'users:read',
+    ];
+    const adminKeys = [
+      'reviews:read',
+      'reviews:read_summary',
+      'classes:manage',
+      'subjects:manage',
+      'users:read',
+      'users:manage',
+      'billing:read',
+    ];
+
+    await this.prisma.rolePermission.createMany({
+      data: studentKeys.map((k) => ({
+        roleId: student.id,
+        permissionId: byKey.get(k)!.id,
+      })),
+      skipDuplicates: true,
+    });
+    await this.prisma.rolePermission.createMany({
+      data: managerKeys.map((k) => ({
+        roleId: manager.id,
+        permissionId: byKey.get(k)!.id,
+      })),
+      skipDuplicates: true,
+    });
+    await this.prisma.rolePermission.createMany({
+      data: adminKeys.map((k) => ({
+        roleId: admin.id,
+        permissionId: byKey.get(k)!.id,
+      })),
+      skipDuplicates: true,
     });
   }
 }
