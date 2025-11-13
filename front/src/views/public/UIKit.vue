@@ -6,6 +6,7 @@ import CheckBoxGroup from '@components/form/CheckBoxGroup.vue';
 import Loader from '@components/animated/Loader.vue';
 import Live from '@components/animated/Live.vue';
 import Banderole from '@components/animated/Banderole.vue';
+import CardClass from '@/components/layout/CardClass.vue';
 
 const toast = useToast();
 
@@ -40,6 +41,10 @@ const iconRows = chunk(iconNames, 7);
 
     <div class="component">
       <h3>Logos</h3>
+
+      <div class="row">
+        <CardClass />
+      </div>
 
       <div class="row">
         <Logo :linkToHome="true" />
