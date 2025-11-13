@@ -187,3 +187,12 @@
   font-style: normal;
   font-display: swap;
 }
+
+@font-face {
+  font-family: 'pecitabook';
+  src:
+    url('../fonts/pecita.woff2') format('woff2'),
+    url('../fonts/pecita.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+}

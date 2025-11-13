@@ -1,20 +1,24 @@
 <script lang="ts" setup>
 import Button from '../base/Button.vue';
 
-const archived = true;
-const archivedDate = '23 mars 2025';
-const buttonText = archived ? 'Voir la classe' : '';
-const buttonText2 = archived ? 'Modifier la classe' : 'Voir la classe';
-const buttonIcon = archived ? 'Pen-Mobile' : 'Eyes';
-const classDesc = 'Description de la classe';
-const studentsCount = 24;
+const props = defineProps<{
+  archived: boolean;
+  className: string;
+  studentsCount: number;
+  classDesc: string;
+  archivedDate?: string;
+}>();
+
+const buttonText = props.archived ? 'Voir la classe' : '';
+const buttonText2 = props.archived ? 'Modifier la classe' : 'Voir la classe';
+const buttonIcon = props.archived ? 'Pen-Mobile' : 'Eyes';
 </script>
 
 <template>
   <div class="classContainer">
     <div class="classTop">
       <div class="classDesc">
-        <h3>B3UI</h3>
+        <h3>{{ className }}</h3>
         <p class="p12">{{ classDesc }}</p>
         <p class="p10 studentsCount">{{ studentsCount }} étudiants</p>
         <p v-if="archived" class="p10 classArchived">Archivée le {{ archivedDate }}</p>

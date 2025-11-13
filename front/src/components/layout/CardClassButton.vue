@@ -1,5 +1,9 @@
 <script lang="ts" setup>
 import Icon from '../base/Icon.vue';
+const props = defineProps<{
+  title: string;
+  desc: string;
+}>();
 </script>
 
 <template>
@@ -8,8 +12,8 @@ import Icon from '../base/Icon.vue';
       <Icon name="Eyes" />
     </div>
     <div>
-      <h3>Basique</h3>
-      <p class="p14">Adapté à tous les cours</p>
+      <h3>{{ title }}</h3>
+      <p class="p14">{{ desc }}</p>
     </div>
   </div>
 </template>

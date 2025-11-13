@@ -8,6 +8,7 @@ import Live from '@components/animated/Live.vue';
 import Banderole from '@components/animated/Banderole.vue';
 import CardClass from '@/components/layout/CardClass.vue';
 import CardClassButton from '@/components/layout/CardClassButton.vue';
+import CardClassHome from '@/components/layout/CardClassHome.vue';
 
 const toast = useToast();
 
@@ -43,9 +44,15 @@ const iconRows = chunk(iconNames, 7);
     <div class="component">
       <h3>Card Classe</h3>
       <div>
-        <CardClassButton />
-        <br></br>
-        <CardClass />
+        <CardClassHome
+          title="Amélioration continue"
+          text="N’offrez pas à vos étudiants l’occasion d’être déçus. Captez leurs retours avant la fin de du module et ajuster ce qui mérite de l’être en live."
+          emphase="Ne soyez plus désolé"
+        />
+        <br />
+        <CardClassButton title="Basique" desc="Adapté à tous les cours" />
+        <br />
+        <CardClass className="B3UI" :studentsCount="24" classDesc="Desccription de la classe" :archived="false" />
       </div>
     </div>
     <div class="component">
