@@ -7,6 +7,7 @@ import Loader from '@components/animated/Loader.vue';
 import Live from '@components/animated/Live.vue';
 import Banderole from '@components/animated/Banderole.vue';
 import CardClass from '@/components/layout/CardClass.vue';
+import CardClassButton from '@/components/layout/CardClassButton.vue';
 
 const toast = useToast();
 
@@ -40,11 +41,15 @@ const iconRows = chunk(iconNames, 7);
     <h1>UI Kit — © IZZZI 2025.</h1>
 
     <div class="component">
-      <h3>Logos</h3>
-
-      <div class="row">
+      <h3>Card Classe</h3>
+      <div>
+        <CardClassButton />
+        <br></br>
         <CardClass />
       </div>
+    </div>
+    <div class="component">
+      <h3>Logos</h3>
 
       <div class="row">
         <Logo :linkToHome="true" />

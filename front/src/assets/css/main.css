@@ -20,6 +20,7 @@
   --dark-orange: #f26103;
   --white: #fff;
   --black: #000;
+  --beige: #fff9d8;
 
   /* Status */
   --success: #4caf50;
@@ -127,6 +128,10 @@ h3 {
 }
 
 h4 {
+  font-size: 0.875rem;
+}
+
+p.p14 {
   font-size: 0.875rem;
 }
 
