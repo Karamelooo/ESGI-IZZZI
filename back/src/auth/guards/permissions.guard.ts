@@ -5,14 +5,14 @@ import {
   ForbiddenException,
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
-import { PermissionKey } from '../permissions.constants';
+import { Permission } from '../permissions.constants';
 
 @Injectable()
 export class PermissionsGuard implements CanActivate {
   constructor(private reflector: Reflector) {}
 
   canActivate(context: ExecutionContext): boolean {
-    const requiredPermissions = this.reflector.get<PermissionKey[]>(
+    const requiredPermissions = this.reflector.get<Permission[]>(
       'permissions',
       context.getHandler(),
     );

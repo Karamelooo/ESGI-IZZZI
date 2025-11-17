@@ -44,7 +44,7 @@ export class AuthService {
       });
       await this.prisma.user.update({
         where: { id: user.id },
-        data: { authzVersion: { increment: 1 } },
+        data: { authorizationVersion: { increment: 1 } },
       });
     }
 
@@ -81,7 +81,7 @@ export class AuthService {
   async logout(userId: number): Promise<void> {
     await this.prisma.user.update({
       where: { id: userId },
-      data: { hashedRefreshToken: null },
+      data: { refreshToken: null },
     });
   }
 
@@ -90,12 +90,9 @@ export class AuthService {
     oldRefreshToken: string,
   ): Promise<Tokens> {
     const user = await this.prisma.user.findUnique({ where: { id: userId } });
-    if (!user || !user.hashedRefreshToken)
+    if (!user || !user.refreshToken)
       throw new ForbiddenException('Accès refusé');
-    const matches = await argon2.verify(
-      user.hashedRefreshToken,
-      oldRefreshToken,
-    );
+    const matches = await argon2.verify(user.refreshToken, oldRefreshToken);
     if (!matches) throw new ForbiddenException('Accès refusé');
     const tokens = await this.issueTokens(
       user.id,
@@ -111,7 +108,7 @@ export class AuthService {
     const hash = await argon2.hash(refreshToken);
     await this.prisma.user.update({
       where: { id: userId },
-      data: { hashedRefreshToken: hash },
+      data: { refreshToken: hash },
     });
   }
 
@@ -121,7 +118,7 @@ export class AuthService {
     institutionId: number,
     refreshTokenVersion: number,
   ): Promise<Tokens> {
-    const { roles, permissions, authzVersion } =
+    const { roles, permissions, authorizationVersion } =
       await this.getRolesPermissionsAndVersion(userId);
 
     const payload: AppJwtPayload = {
@@ -129,7 +126,7 @@ export class AuthService {
       email,
       institutionId,
       refreshTokenVersion,
-      authzVersion,
+      authorizationVersion,
       roles,
       permissions,
     };
@@ -165,7 +162,7 @@ export class AuthService {
     await this.prisma.user.update({
       where: { id: userId },
       data: {
-        hashedRefreshToken: null,
+        refreshToken: null,
         refreshTokenVersion: user.refreshTokenVersion + 1,
       },
     });
@@ -174,11 +171,11 @@ export class AuthService {
   private async getRolesPermissionsAndVersion(userId: number): Promise<{
     roles: string[];
     permissions: string[];
-    authzVersion: number;
+    authorizationVersion: number;
   }> {
     const user = await this.prisma.user.findUnique({
       where: { id: userId },
-      select: { authzVersion: true },
+      select: { authorizationVersion: true },
     });
     const roles = await this.prisma.role.findMany({
       where: { userRoles: { some: { userId } } },
@@ -199,7 +196,7 @@ export class AuthService {
     return {
       roles: roleNames,
       permissions: Array.from(permSet.values()),
-      authzVersion: user?.authzVersion ?? 0,
+      authorizationVersion: user?.authorizationVersion ?? 0,
     };
   }
 
@@ -207,36 +204,27 @@ export class AuthService {
     const permissions = await this.prisma.permission.findMany();
     if (permissions.length > 0) return;
 
-    const keys = [
-      'reviews:create',
-      'reviews:read',
-      'reviews:read_summary',
-      'classes:manage',
-      'subjects:manage',
-      'users:read',
-      'users:manage',
-      'billing:read',
-    ];
+    const defaultPermissions = ['users:read'];
 
     await this.prisma.permission.createMany({
-      data: keys.map((k) => ({ key: k })),
+      data: defaultPermissions.map((permission) => ({ key: permission })),
       skipDuplicates: true,
     });
 
-    const student = await this.prisma.role.upsert({
-      where: { name: 'student' },
+    const admin = await this.prisma.role.upsert({
+      where: { name: 'admin' },
       update: {},
-      create: { name: 'student', system: true },
+      create: { name: 'admin', system: true },
     });
     const manager = await this.prisma.role.upsert({
       where: { name: 'manager' },
       update: {},
       create: { name: 'manager', system: true },
     });
-    const admin = await this.prisma.role.upsert({
-      where: { name: 'admin' },
+    const student = await this.prisma.role.upsert({
+      where: { name: 'student' },
       update: {},
-      create: { name: 'admin', system: true },
+      create: { name: 'student', system: true },
     });
 
     const perms = await this.prisma.permission.findMany();
