@@ -34,8 +34,9 @@ export class AuthController {
   @UsePipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }))
   async login(@Body() dto: LoginDto, @Res() res: Response) {
     const tokens = await this.authService.login(dto);
+    this.setAccessCookie(res, tokens.accessToken);
     this.setRefreshCookie(res, tokens.refreshToken);
-    return res.json({ accessToken: tokens.accessToken });
+    return res.json({ message: 'Connexion réussie' });
   }
 
   @Post('refresh')
@@ -61,8 +62,19 @@ export class AuthController {
   @UseGuards(AccessTokenGuard)
   async logoutAll(@CurrentUser() payload: any, @Res() res: Response) {
     await this.authService.invalidateAllSessions(Number(payload.sub));
+    this.clearAccessCookie(res);
     this.clearRefreshCookie(res);
     return res.json({ message: 'Déconnexion globale réussie' });
+  }
+
+  private setAccessCookie(res: Response, token: string) {
+    res.cookie('access_token', token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'strict',
+      path: '/',
+      maxAge: 1000 * 60 * 15,
+    });
   }
 
   private setRefreshCookie(res: Response, token: string) {
@@ -73,6 +85,10 @@ export class AuthController {
       path: '/auth/refresh',
       maxAge: 1000 * 60 * 60 * 24 * 30,
     });
+  }
+
+  private clearAccessCookie(res: Response) {
+    res.clearCookie('access_token', { path: '/' });
   }
 
   private clearRefreshCookie(res: Response) {

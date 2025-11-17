@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia';
-import api from '@api/axios';
 import type { Router } from 'vue-router';
+import { useTypedApi } from '@api/helper';
 
 export interface User {
   id: number;
@@ -12,24 +12,25 @@ export interface User {
 
 export const useAuthStore = defineStore('auth', {
   state: () => ({
-    accessToken: null as string | null,
     user: null as User | null,
   }),
   getters: {
-    isAuthenticated: (state) => !!state.accessToken,
+    isAuthenticated(state): boolean {
+      return state.user !== null;
+    },
+    getUser(state): User | null {
+      return state.user;
+    },
   },
   actions: {
-    setAccessToken(token: string | null) {
-      this.accessToken = token;
-    },
     setUser(userData: User | null) {
       this.user = userData;
     },
     async logout(router: Router) {
+      const api = useTypedApi();
       try {
         await api.post('/auth/logout');
       } finally {
-        this.setAccessToken(null);
         this.setUser(null);
         router.push('/login');
       }

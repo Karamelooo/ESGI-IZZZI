@@ -11,7 +11,9 @@ export class RefreshTokenStrategy extends PassportStrategy(
 ) {
   constructor() {
     const secret = process.env.JWT_REFRESH_SECRET;
-    if (!secret) throw new Error('JWT_REFRESH_SECRET is not defined');
+    if (!secret)
+      throw new Error('Le secret JWT_REFRESH_SECRET est introuvable');
+
     super({
       jwtFromRequest: (req: Request) => {
         if (req.cookies && req.cookies.refresh_token)
@@ -26,7 +28,11 @@ export class RefreshTokenStrategy extends PassportStrategy(
 
   validate(req: Request, payload: any) {
     const token = req.cookies?.refresh_token;
-    if (!token) throw new UnauthorizedException('Refresh token missing');
+    if (!token)
+      throw new UnauthorizedException(
+        'Le jeton de rafraîchissement est manquant',
+      );
+
     return {
       payload: {
         sub: Number(payload.sub),
