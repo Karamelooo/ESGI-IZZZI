@@ -29,7 +29,6 @@ async function onSubmit(event: Event) {
       email: emailInput.value,
       password: passwordInput.value,
     });
-    authStore.setAccessToken(data.accessToken);
     loadingState.value = false;
     router.push('/classes');
   } catch (error: any) {
