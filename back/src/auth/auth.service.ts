@@ -4,13 +4,13 @@ import {
   ForbiddenException,
 } from '@nestjs/common';
 import { JwtService, JwtSignOptions } from '@nestjs/jwt';
+import * as argon2 from 'argon2';
 import { PrismaService } from '../prisma/prisma.service';
 import { InstitutionService } from '../institution/institution.service';
 import { UserService } from '../user/user.service';
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
-import { Tokens, AppJwtPayload } from './auth.types';
-import * as argon2 from 'argon2';
+import { Tokens } from './auth.types';
 
 @Injectable()
 export class AuthService {
@@ -19,13 +19,12 @@ export class AuthService {
     private readonly jwt: JwtService,
     private readonly institutionService: InstitutionService,
     private readonly userService: UserService,
-  ) {}
+  ) { }
 
-  async register(data: RegisterDto): Promise<Tokens> {
+  async register(data: RegisterDto): Promise<{ user: any; tokens: Tokens }> {
     const institution = await this.institutionService.create({
       name: data.institutionName,
     });
-
     const user = await this.userService.create({
       firstName: data.firstName,
       lastName: data.lastName,
@@ -33,48 +32,30 @@ export class AuthService {
       password: data.password,
       institutionId: institution.id,
     });
-
     await this.ensureDefaultRolesAndPermissions();
-    const adminRole = await this.prisma.role.findUnique({
-      where: { name: 'admin' },
-    });
-    if (adminRole) {
-      await this.prisma.userRole.create({
-        data: { userId: user.id, roleId: adminRole.id },
-      });
-      await this.prisma.user.update({
-        where: { id: user.id },
-        data: { authorizationVersion: { increment: 1 } },
-      });
-    }
-
-    const refreshTokenVersion = 0;
-
-    const tokens = await this.issueTokens(
-      user.id,
-      user.email,
-      user.institutionId,
-      refreshTokenVersion,
-    );
+    await this.assignAdminRole(user.id);
+    const tokens = await this.issueTokens(user.id);
     await this.storeRefreshToken(user.id, tokens.refreshToken);
-
-    return tokens;
+    return { user: this.toPublicUser(user), tokens };
   }
 
-  async login(data: LoginDto): Promise<Tokens> {
+  async login(data: LoginDto): Promise<{ user: any; tokens: Tokens }> {
     const user = await this.prisma.user.findFirst({
       where: { email: data.email, deletedAt: null },
     });
     if (!user) throw new BadRequestException('Identifiants invalides');
     const valid = await argon2.verify(user.password, data.password);
     if (!valid) throw new BadRequestException('Identifiants invalides');
-    const tokens = await this.issueTokens(
-      user.id,
-      user.email,
-      user.institutionId,
-      user.refreshTokenVersion,
-    );
+    const tokens = await this.issueTokens(user.id);
     await this.storeRefreshToken(user.id, tokens.refreshToken);
+    return { user: this.toPublicUser(user), tokens };
+  }
+
+  async refreshFromGuard(payload: any, refreshToken: string): Promise<Tokens> {
+    const userId = Number(payload.sub);
+    await this.verifyStoredRefreshToken(userId, refreshToken);
+    const tokens = await this.issueTokens(userId);
+    await this.rotateRefreshToken(userId, tokens.refreshToken);
     return tokens;
   }
 
@@ -85,132 +66,106 @@ export class AuthService {
     });
   }
 
-  async rotateRefreshToken(
-    userId: number,
-    oldRefreshToken: string,
-  ): Promise<Tokens> {
-    const user = await this.prisma.user.findUnique({ where: { id: userId } });
-    if (!user || !user.refreshToken)
-      throw new ForbiddenException('Accès refusé');
-    const matches = await argon2.verify(user.refreshToken, oldRefreshToken);
-    if (!matches) throw new ForbiddenException('Accès refusé');
-    const tokens = await this.issueTokens(
-      user.id,
-      user.email,
-      user.institutionId,
-      user.refreshTokenVersion,
-    );
-    await this.storeRefreshToken(user.id, tokens.refreshToken);
-    return tokens;
-  }
-
-  async storeRefreshToken(userId: number, refreshToken: string): Promise<void> {
-    const hash = await argon2.hash(refreshToken);
+  async logoutAll(userId: number): Promise<void> {
     await this.prisma.user.update({
       where: { id: userId },
-      data: { refreshToken: hash },
+      data: { refreshToken: null, refreshTokenVersion: { increment: 1 } },
     });
   }
 
-  async issueTokens(
-    userId: number,
-    email: string,
-    institutionId: number,
-    refreshTokenVersion: number,
-  ): Promise<Tokens> {
-    const { roles, permissions, authorizationVersion } =
-      await this.getRolesPermissionsAndVersion(userId);
+  async getPublicUser(userId: number) {
+    const user = await this.prisma.user.findUnique({ where: { id: userId } });
+    if (!user) throw new BadRequestException('Utilisateur introuvable');
+    return this.toPublicUser(user);
+  }
 
-    const payload: AppJwtPayload = {
-      sub: String(userId),
-      email,
-      institutionId,
-      refreshTokenVersion,
-      authorizationVersion,
-      roles,
-      permissions,
-    };
-
-    const accessSecret = process.env.JWT_ACCESS_SECRET;
-    const refreshSecret = process.env.JWT_REFRESH_SECRET;
-    if (!accessSecret || !refreshSecret)
-      throw new Error('Les secrets JWT ne sont pas définis');
-
-    const accessToken = await this.jwt.signAsync(payload, {
-      secret: accessSecret,
-      expiresIn: process.env.JWT_ACCESS_EXPIRES ?? '15m',
-    } as JwtSignOptions);
-
-    const refreshToken = await this.jwt.signAsync(payload, {
-      secret: refreshSecret,
-      expiresIn: process.env.JWT_REFRESH_EXPIRES ?? '30d',
-    } as JwtSignOptions);
-
+  async issueTokens(userId: number): Promise<Tokens> {
+    const user = await this.prisma.user.findUnique({ where: { id: userId } });
+    if (!user) throw new ForbiddenException('Accès refusé');
+    const accessToken = await this.jwt.signAsync(
+      {
+        sub: String(user.id),
+        authorizationVersion: user.authorizationVersion,
+        institutionId: user.institutionId,
+      },
+      {
+        secret: process.env.JWT_ACCESS_SECRET,
+        expiresIn: (process.env.JWT_ACCESS_EXPIRES || '15m') as JwtSignOptions['expiresIn'],
+      },
+    );
+    const refreshToken = await this.jwt.signAsync(
+      {
+        sub: String(user.id),
+        refreshTokenVersion: user.refreshTokenVersion,
+      },
+      {
+        secret: process.env.JWT_REFRESH_SECRET,
+        expiresIn: (process.env.JWT_REFRESH_EXPIRES || '30d') as JwtSignOptions['expiresIn'],
+      },
+    );
     return { accessToken, refreshToken };
   }
 
-  async refreshFromGuard(
-    payload: AppJwtPayload,
-    refreshToken: string,
-  ): Promise<Tokens> {
-    return this.rotateRefreshToken(Number(payload.sub), refreshToken);
-  }
-
-  async invalidateAllSessions(userId: number): Promise<void> {
-    const user = await this.prisma.user.findUnique({ where: { id: userId } });
-    if (!user) return;
+  async storeRefreshToken(userId: number, refreshToken: string): Promise<void> {
+    const hashed = await argon2.hash(refreshToken);
     await this.prisma.user.update({
       where: { id: userId },
-      data: {
-        refreshToken: null,
-        refreshTokenVersion: user.refreshTokenVersion + 1,
-      },
+      data: { refreshToken: hashed },
     });
   }
 
-  private async getRolesPermissionsAndVersion(userId: number): Promise<{
-    roles: string[];
-    permissions: string[];
-    authorizationVersion: number;
-  }> {
-    const user = await this.prisma.user.findUnique({
+  async rotateRefreshToken(
+    userId: number,
+    newRefreshToken: string,
+  ): Promise<void> {
+    const hashed = await argon2.hash(newRefreshToken);
+    await this.prisma.user.update({
       where: { id: userId },
-      select: { authorizationVersion: true },
+      data: { refreshToken: hashed },
     });
-    const roles = await this.prisma.role.findMany({
-      where: { userRoles: { some: { userId } } },
-      select: {
-        name: true,
-        rolePermissions: {
-          select: { permission: { select: { key: true } } },
-        },
-      },
-    });
-    const roleNames = roles.map((r) => r.name);
-    const permSet = new Set<string>();
-    for (const r of roles) {
-      for (const rp of r.rolePermissions) {
-        permSet.add(rp.permission.key);
-      }
-    }
+  }
+
+  async verifyStoredRefreshToken(
+    userId: number,
+    incoming: string,
+  ): Promise<void> {
+    const user = await this.prisma.user.findUnique({ where: { id: userId } });
+    if (!user || !user.refreshToken)
+      throw new ForbiddenException('Accès refusé');
+    const ok = await argon2.verify(user.refreshToken, incoming);
+    if (!ok) throw new ForbiddenException('Accès refusé');
+  }
+
+  private toPublicUser(user: any) {
     return {
-      roles: roleNames,
-      permissions: Array.from(permSet.values()),
-      authorizationVersion: user?.authorizationVersion ?? 0,
+      id: user.id,
+      email: user.email,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      institutionId: user.institutionId,
     };
   }
 
+  private async assignAdminRole(userId: number) {
+    const role = await this.prisma.role.findUnique({
+      where: { name: 'admin' },
+    });
+    if (!role) return;
+    await this.prisma.userRole.create({ data: { userId, roleId: role.id } });
+    await this.prisma.user.update({
+      where: { id: userId },
+      data: { authorizationVersion: { increment: 1 } },
+    });
+  }
+
   private async ensureDefaultRolesAndPermissions(): Promise<void> {
-    const permissions = await this.prisma.permission.findMany();
-    if (permissions.length > 0) return;
-
+    const existing = await this.prisma.permission.findMany();
+    if (existing.length > 0) return;
     const defaultPermissions = ['users:read'];
-
     await this.prisma.permission.createMany({
-      data: defaultPermissions.map((permission) => ({ key: permission })),
+      data: defaultPermissions.map((p) => ({ key: p })),
       skipDuplicates: true,
     });
-
     const admin = await this.prisma.role.upsert({
       where: { name: 'admin' },
       update: {},
@@ -226,10 +181,8 @@ export class AuthService {
       update: {},
       create: { name: 'student', system: true },
     });
-
     const perms = await this.prisma.permission.findMany();
     const byKey = new Map(perms.map((p) => [p.key, p]));
-
     const studentKeys = ['reviews:create'];
     const managerKeys = [
       'reviews:read',
@@ -247,7 +200,6 @@ export class AuthService {
       'users:manage',
       'billing:read',
     ];
-
     await this.prisma.rolePermission.createMany({
       data: studentKeys.map((k) => ({
         roleId: student.id,

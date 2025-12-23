@@ -1,21 +1,30 @@
 <script lang="ts" setup>
-import { ref } from 'vue';
-import Header from '../../components/page/Header.vue';
+import { useRouter } from 'vue-router';
+import { useAuthStore } from '@stores/auth';
 
-const headerActiveTab = ref(0);
+const router = useRouter();
+const authStore = useAuthStore();
 </script>
 
 <template>
-  <Header :activeTab="headerActiveTab" @update:activeTab="headerActiveTab = $event" />
-
-  <SwitchPanels :activeTab="headerActiveTab">
-    <template #tab-0>
-      <p>Mes classes</p>
-    </template>
-    <template #tab-1>
-      <p>Dashboard</p>
-    </template>
-  </SwitchPanels>
+  <div style="padding: 20px">
+    <p>
+      Bienvenue sur IZZZI. Vous êtes
+      {{
+        authStore.isAuthenticated
+          ? 'connecté en tant que ' +
+            authStore.user?.firstName +
+            ' ' +
+            authStore.user?.lastName +
+            ' (' +
+            authStore.user?.role +
+            ').'
+          : 'déconnecté.'
+      }}
+    </p>
+    <Button variant="plain" v-if="authStore.isAuthenticated" @click="authStore.logout">Se déconnecter</Button>
+    <Button variant="plain" v-else @click="router.push('/auth')">Se connecter</Button>
+  </div>
 </template>
 
 <style scoped></style>
