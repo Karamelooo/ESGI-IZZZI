@@ -27,9 +27,15 @@ export class UserService {
 
   constructor(private prisma: PrismaService) {}
 
-  async findAll(withDeleted: boolean = false): Promise<UserPublic[]> {
+  async findAll(
+    institutionId: number,
+    withDeleted: boolean = false,
+  ): Promise<UserPublic[]> {
     return this.prisma.user.findMany({
-      where: withDeleted ? undefined : { deletedAt: null },
+      where: {
+        institutionId,
+        ...(withDeleted ? {} : { deletedAt: null }),
+      },
       orderBy: { id: 'asc' },
       select: this.userPublicFields,
     });
@@ -50,10 +56,12 @@ export class UserService {
 
   async findOneById(
     userId: number,
+    institutionId: number,
     withDeleted: boolean = false,
   ): Promise<UserPublic | null> {
     const where: any = {
       id: userId,
+      institutionId,
       ...(withDeleted ? {} : { deletedAt: null }),
     };
 
@@ -90,22 +98,33 @@ export class UserService {
     return this.findOneWhere(where) as Promise<User>;
   }
 
-  async create(data: CreateUserDto): Promise<UserPublic> {
+  async create(
+    institutionId: number,
+    data: CreateUserDto,
+  ): Promise<UserPublic> {
     if (await this.prisma.user.findUnique({ where: { email: data.email } }))
       throw new BadRequestException('Email déjà utilisé');
 
     const hash = await argon2.hash(data.password);
 
     const user = await this.prisma.user.create({
-      data: { ...data, password: hash },
+      data: {
+        ...data,
+        password: hash,
+        institutionId,
+      },
     });
     const { password, ...userPublic } = user;
 
     return userPublic;
   }
 
-  async update(userId: number, data: UpdateUserDto): Promise<UserPublic> {
-    const user = await this.findOneById(userId);
+  async update(
+    userId: number,
+    institutionId: number,
+    data: UpdateUserDto,
+  ): Promise<UserPublic> {
+    const user = await this.findOneById(userId, institutionId);
     if (!user) throw new NotFoundException('Utilisateur non trouvé');
 
     return this.prisma.user.update({
@@ -117,8 +136,15 @@ export class UserService {
 
   async updatePassword(
     userId: number,
+    institutionId: number,
     data: UpdatePasswordDto,
   ): Promise<UserPublic> {
+    // For password update, we need to check password, so we use findOneWithPassword but we should also check institutionId
+    // But findOneWithPassword doesn't take institutionId in my previous code?
+    // Let's rely on findOneById check first or add check here.
+    const checkUser = await this.findOneById(userId, institutionId);
+    if (!checkUser) throw new NotFoundException('Utilisateur non trouvé');
+
     const user = await this.findOneWithPassword(userId);
     if (!user) throw new NotFoundException('Utilisateur non trouvé');
 
@@ -138,8 +164,8 @@ export class UserService {
     });
   }
 
-  async remove(userId: number): Promise<UserPublic> {
-    const user = await this.findOneById(userId);
+  async remove(userId: number, institutionId: number): Promise<UserPublic> {
+    const user = await this.findOneById(userId, institutionId);
     if (!user)
       throw new NotFoundException('Utilisateur non trouvé ou déjà supprimé');
 
@@ -150,9 +176,9 @@ export class UserService {
     });
   }
 
-  async restore(userId: number): Promise<UserPublic> {
+  async restore(userId: number, institutionId: number): Promise<UserPublic> {
     const user = await this.prisma.user.findFirst({
-      where: { id: userId, deletedAt: { not: null } },
+      where: { id: userId, institutionId, deletedAt: { not: null } },
     });
     if (!user || user.deletedAt === null)
       throw new NotFoundException('Utilisateur non trouvé ou non supprimé');

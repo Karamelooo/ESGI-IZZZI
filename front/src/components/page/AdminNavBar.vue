@@ -3,17 +3,17 @@ const props = withDefaults(
   defineProps<{
     activeTab: number;
     activeRoute?: string;
+    disabled?: boolean;
   }>(),
   {
     activeRoute: '/',
+    disabled: false,
   }
 );
 
 const emit = defineEmits<{
   (e: 'update:activeTab', value: number): void;
 }>();
-
-const switchTabs = [{ name: 'Mes classes' }, { name: 'Dashboard' }];
 
 function onTabChange(index: number) {
   emit('update:activeTab', index);
@@ -23,7 +23,12 @@ function onTabChange(index: number) {
 <template>
   <nav class="navbar navbar--authenticated">
     <div class="">
-      <SwitchTabs :tabs="switchTabs" :modelValue="props.activeTab" @update:modelValue="onTabChange" />
+      <SwitchTabs
+        :tabs="[{ name: 'Mes classes' }, { name: 'Dashboard' }]"
+        :disabled="disabled"
+        :modelValue="activeTab"
+        @update:modelValue="onTabChange"
+      />
     </div>
   </nav>
 </template>

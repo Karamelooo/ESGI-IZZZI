@@ -5,7 +5,7 @@
   --primary: #ffe552;
   --secondary: #fff9d8;
 
-  /* Black & White */
+  /* Neutral */
   --black: #000000;
   --white: #ffffff;
 
@@ -142,4 +142,16 @@ p.p12 {
 
 p.p10 {
   font-size: 0.625rem;
+}
+
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 12px 20px;
+  height: 100vh;
+}
+
+.page .switch-panels {
+  flex: 1;
 }

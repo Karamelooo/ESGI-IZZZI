@@ -29,6 +29,7 @@ export function useApi() {
           } catch {
             isRefreshing = false;
             authStore.setUser(null);
+            localStorage.removeItem('isAuthenticated');
             router.push('/auth');
             return Promise.reject(error);
           }

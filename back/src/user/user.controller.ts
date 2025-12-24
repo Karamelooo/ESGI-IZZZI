@@ -20,81 +20,97 @@ import { UpdatePasswordDto } from './dto/update-password.dto';
 import { UserPublic } from './dto/user-public.dto';
 import { AccessTokenGuard } from '../auth/guards/access-token.guard';
 import { PermissionsGuard } from '../auth/guards/permissions.guard';
-import { Permissions } from '../auth/decorators/permissions.decorator';
+import { RequirePermissions } from '../auth/decorators/permissions.decorator';
+import { CurrentUser } from '../auth/decorators/current-user.decorator';
 
 @ApiTags('users')
 @Controller('users')
+@UseGuards(AccessTokenGuard, PermissionsGuard)
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
-  @UseGuards(AccessTokenGuard, PermissionsGuard)
   @Get()
   @ApiOperation({ summary: 'Get all users' })
-  @Permissions('users:read')
+  @RequirePermissions('users:read')
   async findAll(
+    @CurrentUser() user: any,
     @Query('withDeleted') withDeleted?: string,
   ): Promise<UserPublic[]> {
-    return this.userService.findAll(withDeleted === 'true');
+    return this.userService.findAll(user.institutionId, withDeleted === 'true');
   }
 
-  @UseGuards(AccessTokenGuard, PermissionsGuard)
   @Get(':id')
   @ApiOperation({ summary: 'Get one user by id' })
-  @Permissions('users:read')
+  @RequirePermissions('users:read')
   async findOne(
     @Param('id', ParseIntPipe) id: number,
+    @CurrentUser() user: any,
     @Query('withDeleted') withDeleted?: string,
   ): Promise<UserPublic | null> {
-    return this.userService.findOneById(id, withDeleted === 'true');
+    return this.userService.findOneById(
+      id,
+      user.institutionId,
+      withDeleted === 'true',
+    );
   }
 
-  @UseGuards(AccessTokenGuard, PermissionsGuard)
   @Post()
   @HttpCode(201)
   @ApiOperation({ summary: 'Create a new user' })
   @UsePipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }))
-  @Permissions('users:create')
-  async create(@Body() createUserDto: CreateUserDto): Promise<UserPublic> {
-    return this.userService.create(createUserDto);
+  @RequirePermissions('users:create')
+  async create(
+    @Body() createUserDto: CreateUserDto,
+    @CurrentUser() user: any,
+  ): Promise<UserPublic> {
+    return this.userService.create(user.institutionId, createUserDto);
   }
 
-  @UseGuards(AccessTokenGuard, PermissionsGuard)
   @Patch(':id')
   @ApiOperation({ summary: 'Update user by id' })
   @UsePipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }))
-  @Permissions('users:update')
+  @RequirePermissions('users:update')
   async update(
     @Param('id', ParseIntPipe) id: number,
+    @CurrentUser() user: any,
     @Body() updateUserDto: UpdateUserDto,
   ): Promise<UserPublic> {
-    return this.userService.update(id, updateUserDto);
+    return this.userService.update(id, user.institutionId, updateUserDto);
   }
 
-  @UseGuards(AccessTokenGuard, PermissionsGuard)
   @Patch(':id/update-password')
   @ApiOperation({ summary: 'Change user password' })
   @UsePipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }))
-  @Permissions('users:update')
+  @RequirePermissions('users:update')
   async updatePassword(
     @Param('id', ParseIntPipe) id: number,
+    @CurrentUser() user: any,
     @Body() updatePasswordDto: UpdatePasswordDto,
   ): Promise<UserPublic> {
-    return this.userService.updatePassword(id, updatePasswordDto);
+    return this.userService.updatePassword(
+      id,
+      user.institutionId,
+      updatePasswordDto,
+    );
   }
 
-  @UseGuards(AccessTokenGuard, PermissionsGuard)
   @Patch(':id/remove')
   @ApiOperation({ summary: 'Soft delete user' })
-  @Permissions('users:delete')
-  async remove(@Param('id', ParseIntPipe) id: number): Promise<UserPublic> {
-    return this.userService.remove(id);
+  @RequirePermissions('users:delete')
+  async remove(
+    @Param('id', ParseIntPipe) id: number,
+    @CurrentUser() user: any,
+  ): Promise<UserPublic> {
+    return this.userService.remove(id, user.institutionId);
   }
 
-  @UseGuards(AccessTokenGuard, PermissionsGuard)
   @Patch(':id/restore')
   @ApiOperation({ summary: 'Restore soft deleted user' })
-  @Permissions('users:delete')
-  async restore(@Param('id', ParseIntPipe) id: number): Promise<UserPublic> {
-    return this.userService.restore(id);
+  @RequirePermissions('users:delete')
+  async restore(
+    @Param('id', ParseIntPipe) id: number,
+    @CurrentUser() user: any,
+  ): Promise<UserPublic> {
+    return this.userService.restore(id, user.institutionId);
   }
 }

@@ -11,6 +11,7 @@ const pinia = createPinia();
 const components = {
   ...import.meta.glob('@components/base/*.vue', { eager: true }),
   ...import.meta.glob('@components/layout/*.vue', { eager: true }),
+  ...import.meta.glob('@components/page/*.vue', { eager: true }),
 };
 
 Object.entries(components as Record<string, { default: any }>).forEach(([path, module]) => {

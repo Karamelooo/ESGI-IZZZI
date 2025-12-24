@@ -5,9 +5,15 @@ import NavBar from './NavBar.vue';
 import Profile from './Profile.vue';
 import { useAuthStore } from '@stores/auth';
 
-const props = defineProps<{
-  activeTab: number;
-}>();
+const props = withDefaults(
+  defineProps<{
+    activeTab: number;
+    disabled?: boolean;
+  }>(),
+  {
+    disabled: false,
+  }
+);
 
 const emit = defineEmits<{
   (e: 'update:activeTab', value: number): void;
@@ -23,8 +29,9 @@ const authStore = useAuthStore();
 
     <component
       :is="authStore.isAuthenticated ? AdminNavBar : NavBar"
-      :activeTab="props.activeTab"
+      :activeTab="activeTab"
       :activeRoute="route.path"
+      :disabled="disabled"
       v-bind="
         authStore.isAuthenticated ? { 'onUpdate:activeTab': (value: number) => emit('update:activeTab', value) } : {}
       "
@@ -41,5 +48,7 @@ const authStore = useAuthStore();
   align-items: center;
   padding: 0 20px;
   height: 96px;
+  border-radius: 8px;
+  background-color: var(--white);
 }
 </style>

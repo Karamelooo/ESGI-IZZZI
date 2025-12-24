@@ -12,6 +12,8 @@ import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
 import { Tokens } from './auth.types';
 
+import { PERMISSIONS, DEFAULT_ROLES } from './permissions.constants';
+
 @Injectable()
 export class AuthService {
   constructor(
@@ -19,29 +21,40 @@ export class AuthService {
     private readonly jwt: JwtService,
     private readonly institutionService: InstitutionService,
     private readonly userService: UserService,
-  ) { }
+  ) {}
 
   async register(data: RegisterDto): Promise<{ user: any; tokens: Tokens }> {
     const institution = await this.institutionService.create({
       name: data.institutionName,
     });
-    const user = await this.userService.create({
+    const user = await this.userService.create(institution.id, {
       firstName: data.firstName,
       lastName: data.lastName,
       email: data.email,
       password: data.password,
-      institutionId: institution.id,
+      institutionId: institution.id, // Included for DTO compliance, though overridden
     });
     await this.ensureDefaultRolesAndPermissions();
     await this.assignAdminRole(user.id);
+    const userWithRoles = await this.prisma.user.findUnique({
+      where: { id: user.id },
+      include: {
+        userRoles: { include: { role: true } },
+        institution: true,
+      },
+    });
     const tokens = await this.issueTokens(user.id);
     await this.storeRefreshToken(user.id, tokens.refreshToken);
-    return { user: this.toPublicUser(user), tokens };
+    return { user: this.toPublicUser(userWithRoles), tokens };
   }
 
   async login(data: LoginDto): Promise<{ user: any; tokens: Tokens }> {
     const user = await this.prisma.user.findFirst({
       where: { email: data.email, deletedAt: null },
+      include: {
+        userRoles: { include: { role: true } },
+        institution: true,
+      },
     });
     if (!user) throw new BadRequestException('Identifiants invalides');
     const valid = await argon2.verify(user.password, data.password);
@@ -74,7 +87,14 @@ export class AuthService {
   }
 
   async getPublicUser(userId: number) {
-    const user = await this.prisma.user.findUnique({ where: { id: userId } });
+    const user = await this.prisma.user.findUnique({
+      where: { id: userId },
+      include: {
+        userRoles: { include: { role: true } },
+        institution: true,
+      },
+    });
+
     if (!user) throw new BadRequestException('Utilisateur introuvable');
     return this.toPublicUser(user);
   }
@@ -90,7 +110,8 @@ export class AuthService {
       },
       {
         secret: process.env.JWT_ACCESS_SECRET,
-        expiresIn: (process.env.JWT_ACCESS_EXPIRES || '15m') as JwtSignOptions['expiresIn'],
+        expiresIn: (process.env.JWT_ACCESS_EXPIRES ||
+          '15m') as JwtSignOptions['expiresIn'],
       },
     );
     const refreshToken = await this.jwt.signAsync(
@@ -100,7 +121,8 @@ export class AuthService {
       },
       {
         secret: process.env.JWT_REFRESH_SECRET,
-        expiresIn: (process.env.JWT_REFRESH_EXPIRES || '30d') as JwtSignOptions['expiresIn'],
+        expiresIn: (process.env.JWT_REFRESH_EXPIRES ||
+          '30d') as JwtSignOptions['expiresIn'],
       },
     );
     return { accessToken, refreshToken };
@@ -142,7 +164,8 @@ export class AuthService {
       email: user.email,
       firstName: user.firstName,
       lastName: user.lastName,
-      institutionId: user.institutionId,
+      role: user.userRoles?.[0]?.role?.name || null,
+      institution: user.institution,
     };
   }
 
@@ -159,67 +182,40 @@ export class AuthService {
   }
 
   private async ensureDefaultRolesAndPermissions(): Promise<void> {
-    const existing = await this.prisma.permission.findMany();
-    if (existing.length > 0) return;
-    const defaultPermissions = ['users:read'];
+    // Seed permissions
     await this.prisma.permission.createMany({
-      data: defaultPermissions.map((p) => ({ key: p })),
+      data: PERMISSIONS.map((p) => ({ key: p })),
       skipDuplicates: true,
     });
-    const admin = await this.prisma.role.upsert({
-      where: { name: 'admin' },
-      update: {},
-      create: { name: 'admin', system: true },
-    });
-    const manager = await this.prisma.role.upsert({
-      where: { name: 'manager' },
-      update: {},
-      create: { name: 'manager', system: true },
-    });
-    const student = await this.prisma.role.upsert({
-      where: { name: 'student' },
-      update: {},
-      create: { name: 'student', system: true },
-    });
-    const perms = await this.prisma.permission.findMany();
-    const byKey = new Map(perms.map((p) => [p.key, p]));
-    const studentKeys = ['reviews:create'];
-    const managerKeys = [
-      'reviews:read',
-      'reviews:read_summary',
-      'classes:manage',
-      'subjects:manage',
-      'users:read',
-    ];
-    const adminKeys = [
-      'reviews:read',
-      'reviews:read_summary',
-      'classes:manage',
-      'subjects:manage',
-      'users:read',
-      'users:manage',
-      'billing:read',
-    ];
-    await this.prisma.rolePermission.createMany({
-      data: studentKeys.map((k) => ({
-        roleId: student.id,
-        permissionId: byKey.get(k)!.id,
-      })),
-      skipDuplicates: true,
-    });
-    await this.prisma.rolePermission.createMany({
-      data: managerKeys.map((k) => ({
-        roleId: manager.id,
-        permissionId: byKey.get(k)!.id,
-      })),
-      skipDuplicates: true,
-    });
-    await this.prisma.rolePermission.createMany({
-      data: adminKeys.map((k) => ({
-        roleId: admin.id,
-        permissionId: byKey.get(k)!.id,
-      })),
-      skipDuplicates: true,
-    });
+
+    const allPermissions = await this.prisma.permission.findMany();
+    const permissionMap = new Map(allPermissions.map((p) => [p.key, p.id]));
+
+    // Seed Roles and assign permissions
+    for (const [roleName, permissionKeys] of Object.entries(DEFAULT_ROLES)) {
+      const role = await this.prisma.role.upsert({
+        where: { name: roleName },
+        update: {},
+        create: { name: roleName, system: true },
+      });
+
+      const rolePermissionsData = permissionKeys
+        .map((key) => {
+          const permissionId = permissionMap.get(key);
+          if (!permissionId) return null;
+          return { roleId: role.id, permissionId };
+        })
+        .filter((item) => item !== null) as {
+        roleId: number;
+        permissionId: number;
+      }[];
+
+      if (rolePermissionsData.length > 0) {
+        await this.prisma.rolePermission.createMany({
+          data: rolePermissionsData,
+          skipDuplicates: true,
+        });
+      }
+    }
   }
 }

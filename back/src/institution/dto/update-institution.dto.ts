@@ -1,9 +1,4 @@
-import { IsNotEmpty, IsString, MaxLength, MinLength } from 'class-validator';
+import { PartialType } from '@nestjs/swagger';
+import { CreateInstitutionDto } from './create-institution.dto';
 
-export class UpdateInstitutionDto {
-  @IsString()
-  @IsNotEmpty()
-  @MinLength(1)
-  @MaxLength(50)
-  name?: string;
-}
+export class UpdateInstitutionDto extends PartialType(CreateInstitutionDto) {}

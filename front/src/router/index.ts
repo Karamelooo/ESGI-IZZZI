@@ -7,7 +7,9 @@ import Auth from '@views/auth/Auth.vue';
 import ChangePassword from '@views/auth/ChangePassword.vue';
 import ForgotPassword from '@views/auth/ForgotPassword.vue';
 import ClassesList from '@views/classes/ClassesList.vue';
+import ClassCreate from '@views/classes/ClassCreate.vue';
 import Survey from '@views/public/Survey.vue';
+import { useAuthStore } from '@stores/auth';
 
 const routes: Array<RouteRecordRaw> = [
   /* Public Routes */
@@ -23,11 +25,27 @@ const routes: Array<RouteRecordRaw> = [
 
   /* Classes Routes */
   { path: '/classes', name: 'classes-list', component: ClassesList },
+  { path: '/classes/new', name: 'class-create', component: ClassCreate },
 ];
 
 const router = createRouter({
   history: createWebHistory(),
   routes,
+});
+
+router.beforeEach(async (to, _from, next) => {
+  const authStore = useAuthStore();
+
+  if (!authStore.initialized) {
+    await authStore.fetchMe();
+  }
+
+  if (to.path.startsWith('/auth') && authStore.isAuthenticated) {
+    next('/classes');
+    return;
+  }
+
+  next();
 });
 
 export default router;

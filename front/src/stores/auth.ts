@@ -6,18 +6,26 @@ export interface User {
   email: string;
   firstName: string;
   lastName: string;
+  role: string;
   institutionId: number;
+  institution: {
+    id: number;
+    name: string;
+    slug: string;
+  };
 }
 
 interface AuthState {
   user: User | null;
   loading: boolean;
+  initialized: boolean;
 }
 
 export const useAuthStore = defineStore('auth', {
   state: (): AuthState => ({
     user: null,
     loading: false,
+    initialized: false,
   }),
   getters: {
     isAuthenticated(state): boolean {
@@ -29,13 +37,19 @@ export const useAuthStore = defineStore('auth', {
       this.user = userData;
     },
     async fetchMe() {
-      if (this.user) return;
+      if (this.initialized) return;
       const api = useApi();
+      if (!localStorage.getItem('isAuthenticated')) {
+        this.initialized = true;
+        return;
+      }
       try {
         const res = await api.get('/auth/me');
         this.setUser(res.data.user);
       } catch {
         this.setUser(null);
+      } finally {
+        this.initialized = true;
       }
     },
     async login(payload: { email: string; password: string }) {
@@ -44,6 +58,7 @@ export const useAuthStore = defineStore('auth', {
       try {
         const res = await api.post('/auth/login', payload);
         this.setUser(res.data.user);
+        localStorage.setItem('isAuthenticated', 'true');
       } catch {
         throw new Error('Connexion échouée');
       } finally {
@@ -62,6 +77,7 @@ export const useAuthStore = defineStore('auth', {
       try {
         const res = await api.post('/auth/register', payload);
         this.setUser(res.data.user);
+        localStorage.setItem('isAuthenticated', 'true');
       } catch {
         throw new Error('Inscription échouée');
       } finally {
@@ -74,6 +90,7 @@ export const useAuthStore = defineStore('auth', {
         await api.post('/auth/logout');
       } finally {
         this.setUser(null);
+        localStorage.removeItem('isAuthenticated');
       }
     },
   },

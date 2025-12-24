@@ -1,9 +1,10 @@
 <script lang="ts" setup>
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
+import { useAuthStore } from '@stores/auth';
 import Input from '@components/base/Input.vue';
 import Button from '@components/base/Button.vue';
-import { useAuthStore } from '@stores/auth';
+import FormErrors from '@components/FormErrors.vue';
 
 const emit = defineEmits<{
   (e: 'login'): void;
@@ -17,6 +18,7 @@ const emailInput = ref('');
 const passwordInput = ref('');
 const firstNameInput = ref('');
 const lastNameInput = ref('');
+
 const loadingState = ref(false);
 const errorMessages = ref<string[]>([]);
 
@@ -89,9 +91,7 @@ async function onSubmit(event: Event) {
       :required="true"
     />
 
-    <ul v-if="errorMessages.length" class="form-errors">
-      <li v-for="error in errorMessages" :key="error">{{ error }}.</li>
-    </ul>
+    <FormErrors :messages="errorMessages" />
 
     <div class="auth-actions">
       <Button icon="Arrow" iconPosition="right" :disabled="loadingState" type="submit">{{

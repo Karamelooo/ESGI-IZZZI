@@ -1,12 +1,14 @@
 import { MinLength, MaxLength, Matches } from 'class-validator';
 
 export class UpdatePasswordDto {
-  @MinLength(8)
-  @MaxLength(128)
-  @Matches(/^(?=.*[a-zA-Z])(?=.*\d)[A-Za-z\d\S]{8,}$/)
+  @Matches(/^(?=.*[a-zA-Z])(?=.*\d)[A-Za-z\d\S]{8,}$/, {
+    message: 'Nouveau mot de passe alphanumérique',
+  })
+  @MaxLength(128, { message: 'Nouveau mot de passe de 128 caractères max' })
+  @MinLength(8, { message: 'Nouveau mot de passe de 8 caractères min' })
   newPassword: string;
 
-  @MinLength(8)
-  @MaxLength(128)
+  @MaxLength(128, { message: 'Mot de passe actuel de 128 caractères max' })
+  @MinLength(8, { message: 'Mot de passe actuel de 8 caractères min' })
   currentPassword: string;
 }
