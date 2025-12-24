@@ -3,8 +3,10 @@ import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 import Login from '@components/auth/Login.vue';
 import Register from '@components/auth/Register.vue';
+import { useAuthStore } from '@stores/auth';
 
 const router = useRouter();
+const authStore = useAuthStore();
 
 function goToForgotPassword() {
   router.push('/auth/forgot-password');

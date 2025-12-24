@@ -2,18 +2,16 @@ import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { Request } from 'express';
 import { Strategy } from 'passport-jwt';
-import { AppJwtPayload } from '../auth.types';
 
 @Injectable()
 export class RefreshTokenStrategy extends PassportStrategy(
   Strategy,
-  'jwt-refresh',
+  'jwt-refresh-cookie',
 ) {
   constructor() {
     const secret = process.env.JWT_REFRESH_SECRET;
     if (!secret)
       throw new Error('Le secret JWT_REFRESH_SECRET est introuvable');
-
     super({
       jwtFromRequest: (req: Request) => {
         if (req.cookies && req.cookies.refresh_token)
@@ -25,22 +23,10 @@ export class RefreshTokenStrategy extends PassportStrategy(
       passReqToCallback: true,
     });
   }
-
   validate(req: Request, payload: any) {
     const token = req.cookies?.refresh_token;
     if (!token)
-      throw new UnauthorizedException(
-        'Le jeton de rafraîchissement est manquant',
-      );
-
-    return {
-      payload: {
-        sub: Number(payload.sub),
-        email: payload.email,
-        institutionId: payload.institutionId,
-        refreshTokenVersion: payload.refreshTokenVersion,
-      },
-      refreshToken: token,
-    };
+      throw new UnauthorizedException("Le jeton d'actualisation est manquant");
+    return { payload, refreshToken: token };
   }
 }

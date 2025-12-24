@@ -3,6 +3,7 @@ import { useRoute } from 'vue-router';
 import AdminNavBar from './AdminNavBar.vue';
 import NavBar from './NavBar.vue';
 import Profile from './Profile.vue';
+import { useAuthStore } from '@stores/auth';
 
 const props = defineProps<{
   activeTab: number;
@@ -13,14 +14,7 @@ const emit = defineEmits<{
 }>();
 
 const route = useRoute();
-
-const user = {
-  firstName: 'Yoann',
-  lastName: 'C.',
-  role: 'admin',
-};
-
-const isAuthenticated = true;
+const authStore = useAuthStore();
 </script>
 
 <template>
@@ -28,13 +22,15 @@ const isAuthenticated = true;
     <Logo :linkToHome="true" />
 
     <component
-      :is="isAuthenticated ? AdminNavBar : NavBar"
+      :is="authStore.isAuthenticated ? AdminNavBar : NavBar"
       :activeTab="props.activeTab"
       :activeRoute="route.path"
-      v-bind="isAuthenticated ? { 'onUpdate:activeTab': (value: number) => emit('update:activeTab', value) } : {}"
+      v-bind="
+        authStore.isAuthenticated ? { 'onUpdate:activeTab': (value: number) => emit('update:activeTab', value) } : {}
+      "
     />
 
-    <Profile v-if="isAuthenticated" :user="user" />
+    <Profile v-if="authStore.isAuthenticated" />
   </header>
 </template>
 

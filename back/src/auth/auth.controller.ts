@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Get,
   HttpCode,
   Post,
   Res,
@@ -24,19 +25,20 @@ export class AuthController {
   @HttpCode(201)
   @UsePipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }))
   async register(@Body() dto: RegisterDto, @Res() res: Response) {
-    const tokens = await this.authService.register(dto);
+    const { user, tokens } = await this.authService.register(dto);
+    this.setAccessCookie(res, tokens.accessToken);
     this.setRefreshCookie(res, tokens.refreshToken);
-    return res.json({ accessToken: tokens.accessToken });
+    return res.json({ user });
   }
 
   @Post('login')
   @HttpCode(200)
   @UsePipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }))
   async login(@Body() dto: LoginDto, @Res() res: Response) {
-    const tokens = await this.authService.login(dto);
+    const { user, tokens } = await this.authService.login(dto);
     this.setAccessCookie(res, tokens.accessToken);
     this.setRefreshCookie(res, tokens.refreshToken);
-    return res.json({ message: 'Connexion réussie' });
+    return res.json({ user });
   }
 
   @Post('refresh')
@@ -46,24 +48,31 @@ export class AuthController {
       data.payload,
       data.refreshToken as string,
     );
+    this.setAccessCookie(res, tokens.accessToken);
     this.setRefreshCookie(res, tokens.refreshToken);
-    return res.json({ accessToken: tokens.accessToken });
+    return res.json({ ok: true });
+  }
+
+  @Get('me')
+  @UseGuards(AccessTokenGuard)
+  async me(@CurrentUser() data: any) {
+    const user = await this.authService.getPublicUser(Number(data.userId));
+    return { user };
   }
 
   @Post('logout')
   @UseGuards(AccessTokenGuard)
-  async logout(@CurrentUser() payload: any, @Res() res: Response) {
-    await this.authService.logout(Number(payload.sub));
-    this.clearRefreshCookie(res);
+  async logout(@CurrentUser() data: any, @Res() res: Response) {
+    await this.authService.logout(Number(data.userId));
+    this.clearCookies(res);
     return res.json({ message: 'Déconnexion réussie' });
   }
 
   @Post('logout-all')
   @UseGuards(AccessTokenGuard)
-  async logoutAll(@CurrentUser() payload: any, @Res() res: Response) {
-    await this.authService.invalidateAllSessions(Number(payload.sub));
-    this.clearAccessCookie(res);
-    this.clearRefreshCookie(res);
+  async logoutAll(@CurrentUser() data: any, @Res() res: Response) {
+    await this.authService.logoutAll(Number(data.userId));
+    this.clearCookies(res);
     return res.json({ message: 'Déconnexion globale réussie' });
   }
 
@@ -82,16 +91,13 @@ export class AuthController {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'strict',
-      path: '/auth/refresh',
+      path: '/auth',
       maxAge: 1000 * 60 * 60 * 24 * 30,
     });
   }
 
-  private clearAccessCookie(res: Response) {
+  private clearCookies(res: Response) {
     res.clearCookie('access_token', { path: '/' });
-  }
-
-  private clearRefreshCookie(res: Response) {
-    res.clearCookie('refresh_token', { path: '/auth/refresh' });
+    res.clearCookie('refresh_token', { path: '/auth' });
   }
 }

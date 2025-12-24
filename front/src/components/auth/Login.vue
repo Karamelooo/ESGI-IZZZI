@@ -3,7 +3,6 @@ import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 import Input from '@components/base/Input.vue';
 import Button from '@components/base/Button.vue';
-import { login } from '@api/auth.ts';
 import { useAuthStore } from '@stores/auth';
 
 const emit = defineEmits<{
@@ -21,25 +20,16 @@ const errorMessages = ref<string[]>([]);
 
 async function onSubmit(event: Event) {
   event.preventDefault();
+  if (loadingState.value) return;
   loadingState.value = true;
   errorMessages.value = [];
-
   try {
-    const data = await login({
-      email: emailInput.value,
-      password: passwordInput.value,
-    });
-    loadingState.value = false;
+    await authStore.login({ email: emailInput.value, password: passwordInput.value });
     router.push('/classes');
-  } catch (error: any) {
+  } catch {
+    errorMessages.value = ['Identifiants invalides'];
+  } finally {
     loadingState.value = false;
-    if (error?.response?.data?.message) {
-      errorMessages.value = Array.isArray(error.response.data.message)
-        ? error.response.data.message
-        : [error.response.data.message];
-    } else {
-      errorMessages.value = ['Une erreur inconnue est survenue'];
-    }
   }
 }
 </script>
