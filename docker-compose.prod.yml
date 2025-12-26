@@ -1,0 +1,62 @@
+services:
+  front:
+    build:
+      context: ./front
+      dockerfile: Dockerfile.prod
+      args:
+        VITE_API_URL: ${VITE_API_URL:-http://localhost:3500}
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.front.rule=Host(`${DOMAIN_NAME}`)"
+      - "traefik.http.routers.front.entrypoints=websecure"
+      - "traefik.http.routers.front.tls.certresolver=letsencrypt"
+      - "traefik.http.services.front.loadbalancer.server.port=80"
+    restart: always
+    depends_on:
+      - back
+    networks:
+      - dokploy-network
+      - internal-network
+
+  back:
+    build:
+      context: ./back
+      dockerfile: Dockerfile.prod
+    environment:
+      - DATABASE_URL=postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-password}@db:5432/${POSTGRES_DB:-izzzi}?schema=public
+      - JWT_SECRET=${JWT_SECRET:-supersecret}
+      - CORS_ORIGIN=https://${DOMAIN_NAME}
+      - PORT=3500
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.back.rule=Host(`${API_DOMAIN_NAME}`)"
+      - "traefik.http.routers.back.entrypoints=websecure"
+      - "traefik.http.routers.back.tls.certresolver=letsencrypt"
+      - "traefik.http.services.back.loadbalancer.server.port=3500"
+    restart: always
+    depends_on:
+      - db
+    networks:
+      - dokploy-network
+      - internal-network
+
+  db:
+    image: postgres:15
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-password}
+      POSTGRES_DB: ${POSTGRES_DB:-izzzi}
+    restart: always
+    networks:
+      - internal-network
+
+volumes:
+  db_data:
+
+networks:
+  dokploy-network:
+    external: true
+  internal-network:
+    driver: bridge

@@ -1,5 +1,6 @@
 import { PrismaClient } from '@prisma/client';
 import { PERMISSIONS, DEFAULT_ROLES } from '../src/auth/permissions.constants';
+import * as argon2 from 'argon2';
 
 const prisma = new PrismaClient();
 
@@ -33,6 +34,55 @@ async function main() {
       })),
       skipDuplicates: true,
     });
+  }
+  const institution = await prisma.institution.findFirst({
+    where: { name: 'ESGI' },
+  });
+
+  const institutionId =
+    institution?.id ??
+    (
+      await prisma.institution.create({
+        data: { name: 'ESGI' },
+      })
+    ).id;
+
+  const password = await argon2.hash('password123');
+
+  for (const roleName of Object.keys(DEFAULT_ROLES)) {
+    const email = `${roleName}@izizzi.fr`;
+    
+    // Create or update user
+    const user = await prisma.user.upsert({
+      where: { email },
+      update: {
+        password, // Update password if user exists to ensure it matches
+      },
+      create: {
+        email,
+        password,
+        firstName: roleName.charAt(0).toUpperCase() + roleName.slice(1),
+        lastName: 'User',
+        institutionId,
+      },
+    });
+
+    const role = rolesByName.get(roleName);
+    if (role) {
+      await prisma.userRole.upsert({
+        where: {
+          userId_roleId: {
+            userId: user.id,
+            roleId: role.id,
+          },
+        },
+        update: {},
+        create: {
+          userId: user.id,
+          roleId: role.id,
+        },
+      });
+    }
   }
 }
 
