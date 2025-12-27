@@ -132,16 +132,36 @@ h4 {
   font-size: 0.875rem;
 }
 
-p.p14 {
-  font-size: 0.875rem;
+.light {
+  font-weight: 300;
 }
 
-p.p12 {
-  font-size: 0.75rem;
+.regular {
+  font-weight: 400;
 }
 
-p.p10 {
-  font-size: 0.625rem;
+.medium {
+  font-weight: 500;
+}
+
+.semibold {
+  font-weight: 600;
+}
+
+.bold {
+  font-weight: 700;
+}
+
+.extra-bold {
+  font-weight: 800;
+}
+
+.black {
+  font-weight: 900;
+}
+
+.italic {
+  font-style: italic;
 }
 
 .page {
@@ -154,4 +174,46 @@ p.p10 {
 
 .page .switch-panels {
   flex: 1;
+}
+
+.page-content {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.details-search {
+  display: flex;
+  gap: 56px;
+}
+
+.details {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.details h3 {
+  font-weight: 400;
+}
+
+.details p {
+  max-width: 412px;
+}
+
+.search-wrapper {
+  display: grid;
+  align-items: center;
+}
+
+.search-input {
+  min-width: 362px;
+  overflow: hidden;
+  background-color: var(--white);
 }

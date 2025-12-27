@@ -1,13 +1,38 @@
 <script lang="ts" setup>
-import { ref } from 'vue';
-import { useRouter } from 'vue-router';
-import { createClass, type CreateClassPayload } from '@/api/classes';
+import { ref, onMounted } from 'vue';
+import { useRouter, useRoute } from 'vue-router';
+import { fetchClass, updateClass, type CreateClassPayload } from '@/api/classes';
 import { isAxiosError } from 'axios';
 import ClassForm from '@/components/forms/ClassForm.vue';
 
+const route = useRoute();
 const router = useRouter();
 const loadingState = ref(false);
+const initialLoading = ref(true);
 const errorMessages = ref<string[]>([]);
+const initialData = ref<Partial<CreateClassPayload>>({});
+
+const classId = route.params.id as string;
+
+onMounted(async () => {
+  try {
+    const classData = await fetchClass(classId);
+    initialData.value = {
+      name: classData.name,
+      studentCount: classData.studentCount,
+      studentEmails: classData.studentEmails,
+      description: classData.description,
+    };
+  } catch (error) {
+    if (isAxiosError(error) && error.response?.status === 404) {
+      router.push('/classes');
+    } else {
+      errorMessages.value.push('Impossible de charger les données de la classe');
+    }
+  } finally {
+    initialLoading.value = false;
+  }
+});
 
 async function onSubmit(formData: CreateClassPayload) {
   if (loadingState.value) return;
@@ -16,7 +41,7 @@ async function onSubmit(formData: CreateClassPayload) {
   errorMessages.value = [];
 
   try {
-    await createClass({
+    await updateClass(classId, {
       name: formData.name,
       studentCount: formData.studentCount,
       studentEmails: formData.studentEmails,
@@ -33,10 +58,10 @@ async function onSubmit(formData: CreateClassPayload) {
           errorMessages.value.push(error.response.data.message);
         }
       } else {
-        errorMessages.value.push('Une erreur est survenue lors de la création de la classe.');
+        errorMessages.value.push('Une erreur est survenue lors de la modification de la classe');
       }
     } else {
-      errorMessages.value.push('Une erreur inattendue est survenue.');
+      errorMessages.value.push('Une erreur inattendue est survenue');
     }
   } finally {
     loadingState.value = false;
@@ -50,9 +75,12 @@ async function onSubmit(formData: CreateClassPayload) {
 
     <Card :autoMargin="true">
       <ClassForm
-        submitLabel="Créer la classe"
+        v-if="!initialLoading"
+        submitLabel="Modifier la classe"
         :loading="loadingState"
         :externalErrors="errorMessages"
+        :initialData="initialData"
+        :isEdit="true"
         @submit="onSubmit"
         @cancel="router.push('/classes')"
       />

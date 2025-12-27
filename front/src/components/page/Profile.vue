@@ -3,8 +3,7 @@ import { useAuthStore } from '@stores/auth';
 
 const authStore = useAuthStore();
 
-const isSuper = ['super', 'admin'].includes(authStore.user.role);
-const isAdmin = ['admin'].includes(authStore.user.role);
+const isSuper = true;
 
 function handleNotificationClick() {
   console.log('IconButton clicked!');
@@ -19,7 +18,7 @@ function handleNotificationClick() {
       <Avatar />
 
       <div class="infos">
-        <p class="name">{{ authStore.user.firstName }} {{ authStore.user.lastName }}</p>
+        <p class="name" v-if="authStore.user">{{ authStore.user.firstName }} {{ authStore.user.lastName }}</p>
 
         <div v-if="isSuper" class="role-wrapper--admin">
           <Icon name="Crown" color="var(--white)" />
@@ -31,8 +30,6 @@ function handleNotificationClick() {
         </div>
       </div>
     </div>
-
-    <Button v-if="isAdmin">Partager</Button>
   </div>
 </template>
 

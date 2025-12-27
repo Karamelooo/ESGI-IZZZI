@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia';
-import { useApi } from '@api/axios';
+import { login as loginApi, register as registerApi, logout as logoutApi, fetchMe as fetchMeApi } from '@api/auth';
 
 export interface User {
   id: number;
@@ -11,7 +11,6 @@ export interface User {
   institution: {
     id: number;
     name: string;
-    slug: string;
   };
 }
 
@@ -38,14 +37,13 @@ export const useAuthStore = defineStore('auth', {
     },
     async fetchMe() {
       if (this.initialized) return;
-      const api = useApi();
       if (!localStorage.getItem('isAuthenticated')) {
         this.initialized = true;
         return;
       }
       try {
-        const res = await api.get('/auth/me');
-        this.setUser(res.data.user);
+        const data = await fetchMeApi();
+        this.setUser(data.user);
       } catch {
         this.setUser(null);
       } finally {
@@ -54,10 +52,9 @@ export const useAuthStore = defineStore('auth', {
     },
     async login(payload: { email: string; password: string }) {
       this.loading = true;
-      const api = useApi();
       try {
-        const res = await api.post('/auth/login', payload);
-        this.setUser(res.data.user);
+        const data = await loginApi(payload);
+        this.setUser(data.user);
         localStorage.setItem('isAuthenticated', 'true');
       } catch {
         throw new Error('Connexion échouée');
@@ -73,10 +70,9 @@ export const useAuthStore = defineStore('auth', {
       password: string;
     }) {
       this.loading = true;
-      const api = useApi();
       try {
-        const res = await api.post('/auth/register', payload);
-        this.setUser(res.data.user);
+        const data = await registerApi(payload);
+        this.setUser(data.user);
         localStorage.setItem('isAuthenticated', 'true');
       } catch {
         throw new Error('Inscription échouée');
@@ -85,9 +81,8 @@ export const useAuthStore = defineStore('auth', {
       }
     },
     async logout() {
-      const api = useApi();
       try {
-        await api.post('/auth/logout');
+        await logoutApi();
       } finally {
         this.setUser(null);
         localStorage.removeItem('isAuthenticated');
