@@ -37,9 +37,16 @@ const authStore = useAuthStore();
 <style scoped>
 .header {
   display: grid;
+  position: fixed;
+  top: 0;
+  z-index: 1000;
+  align-self: center;
   grid-template-columns: repeat(auto-fit, minmax(0, 1fr));
-  align-items: center;
-  padding: 0 20px;
-  height: 96px;
+  background-color: var(--bg-secondary, #fafafa);
+  padding: 0 1em;
+  margin: 1em 0;
+  width: 90%;
+  height: 6em;
+  border-radius: 1em;
 }
 </style>
