@@ -1,4 +1,6 @@
 <script lang="ts" setup>
+import { computed } from 'vue';
+
 const props = defineProps<{
   title: string;
   text: string;
@@ -11,7 +13,7 @@ const props = defineProps<{
     <p class="classHomeEmphase">{{ emphase }}</p>
     <div>
       <h4>{{ title }}</h4>
-      <p>{{ text }}</p>
+      <p v-html="text"></p>
     </div>
   </div>
 </template>
@@ -24,7 +26,7 @@ const props = defineProps<{
   justify-content: space-between;
   width: 342px;
   height: 452px;
-  border-radius: 8px;
+  border-radius: 20px;
   background-color: var(--yellow);
   padding: 40px;
 }
@@ -36,7 +38,7 @@ const props = defineProps<{
 .classHomeEmphase {
   width: 112px;
   text-align: center;
-  font-family: 'Pecita';
+  font-family: 'Pecita', sans-serif;
   font-size: 22px;
   transform: rotate(15deg);
 }

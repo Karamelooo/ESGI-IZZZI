@@ -39,6 +39,14 @@ const buttonIcon = props.archived ? 'Pen-Mobile' : 'Eyes';
   display: flex;
   flex-direction: column;
   width: 362px;
+  background-color: var(--gray-2);
+  border: 1px solid var(--gray-15);
+  border-radius: 8px;
+  padding: 1rem;
+}
+
+.classDesc h3 {
+  justify-self: start;
 }
 
 .classDesc p {
@@ -59,6 +67,10 @@ const buttonIcon = props.archived ? 'Pen-Mobile' : 'Eyes';
 
 .studentsCount {
   font-weight: bold;
+}
+
+.buttonContainer {
+  justify-content: flex-end;
 }
 
 .buttonContainer,
