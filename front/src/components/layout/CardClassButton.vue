@@ -42,6 +42,7 @@ const props = defineProps<{
 
 .classButtonContainer h3 {
   margin-bottom: 1rem;
+  text-align: start;
 }
 
 .classButtonContainer:hover {
