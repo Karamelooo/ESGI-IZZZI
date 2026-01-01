@@ -5,9 +5,28 @@ import { ref } from 'vue';
 import Card from '@/components/layout/Card.vue';
 import Button from '@/components/base/Button.vue';
 import Icon from '@/components/base/Icon.vue';
+import CardTable from '@/components/layout/CardTable.vue';
+import Footer from '@/components/page/Footer.vue';
 
 const activeTab = ref(0);
 const activeTab2 = ref(0);
+
+const tableData = [
+  { title: 'Nombre de classes actives', content: 'Illimité' },
+  { title: 'Matières par classe', content: 'Illimité' },
+  { title: 'Retours visibles par matière', content: 'Illimité' },
+  { title: 'Retours au-delà', content: 'Visibles' },
+  { title: 'Anonymat des retours', content: 'Oui + levée possible (bientôt disponible)' },
+  { title: 'Envoi automatique du formulaire', content: 'Oui (début + fin) (bientôt disponible)' },
+  { title: 'Relance manuelle (bouton)', content: 'Oui' },
+  { title: 'Export CSV', content: 'Oui' },
+  { title: "QR code & lien d'accès", content: 'Oui' },
+  { title: 'IA - alertes négatives', content: 'Oui' },
+  { title: 'IA - alertes positives', content: 'Oui' },
+  { title: 'Traite des alertes', content: 'Oui + réponse auto par IA' },
+  { title: 'Brandig personnalisé', content: 'Oui (bientôt disponible)' },
+  { title: 'Suppression du logo Izzzi', content: 'Oui (bientôt disponible)' },
+];
 </script>
 
 <template>
@@ -57,11 +76,13 @@ const activeTab2 = ref(0);
           </div>
           <Button icon="Arrow" iconPosition="right">Démarrer l'essai gratuit</Button>
           <Icon name="Info-Desktop" />
+          <CardTable :rows="tableData" />
         </Card>
       </template>
       <template #tab-1>Voici le contenu de l'onglet 2.</template>
     </SwitchPanels>
   </main>
+  <Footer />
 </template>
 
 <style scoped>
