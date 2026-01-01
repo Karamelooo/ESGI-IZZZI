@@ -8,10 +8,27 @@ import Icon from '@/components/base/Icon.vue';
 import CardTable from '@/components/layout/CardTable.vue';
 import Footer from '@/components/page/Footer.vue';
 
-const activeTab = ref(0);
 const activeTab2 = ref(0);
+const billingPeriod = ref<'annual' | 'monthly'>('annual');
 
 const tableData = [
+  { title: 'Nombre de classes actives', content: 'Illimité' },
+  { title: 'Matières par classe', content: 'Illimité' },
+  { title: 'Retours visibles par matière', content: '5 par matière (après 4 mois)' },
+  { title: 'Retours au-delà', content: 'Enregistrés, masqués' },
+  { title: 'Anonymat des retours', content: 'Oui (obligatoire)' },
+  { title: 'Envoi automatique du formulaire', content: 'Non' },
+  { title: 'Relance manuelle (bouton)', content: 'Oui' },
+  { title: 'Export CSV', content: 'Oui' },
+  { title: "QR code & lien d'accès", content: 'Oui' },
+  { title: 'IA - alertes négatives', content: 'Oui' },
+  { title: 'IA - alertes positives', content: 'Oui' },
+  { title: 'Traite des alertes', content: 'Oui (commentaire possible)' },
+  { title: 'Brandig personnalisé', content: 'Non' },
+  { title: 'Suppression du logo Izzzi', content: 'Non' },
+];
+
+const tableData2 = [
   { title: 'Nombre de classes actives', content: 'Illimité' },
   { title: 'Matières par classe', content: 'Illimité' },
   { title: 'Retours visibles par matière', content: 'Illimité' },
@@ -35,8 +52,12 @@ const tableData = [
     <br />
     <p>Commencez gratuitement et passez au niveau supérieur quand vous êtes prêts.</p>
     <br />
-    <SwitchTabs v-model="activeTab" :tabs="[{ name: 'Annuel -30%' }, { name: 'Mensuel' }]" />
-    <SwitchPanels :activeTab="activeTab">
+    <SwitchTabs
+      :model-value="billingPeriod === 'annual' ? 0 : 1"
+      :tabs="[{ name: 'Annuel -30%' }, { name: 'Mensuel' }]"
+      @update:model-value="(val) => (billingPeriod = val === 0 ? 'annual' : 'monthly')"
+    />
+    <SwitchPanels :activeTab="0">
       <template #tab-0>
         <Card class="annuel-tarif">
           <Button variant="neutral" round>👌🏻 Izzzi</Button>
@@ -63,7 +84,6 @@ const tableData = [
         </Card>
         <h2>Comparez nos plans</h2>
       </template>
-      <template #tab-1>Voici le contenu de l'onglet 2.</template>
     </SwitchPanels>
     <SwitchTabs v-model="activeTab2" round :tabs="[{ name: '👌🏻 Izzzi' }, { name: '🙌 Super Izzzi' }]" />
     <SwitchPanels :activeTab="activeTab2">
@@ -79,7 +99,20 @@ const tableData = [
           <CardTable :rows="tableData" />
         </Card>
       </template>
-      <template #tab-1>Voici le contenu de l'onglet 2.</template>
+      <template #tab-1>
+        <Card class="plans">
+          <Button variant="neutral" round>🙌 Super Izzzi</Button>
+          <div>
+            <p class="p10">À partir de</p>
+            <h3>
+              {{ billingPeriod === 'annual' ? '19€' : '22€' }}
+              <span>par mois / classe</span>
+            </h3>
+          </div>
+          <Button icon="Arrow" iconPosition="right">Je choisis ce plan</Button>
+          <CardTable :rows="tableData2" />
+        </Card>
+      </template>
     </SwitchPanels>
   </main>
   <Footer />
