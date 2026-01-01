@@ -1,0 +1,164 @@
+<script lang="ts" setup>
+import SwitchPanels from '@/components/layout/SwitchPanels.vue';
+import SwitchTabs from '@/components/layout/SwitchTabs.vue';
+import { ref } from 'vue';
+import Card from '@/components/layout/Card.vue';
+import Button from '@/components/base/Button.vue';
+import Icon from '@/components/base/Icon.vue';
+import CardTable from '@/components/layout/CardTable.vue';
+import Footer from '@/components/page/Footer.vue';
+
+const activeTab2 = ref(0);
+const billingPeriod = ref<'annual' | 'monthly'>('annual');
+
+const tableData = [
+  { title: 'Nombre de classes actives', content: 'Illimité' },
+  { title: 'Matières par classe', content: 'Illimité' },
+  { title: 'Retours visibles par matière', content: '5 par matière (après 4 mois)' },
+  { title: 'Retours au-delà', content: 'Enregistrés, masqués' },
+  { title: 'Anonymat des retours', content: 'Oui (obligatoire)' },
+  { title: 'Envoi automatique du formulaire', content: 'Non' },
+  { title: 'Relance manuelle (bouton)', content: 'Oui' },
+  { title: 'Export CSV', content: 'Oui' },
+  { title: "QR code & lien d'accès", content: 'Oui' },
+  { title: 'IA - alertes négatives', content: 'Oui' },
+  { title: 'IA - alertes positives', content: 'Oui' },
+  { title: 'Traite des alertes', content: 'Oui (commentaire possible)' },
+  { title: 'Brandig personnalisé', content: 'Non' },
+  { title: 'Suppression du logo Izzzi', content: 'Non' },
+];
+
+const tableData2 = [
+  { title: 'Nombre de classes actives', content: 'Illimité' },
+  { title: 'Matières par classe', content: 'Illimité' },
+  { title: 'Retours visibles par matière', content: 'Illimité' },
+  { title: 'Retours au-delà', content: 'Visibles' },
+  { title: 'Anonymat des retours', content: 'Oui + levée possible (bientôt disponible)' },
+  { title: 'Envoi automatique du formulaire', content: 'Oui (début + fin) (bientôt disponible)' },
+  { title: 'Relance manuelle (bouton)', content: 'Oui' },
+  { title: 'Export CSV', content: 'Oui' },
+  { title: "QR code & lien d'accès", content: 'Oui' },
+  { title: 'IA - alertes négatives', content: 'Oui' },
+  { title: 'IA - alertes positives', content: 'Oui' },
+  { title: 'Traite des alertes', content: 'Oui + réponse auto par IA' },
+  { title: 'Brandig personnalisé', content: 'Oui (bientôt disponible)' },
+  { title: 'Suppression du logo Izzzi', content: 'Oui (bientôt disponible)' },
+];
+</script>
+
+<template>
+  <main>
+    <h3>Deux plans. Zéro friction.</h3>
+    <br />
+    <p>Commencez gratuitement et passez au niveau supérieur quand vous êtes prêts.</p>
+    <br />
+    <SwitchTabs
+      :model-value="billingPeriod === 'annual' ? 0 : 1"
+      :tabs="[{ name: 'Annuel -30%' }, { name: 'Mensuel' }]"
+      @update:model-value="(val) => (billingPeriod = val === 0 ? 'annual' : 'monthly')"
+    />
+    <SwitchPanels :activeTab="0">
+      <template #tab-0>
+        <Card class="annuel-tarif">
+          <Button variant="neutral" round>👌🏻 Izzzi</Button>
+          <h1>0€<span>/ mois</span></h1>
+          <Button icon="Arrow" iconPosition="right">Démarrer mes 4 mois gratuits</Button>
+          <div>
+            <ul>
+              <li>4 mois d’essai illimités <span>(matières, classes, retours)</span></li>
+              <li>Puis 5 retours visibles par matière<span>(les autres sont enregistrés mais masqués)</span></li>
+              <li>Anonymat garanti pour tous les retours</li>
+              <li>Relance manuelle possible <span>(bouton à cliquer)</span></li>
+              <li>Export des retours en CSV à tout moment</li>
+              <li>QR code généré automatiquement</li>
+              <li>IA avancée <span>(alertes négatives & alertes positives)</span></li>
+              <li>Page de suivi des alertes<span>(notifications, commentaires possibles)</span></li>
+            </ul>
+            <p class="p12">Au-delà des 4 mois :</p>
+            <ul>
+              <li>Vos classes restent actives</li>
+              <li>Les retours visibles sont limités à 5 par matière</li>
+            </ul>
+          </div>
+          <Button icon="Arrow" iconPosition="right" variant="neutral">Voir les détails du plan</Button>
+        </Card>
+        <h2>Comparez nos plans</h2>
+      </template>
+    </SwitchPanels>
+    <SwitchTabs v-model="activeTab2" round :tabs="[{ name: '👌🏻 Izzzi' }, { name: '🙌 Super Izzzi' }]" />
+    <SwitchPanels :activeTab="activeTab2">
+      <template #tab-0>
+        <Card class="plans">
+          <Button variant="neutral" round>👌🏻 Izzzi</Button>
+          <div>
+            <h3>0€ <span>par mois</span></h3>
+            <p class="p10">(4 mois d'essai illimités)</p>
+          </div>
+          <Button icon="Arrow" iconPosition="right">Démarrer l'essai gratuit</Button>
+          <Icon name="Info-Desktop" />
+          <CardTable :rows="tableData" />
+        </Card>
+      </template>
+      <template #tab-1>
+        <Card class="plans">
+          <Button variant="neutral" round>🙌 Super Izzzi</Button>
+          <div>
+            <p class="p10">À partir de</p>
+            <h3>
+              {{ billingPeriod === 'annual' ? '19€' : '22€' }}
+              <span>par mois / classe</span>
+            </h3>
+          </div>
+          <Button icon="Arrow" iconPosition="right">Je choisis ce plan</Button>
+          <CardTable :rows="tableData2" />
+        </Card>
+      </template>
+    </SwitchPanels>
+  </main>
+  <Footer />
+</template>
+
+<style scoped>
+main {
+  margin: 10rem 1rem 0 1rem;
+}
+
+.annuel-tarif {
+  padding: 3rem;
+  margin-bottom: 5rem;
+}
+
+.annuel-tarif h1 span {
+  font-size: 12px;
+}
+
+.annuel-tarif ul {
+  list-style: url('src/assets/svg/icons/Check-Desktop.svg');
+}
+
+.annuel-tarif ul li {
+  padding: 0.2rem 1rem;
+  line-height: 1.5rem;
+}
+
+.annuel-tarif ul li span {
+  display: block;
+  font-size: 12px;
+}
+
+.annuel-tarif .p12 {
+  margin-top: 3rem;
+  margin-bottom: 1rem;
+  font-weight: bold;
+}
+
+.plans {
+  text-align: center;
+}
+
+.plans h3 span {
+  font-size: 12px;
+  font-family: 'Poppins';
+  font-weight: normal;
+}
+</style>
