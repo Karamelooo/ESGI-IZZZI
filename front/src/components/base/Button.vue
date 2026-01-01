@@ -8,6 +8,7 @@ const props = withDefaults(
     iconPosition?: 'left' | 'right';
     disabled?: boolean;
     inSwitchComponent?: boolean;
+    round?: boolean;
   }>(),
   {
     type: 'button',
@@ -15,6 +16,7 @@ const props = withDefaults(
     iconPosition: 'left',
     disabled: false,
     inSwitchComponent: false,
+    round: false,
   }
 );
 
@@ -32,7 +34,7 @@ const handleClick = (event: MouseEvent) => {
 <template>
   <router-link v-if="link" :to="link" custom v-slot="{ navigate, href }">
     <button
-      :class="['button', `button--${variant}`, { 'button--in-switch': inSwitchComponent }]"
+      :class="['button', `button--${variant}`, { 'button--in-switch': inSwitchComponent, 'button--round': round }]"
       :type="type"
       :disabled="disabled"
       :href="href"
@@ -52,7 +54,7 @@ const handleClick = (event: MouseEvent) => {
   </router-link>
   <button
     v-else
-    :class="['button', `button--${variant}`, { 'button--in-switch': inSwitchComponent }]"
+    :class="['button', `button--${variant}`, { 'button--in-switch': inSwitchComponent, 'button--round': round }]"
     :type="type"
     :disabled="disabled"
     @click="handleClick"
@@ -147,12 +149,49 @@ const handleClick = (event: MouseEvent) => {
   padding: 12px 60px;
 }
 
+/* Round style modifier */
+.button--round {
+  border-radius: 50px;
+  font-family: 'Mochiy Pop One', sans-serif;
+  padding: 12px 24px;
+}
+
+.button--round.button--plain {
+  background-color: transparent;
+  border: 1px solid var(--gray-15);
+  color: var(--gray-100);
+  padding: 12px 24px;
+}
+
+.button--round.button--plain:hover {
+  background-color: var(--gray-10);
+  text-decoration: none;
+}
+
+.button--round.button--switch {
+  background-color: var(--black);
+  border-color: var(--black);
+  color: var(--white);
+  padding: 12px 24px;
+}
+
+.button--round.button--switch:hover {
+  background-color: var(--gray-100);
+  border-color: var(--gray-100);
+}
+
 .button--plain.button--in-switch {
   padding: 0 30px;
   border-radius: 0;
   height: -webkit-fill-available;
   height: -moz-available;
   height: fill-available;
+}
+
+.button--round.button--plain.button--in-switch {
+  padding: 12px 24px;
+  border-radius: 50px;
+  height: auto;
 }
 
 @media (max-width: 600px) {

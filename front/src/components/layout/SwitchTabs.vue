@@ -1,8 +1,14 @@
 <script lang="ts" setup>
-const props = defineProps<{
-  modelValue: number;
-  tabs: { name: string }[];
-}>();
+const props = withDefaults(
+  defineProps<{
+    modelValue: number;
+    tabs: { name: string }[];
+    round?: boolean;
+  }>(),
+  {
+    round: false,
+  }
+);
 
 const emit = defineEmits<{
   (e: 'update:modelValue', value: number): void;
@@ -20,6 +26,7 @@ const setTab = (index: number) => {
       :key="index"
       :variant="modelValue === index ? 'switch' : 'plain'"
       :inSwitchComponent="true"
+      :round="round"
       @click="setTab(index)"
     >
       {{ tab.name }}
