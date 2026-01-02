@@ -44,4 +44,20 @@ const props = defineProps<{
   line-height: 1.5;
   color: var(--gray-100);
 }
+@media (min-width: 1024px) {
+  .card-table-row {
+    border-top: 1px solid var(--gray-10);
+    border-bottom: 1px solid var(--gray-10);
+    border-left: none;
+    border-right: none;
+  }
+
+  .card-table-row:first-child {
+    border-top: 1px solid var(--gray-10);
+  }
+
+  .card-table-row:last-child {
+    border-bottom: 1px solid var(--gray-10);
+  }
+}
 </style>
