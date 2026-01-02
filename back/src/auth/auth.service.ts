@@ -32,7 +32,7 @@ export class AuthService {
       lastName: data.lastName,
       email: data.email,
       password: data.password,
-      institutionId: institution.id, // Included for DTO compliance, though overridden
+      institutionId: institution.id,
     });
     await this.ensureDefaultRolesAndPermissions();
     await this.assignAdminRole(user.id);
@@ -182,7 +182,6 @@ export class AuthService {
   }
 
   private async ensureDefaultRolesAndPermissions(): Promise<void> {
-    // Seed permissions
     await this.prisma.permission.createMany({
       data: PERMISSIONS.map((p) => ({ key: p })),
       skipDuplicates: true,
@@ -191,7 +190,6 @@ export class AuthService {
     const allPermissions = await this.prisma.permission.findMany();
     const permissionMap = new Map(allPermissions.map((p) => [p.key, p.id]));
 
-    // Seed Roles and assign permissions
     for (const [roleName, permissionKeys] of Object.entries(DEFAULT_ROLES)) {
       const role = await this.prisma.role.upsert({
         where: { name: roleName },

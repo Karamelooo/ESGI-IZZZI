@@ -33,7 +33,6 @@ export class PermissionsGuard implements CanActivate {
       throw new ForbiddenException('User not authenticated');
     }
 
-    // Fetch user permissions from database
     const user = await this.prisma.user.findUnique({
       where: { id: Number(userId) },
       select: {

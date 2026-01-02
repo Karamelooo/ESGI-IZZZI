@@ -6,13 +6,30 @@ import Button from '@components/base/Button.vue';
 <template>
   <div class="footer-wrapper">
     <div class="footer-decoration">
-      <div class="pill yellow rotate-a-lot-right" style="justify-self: start  ; margin-left: -0.5vw; margin-top: -2vh;">#Love</div>
-      <div class="pill white rotate-little-right" style="justify-self: start; margin-left: -0.5vw; margin-top: 6vh;">IA + education = <3</div>
-      <div class="pill orange rotate-left" style="justify-self: start; margin-left: 5vw; margin-top: 0.6vh;">#QualiopiFriendly</div>
-      <div class="pill yellow rotate-a-lot-right" style="justify-self: start; margin-left: -6vw; margin-top: -14vh;">#Simple</div>
-      <div class="pill white" style="justify-self: start; margin-left: -3vw; margin-top: 7.5vh;">#DoubleSatisfaction</div>
-      <div class="pill orange rotate-a-lot-right" style="justify-self: start; margin-left: -6vw; margin-top: -1.5vh;">#LiveReview</div>
-      <div class="pill yellow rotate-left" style="justify-self: start; margin-right: 10vw; margin-left: -12vw; margin-top: -25vh;">#Sincère</div>
+      <div class="pill yellow rotate-a-lot-right" style="justify-self: start; margin-left: -0.5vw; margin-top: -2vh">
+        #Love
+      </div>
+      <div class="pill white rotate-little-right" style="justify-self: start; margin-left: -0.5vw; margin-top: 6vh">
+        IA + education = <3
+      </div>
+      <div class="pill orange rotate-left" style="justify-self: start; margin-left: 5vw; margin-top: 0.6vh">
+        #QualiopiFriendly
+      </div>
+      <div class="pill yellow rotate-a-lot-right" style="justify-self: start; margin-left: -6vw; margin-top: -14vh">
+        #Simple
+      </div>
+      <div class="pill white" style="justify-self: start; margin-left: -3vw; margin-top: 7.5vh">
+        #DoubleSatisfaction
+      </div>
+      <div class="pill orange rotate-a-lot-right" style="justify-self: start; margin-left: -6vw; margin-top: -1.5vh">
+        #LiveReview
+      </div>
+      <div
+        class="pill yellow rotate-left"
+        style="justify-self: start; margin-right: 10vw; margin-left: -12vw; margin-top: -25vh"
+      >
+        #Sincère
+      </div>
     </div>
 
     <footer class="footer-content">
@@ -26,23 +43,21 @@ import Button from '@components/base/Button.vue';
             <h4>Plan du site</h4>
             <ul>
               <li><router-link to="/pricing">Nos tarifs</router-link></li>
-              <li><router-link to="/auth/register">S'inscrire</router-link></li>
-              <li><router-link to="/auth/login">Se connecter</router-link></li>
+              <li><router-link to="/auth">S'inscrire</router-link></li>
+              <li><router-link to="/auth">Se connecter</router-link></li>
             </ul>
           </div>
 
           <div class="footer-column">
             <h4>Nous contacter</h4>
-            <Button link="mailto:hello@izzzi.io" variant="neutral" class="contact-btn">
-              hello@izzzi.io
-            </Button>
+            <Button link="/" variant="neutral" class="contact-btn"> hello@izzzi.io </Button>
           </div>
         </div>
       </div>
 
       <div class="footer-bottom">
-        <router-link to="/legal">Mentions légales</router-link>
-        <router-link to="/faq">FAQ</router-link>
+        <router-link to="/">Mentions légales</router-link>
+        <router-link to="/">FAQ</router-link>
       </div>
     </footer>
   </div>
@@ -82,14 +97,28 @@ import Button from '@components/base/Button.vue';
   color: var(--black, #000);
 }
 
-.pill.yellow { background-color: var(--yellow, #FDE047); }
-.pill.orange { background-color: #F69D04; }
-.pill.white { background-color: white; }
+.pill.yellow {
+  background-color: var(--yellow, #fde047);
+}
+.pill.orange {
+  background-color: #f69d04;
+}
+.pill.white {
+  background-color: white;
+}
 
-.rotate-left { transform: rotate(-15deg); }
-.rotate-right { transform: rotate(10deg); }
-.rotate-little-right { transform: rotate(4deg); }
-.rotate-a-lot-right { transform: rotate(20deg); }
+.rotate-left {
+  transform: rotate(-15deg);
+}
+.rotate-right {
+  transform: rotate(10deg);
+}
+.rotate-little-right {
+  transform: rotate(4deg);
+}
+.rotate-a-lot-right {
+  transform: rotate(20deg);
+}
 
 .footer-content {
   width: 100%;
@@ -100,7 +129,7 @@ import Button from '@components/base/Button.vue';
   flex-direction: column;
   justify-content: center;
   gap: 4rem;
-  background-color: var(--dark-orange, #F26103);
+  background-color: var(--dark-orange, #f26103);
 }
 
 .footer-main {
@@ -182,7 +211,7 @@ import Button from '@components/base/Button.vue';
     gap: 2rem;
     width: 100%;
   }
-  
+
   .footer-bottom {
     justify-content: center;
     align-items: center;

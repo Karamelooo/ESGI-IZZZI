@@ -1,6 +1,8 @@
 <script lang="ts" setup>
+import { useRouter } from 'vue-router';
 import { useAuthStore } from '@stores/auth';
 
+const router = useRouter();
 const authStore = useAuthStore();
 
 const isSuper = true;
@@ -14,11 +16,11 @@ function handleNotificationClick() {
   <div class="wrapper">
     <IconButton @click="handleNotificationClick" icon="Bell-Mobile" size="26px" />
 
-    <div class="profile">
+    <div @click="router.push('/classes')" class="profile">
       <Avatar />
 
       <div class="infos">
-        <p class="name" v-if="authStore.user">{{ authStore.user.firstName }} {{ authStore.user.lastName }}</p>
+        <p class="name">{{ authStore.user?.firstName }} {{ authStore.user?.lastName }}</p>
 
         <div v-if="isSuper" class="role-wrapper--admin">
           <Icon name="Crown" color="var(--white)" />
@@ -45,15 +47,13 @@ function handleNotificationClick() {
   display: flex;
   align-items: center;
   gap: 10px;
+  cursor: pointer;
 }
 
 .infos {
   display: flex;
   flex-direction: column;
   gap: 6px;
-}
-
-.name {
 }
 
 .role {

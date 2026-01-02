@@ -105,8 +105,8 @@ const tableData2 = [
     />
     <SwitchPanels :activeTab="0">
       <template #tab-0>
-        <div class="annuel-tarif-wrapper">
-          <Card class="annuel-tarif">
+        <div class="annuel-pricing-wrapper">
+          <Card class="annuel-pricing">
             <Button variant="neutral" round>👌🏻 Izzzi</Button>
             <h1>0€<span>/ mois</span></h1>
             <br />
@@ -132,7 +132,7 @@ const tableData2 = [
             <br />
             <Button icon="Arrow" iconPosition="right" variant="neutral">Voir les détails du plan</Button>
           </Card>
-          <Card class="annuel-tarif annuel-tarif-orange annuel-tarif-desktop">
+          <Card class="annuel-pricing annuel-pricing-orange annuel-pricing-desktop">
             <Button variant="neutral" round>🙌 Super Izzzi</Button>
             <br />
             <br />
@@ -269,46 +269,46 @@ main {
   margin: 10rem 1rem 0 1rem;
 }
 
-.annuel-tarif-wrapper {
+.annuel-pricing-wrapper {
   display: flex;
   flex-direction: column;
   gap: 2rem;
   margin-bottom: 5rem;
 }
 
-.annuel-tarif {
+.annuel-pricing {
   padding: 3rem;
   display: block;
 }
 
-.annuel-tarif-desktop {
+.annuel-pricing-desktop {
   display: none;
 }
 
-.annuel-tarif-orange {
+.annuel-pricing-orange {
   background-color: var(--orange) !important;
   border-color: var(--orange) !important;
 }
 
-.annuel-tarif h1 span {
+.annuel-pricing h1 span {
   font-size: 12px;
 }
 
-.annuel-tarif ul {
+.annuel-pricing ul {
   list-style: url('src/assets/svg/icons/Check-Desktop.svg');
 }
 
-.annuel-tarif ul li {
+.annuel-pricing ul li {
   padding: 0.2rem 1rem;
   line-height: 1.5rem;
 }
 
-.annuel-tarif ul li span {
+.annuel-pricing ul li span {
   display: block;
   font-size: 12px;
 }
 
-.annuel-tarif .p12 {
+.annuel-pricing .p12 {
   margin-top: 3rem;
   margin-bottom: 1rem;
   font-weight: bold;
@@ -473,16 +473,16 @@ main {
     display: none;
   }
 
-  .annuel-tarif-wrapper {
+  .annuel-pricing-wrapper {
     flex-direction: row;
     align-items: stretch;
   }
 
-  .annuel-tarif-desktop {
+  .annuel-pricing-desktop {
     display: block;
   }
 
-  .annuel-tarif {
+  .annuel-pricing {
     flex: 1;
   }
 

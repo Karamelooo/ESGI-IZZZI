@@ -1,19 +1,16 @@
 <script lang="ts" setup>
-const props = withDefaults(
-  defineProps<{
-    activeRoute?: string;
-  }>(),
-  {
-    activeRoute: '/',
-  }
-);
+import { useRoute } from 'vue-router';
+import { useAuthStore } from '@stores/auth';
+
+const route = useRoute();
+const authStore = useAuthStore();
 </script>
 
 <template>
   <nav class="navbar">
-    <Button link="/pricing" variant="plain" :class="{ active: activeRoute === '/pricing' }">Nos tarifs</Button>
+    <Button link="/pricing" variant="plain" :class="{ active: route.path === '/pricing' }">Nos tarifs</Button>
 
-    <div class="auth">
+    <div v-if="!authStore.isAuthenticated" class="auth">
       <Button link="/auth" variant="primary" icon="Arrow" iconPosition="right">S'inscrire</Button>
       <Button link="/auth" variant="neutral" icon="Arrow" iconPosition="right">Se connecter</Button>
     </div>

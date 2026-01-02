@@ -1,18 +1,18 @@
 <script lang="ts" setup>
 import { onMounted, ref } from 'vue';
-import { useAuthStore } from '@stores/auth';
 import { useRoute } from 'vue-router';
-import Header from './components/page/Header.vue';
-import MobileMenu from './components/page/MobileMenu.vue';
+import { useAuthStore } from '@stores/auth';
+import Header from '@components/page/Header.vue';
+import MobileMenu from '@components/page/MobileMenu.vue';
+import { isAdminRoute } from '@utils/route';
 
-const authStore = useAuthStore();
 const route = useRoute();
+const authStore = useAuthStore();
 
 onMounted(async () => {
   await authStore.fetchMe();
 });
 
-const activeTab = ref(0);
 const isMobileMenuOpen = ref(false);
 </script>
 
@@ -20,11 +20,10 @@ const isMobileMenuOpen = ref(false);
   <ToastContainer />
 
   <div id="root">
-    <Header v-model:activeTab="activeTab" @openMobileMenu="isMobileMenuOpen = true" />
+    <Header v-if="!isAdminRoute(route.path)" @openMobileMenu="isMobileMenuOpen = true" />
     <MobileMenu
       :isOpen="isMobileMenuOpen"
       :isAuthenticated="authStore.isAuthenticated"
-      v-model:activeTab="activeTab"
       :activeRoute="route.path"
       @close="isMobileMenuOpen = false"
     />

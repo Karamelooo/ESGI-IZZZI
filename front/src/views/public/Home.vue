@@ -22,11 +22,11 @@ import CardClass from '@/components/layout/CardClass.vue';
             + de satisfaction
           </p>
           <div class="cta-group">
-            <Button link="/auth/register" variant="primary" icon="Arrow" iconPosition="right" class="cta-button">
+            <Button link="/auth" variant="primary" icon="Arrow" iconPosition="right" class="cta-button">
               Essayer gratuitement
             </Button>
             <p class="cta-text">
-              4 mois d'essai illimité. Facturation simple par <br/>
+              4 mois d'essai illimité. Facturation simple par <br />
               classe une fois la période d'essai terminée.
             </p>
           </div>
@@ -37,19 +37,33 @@ import CardClass from '@/components/layout/CardClass.vue';
             <img src="@assets/images/home-page-woman-outside.png" alt="Woman outside" class="hero-image-woman" />
           </div>
           <div>
-            <img src="@assets/images/izzzi-dashboard-preview.png" alt="IZZZI dashboard preview" class="hero-image-dashboard" />
+            <img
+              src="@assets/images/izzzi-dashboard-preview.png"
+              alt="IZZZI dashboard preview"
+              class="hero-image-dashboard"
+            />
           </div>
           <div>
             <img src="@assets/images/home-page-devs-working-team.png" alt="devs working team" class="hero-image-devs" />
           </div>
           <div>
-            <img src="@assets/images/home-page-woman-typping-phone.png" alt="woman typing phone" class="hero-image-woman-typping-phone" />
+            <img
+              src="@assets/images/home-page-woman-typping-phone.png"
+              alt="woman typing phone"
+              class="hero-image-woman-typping-phone"
+            />
           </div>
           <div>
             <CardClassButton title="Basique" desc="Adapté à tous les cours" class="blured-card basique-card" />
           </div>
           <div>
-            <CardClass className="A3UI" :studentsCount="24" classDesc="Description de la classe" :archived="true" class="blured-card premium-card" />
+            <CardClass
+              className="A3UI"
+              :studentsCount="24"
+              classDesc="Description de la classe"
+              :archived="true"
+              class="blured-card premium-card"
+            />
           </div>
         </div>
       </section>
@@ -73,7 +87,7 @@ import CardClass from '@/components/layout/CardClass.vue';
               <br/>
               Indicateur 31 : Traitement des réclamations"
               emphase="Mieux que mieux !"
-              style="background-color: var(--white, #fafafa); border: 1px solid #E0E0E0; height: 509px;"
+              style="background-color: var(--white, #fafafa); border: 1px solid #e0e0e0; height: 509px"
             />
           </div>
 
@@ -82,13 +96,13 @@ import CardClass from '@/components/layout/CardClass.vue';
               title="Double satisfaction"
               text="Vos étudiants sont écoutés. Vous intervenez au bon moment. Résultat : un vrai sentiment d’écoute et une progression immédiate."
               emphase="Mieux que mieux !"
-              style="background-color: var(--white, #fafafa); border: 1px solid #E0E0E0;"
+              style="background-color: var(--white, #fafafa); border: 1px solid #e0e0e0"
             />
             <CardClassHome
               title="Retours garantis 100% sincères"
               text="Des retours vraiment libres. Vos étudiants répondent sans compte, en toute confidentialité. Les retours sont anonymes par défaut."
               emphase="Même pas peur !"
-              style="background-color: var(--orange, #F69D04); height: 406px;"
+              style="background-color: var(--orange, #f69d04); height: 406px"
             />
           </div>
 
@@ -97,13 +111,13 @@ import CardClass from '@/components/layout/CardClass.vue';
               title="L'IA est la pour vous assister"
               text="N’offrez pas à vos étudiants l’occasion d’être déçus. Captez leurs retours avant la fin du module et ajustez ce qui mérite de l’être en live."
               emphase="Vous n’avez pas le temps !"
-              style="background-color: var(--dark-orange, #F26103); border: 1px solid #E0E0E0; height: 583px;"
+              style="background-color: var(--dark-orange, #f26103); border: 1px solid #e0e0e0; height: 583px"
             />
             <CardClassHome
               title="Prêt en 10 minutes chrono."
               text="Import CSV, génération automatique de QR code, lien à partager. Vos étudiants accèdent directement à leur formulaire, sans friction."
               emphase="C’est trop Izzzi !"
-              style="height: 452px;"
+              style="height: 452px"
             />
           </div>
         </div>
@@ -116,7 +130,7 @@ import CardClass from '@/components/layout/CardClass.vue';
             <h3>de retours collectés en moyenne*</h3>
             <p>
               Les étudiants savent que leur avis change leur cours, pas celui du prochain semestre.
-              <br><br>
+              <br /><br />
               Résultat : ils répondent plus, mieux, et plus vite.
             </p>
             <span class="footnote">*par rapport aux méthodes conventionnelles</span>
@@ -129,12 +143,15 @@ import CardClass from '@/components/layout/CardClass.vue';
 
       <section class="try-section">
         <div class="try-container">
-          <h2>Créer une classe test <br/> en quelques minutes.</h2>
+          <h2>
+            Créer une classe test <br />
+            en quelques minutes.
+          </h2>
           <p>
-            C'est gratuit. 4 mois en illimité. Sans carte. <br/>
+            C'est gratuit. 4 mois en illimité. Sans carte. <br />
             Vos premiers retours sont immédiats.
           </p>
-          <Button link="/auth/register" variant="primary" icon="Arrow" iconPosition="right" class="cta-button">
+          <Button link="/auth" variant="primary" icon="Arrow" iconPosition="right" class="cta-button">
             Créer une classe gratuitement
           </Button>
         </div>
@@ -148,7 +165,7 @@ import CardClass from '@/components/layout/CardClass.vue';
 .blured-card {
   backdrop-filter: blur(15px);
   -webkit-backdrop-filter: blur(15px);
-  background-color: #FFFFFF0D;
+  background-color: #ffffff0d;
   z-index: 4 !important;
   border-color: var(--yellow);
 }
@@ -182,7 +199,7 @@ import CardClass from '@/components/layout/CardClass.vue';
   align-items: center;
   justify-content: center;
   gap: 2vh;
-  background-color: var(--dark-orange, #F26103);
+  background-color: var(--dark-orange, #f26103);
   border-radius: 10px;
   color: var(--white, #fafafa);
   max-width: 74vw;
@@ -208,7 +225,7 @@ import CardClass from '@/components/layout/CardClass.vue';
 .stats-card {
   flex: 1;
   background-color: var(--gray-5);
-  border: 1px solid #E0E0E0;
+  border: 1px solid #e0e0e0;
   border-radius: 20px;
   padding: 60px;
   display: flex;
@@ -283,7 +300,7 @@ main {
   flex: 1;
   display: flex;
   flex-direction: column;
-  background-color: #FFF9D8;
+  background-color: #fff9d8;
   overflow-x: hidden;
 }
 
@@ -297,7 +314,7 @@ main {
   align-items: center;
   padding: 20vh 2vw;
   text-align: center;
-  background-color: #FFF9D8;
+  background-color: #fff9d8;
 }
 
 .hero-section .hero-content {
@@ -306,7 +323,7 @@ main {
   text-align: left;
   margin-left: 5vw;
   margin-top: 10vh;
-} 
+}
 
 .hero-section .hero-image {
   position: relative;
@@ -423,7 +440,6 @@ main {
 }
 
 @media (max-width: 768px) {
-
   .rounded-arrow {
     left: 55vw;
     top: -1vh;
@@ -569,11 +585,11 @@ main {
   .stats-container {
     flex-direction: column;
   }
-  
+
   .stats-card {
     padding: 30px;
   }
-  
+
   .stats-card h2 {
     font-size: 3.5rem;
   }
@@ -584,4 +600,3 @@ main {
   }
 }
 </style>
-
