@@ -96,6 +96,49 @@ a:active {
   font-weight: 300;
 }
 
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  min-width: 438px;
+}
+
+.form--centered {
+  align-items: center;
+}
+
+.form--full-width {
+  width: 100%;
+}
+
+.form-title {
+  font-weight: 400;
+}
+
+.form .input-wrapper {
+  width: 100%;
+}
+
+.form .button {
+  margin: 0;
+}
+
+.form--centered .button {
+  margin: 0 auto;
+}
+
+.form-row {
+  width: 100%;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.form .separator {
+  font-family: 'Mochiy Pop One';
+  font-size: 1.15rem;
+}
+
 .form-errors {
   width: 100%;
   display: flex;
@@ -167,7 +210,7 @@ h4 {
 .page {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 32px;
   padding: 12px 20px;
   height: 100vh;
 }
@@ -188,9 +231,26 @@ h4 {
   align-items: center;
 }
 
+.page-actions {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
 .details-search {
   display: flex;
   gap: 56px;
+}
+
+.details-class {
+  display: flex;
+  align-items: end;
+  gap: 20px;
+}
+
+.details-class p {
+  position: relative;
+  bottom: 4px;
 }
 
 .details {
@@ -199,6 +259,8 @@ h4 {
   gap: 8px;
 }
 
+.details h1,
+.details h2,
 .details h3 {
   font-weight: 400;
 }

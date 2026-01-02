@@ -37,8 +37,4 @@ export class CreateSubjectDto {
   @IsInt({ message: 'ID classe doit être un entier' })
   @IsNotEmpty({ message: 'ID classe requis' })
   classId: number;
-
-  @IsInt({ message: 'ID institution doit être un entier' })
-  @IsNotEmpty({ message: 'ID institution requis' })
-  institutionId: number;
 }

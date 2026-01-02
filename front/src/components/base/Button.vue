@@ -10,15 +10,19 @@ const props = withDefaults(
     iconPosition?: 'left' | 'right';
     disabled?: boolean;
     inSwitchComponent?: boolean;
+    flipHorizontal?: boolean;
+    flipVertical?: boolean;
   }>(),
   {
-    width: 'fill',
+    width: 'fit',
     type: 'button',
     variant: 'primary',
     iconOnly: false,
     iconPosition: 'left',
     disabled: false,
     inSwitchComponent: false,
+    flipHorizontal: false,
+    flipVertical: false,
   }
 );
 
@@ -53,9 +57,19 @@ const handleClick = (event: MouseEvent) => {
       "
     >
       <div class="button-container" :style="{ gap: variant === 'plain' ? '10px' : '' }">
-        <Icon v-if="icon && iconPosition === 'left'" :name="icon" />
+        <Icon
+          v-if="icon && iconPosition === 'left'"
+          :name="icon"
+          :flip-horizontal="flipHorizontal"
+          :flip-vertical="flipVertical"
+        />
         <slot v-if="!iconOnly" />
-        <Icon v-if="icon && iconPosition === 'right'" :name="icon" />
+        <Icon
+          v-if="icon && iconPosition === 'right'"
+          :name="icon"
+          :flip-horizontal="flipHorizontal"
+          :flip-vertical="flipVertical"
+        />
       </div>
     </button>
   </router-link>
@@ -72,9 +86,19 @@ const handleClick = (event: MouseEvent) => {
     @click="handleClick"
   >
     <div class="button-container" :style="{ gap: variant === 'plain' ? '10px' : '' }">
-      <Icon v-if="icon && iconPosition === 'left'" :name="icon" />
+      <Icon
+        v-if="icon && iconPosition === 'left'"
+        :name="icon"
+        :flip-horizontal="flipHorizontal"
+        :flip-vertical="flipVertical"
+      />
       <slot v-if="!iconOnly" />
-      <Icon v-if="icon && iconPosition === 'right'" :name="icon" />
+      <Icon
+        v-if="icon && iconPosition === 'right'"
+        :name="icon"
+        :flip-horizontal="flipHorizontal"
+        :flip-vertical="flipVertical"
+      />
     </div>
   </button>
 </template>

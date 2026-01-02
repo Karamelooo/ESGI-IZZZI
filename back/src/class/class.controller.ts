@@ -13,9 +13,10 @@ import {
   ValidationPipe,
 } from '@nestjs/common';
 import { ClassService } from './class.service';
+import { SubjectService } from '../subject/subject.service';
 import { CreateClassDto } from './dto/create-class.dto';
 import { UpdateClassDto } from './dto/update-class.dto';
-import { Class } from '@prisma/client';
+import { Class, Subject } from '@prisma/client';
 import { AccessTokenGuard } from '../auth/guards/access-token.guard';
 import { PermissionsGuard } from '../auth/guards/permissions.guard';
 import { RequirePermissions } from '../auth/decorators/permissions.decorator';
@@ -26,7 +27,10 @@ import { ApiTags, ApiOperation } from '@nestjs/swagger';
 @Controller('classes')
 @UseGuards(AccessTokenGuard, PermissionsGuard)
 export class ClassController {
-  constructor(private readonly classService: ClassService) {}
+  constructor(
+    private readonly classService: ClassService,
+    private readonly subjectService: SubjectService,
+  ) {}
 
   @Get()
   @ApiOperation({ summary: 'Get all classes' })
@@ -50,6 +54,21 @@ export class ClassController {
     @Query('withDeleted') withDeleted?: string,
   ): Promise<Class | null> {
     return this.classService.findOne(
+      id,
+      user.institutionId,
+      withDeleted === 'true',
+    );
+  }
+
+  @Get(':id/subjects')
+  @ApiOperation({ summary: 'Get all subjects by class id' })
+  @RequirePermissions('classes:read')
+  async findAllSubjectsByClassId(
+    @Param('id', ParseIntPipe) id: number,
+    @CurrentUser() user: any,
+    @Query('withDeleted') withDeleted?: string,
+  ): Promise<Subject[]> {
+    return this.subjectService.findAllByClassId(
       id,
       user.institutionId,
       withDeleted === 'true',

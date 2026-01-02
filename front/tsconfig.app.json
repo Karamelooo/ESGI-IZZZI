@@ -18,7 +18,8 @@
       "@views/*": ["src/views/*"],
       "@router/*": ["src/router/*"],
       "@api/*": ["src/api/*"],
-      "@stores/*": ["src/stores/*"]
+      "@stores/*": ["src/stores/*"],
+      "@utils/*": ["src/utils/*"]
     },
 
     /* Linting */

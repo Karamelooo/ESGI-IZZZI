@@ -21,7 +21,7 @@ const props = withDefaults(defineProps<Props>(), {
   initialData: () => ({}),
   loading: false,
   externalErrors: () => [],
-  submitLabel: 'Créer la classe',
+  submitLabel: 'Valider',
   isEdit: false,
 });
 
@@ -100,7 +100,7 @@ function onCancel() {
 </script>
 
 <template>
-  <form class="auth-form auth-form--centered" @submit="onSubmit">
+  <form class="form form--centered" @submit="onSubmit">
     <Input
       v-model="nameInput"
       type="text"
@@ -144,8 +144,8 @@ function onCancel() {
     <FormErrors :messages="allErrors" />
 
     <div class="auth-actions">
-      <Button icon="Arrow" iconPosition="right" :disabled="loading" type="submit">{{ submitLabel }}</Button>
-      <Button :disabled="loading" type="button" @click="onCancel">Annuler</Button>
+      <Button icon="Arrow" iconPosition="right" type="submit" :disabled="loading">{{ submitLabel }}</Button>
+      <Button variant="neutral" type="button" :disabled="loading" @click="onCancel">Annuler</Button>
     </div>
   </form>
 </template>

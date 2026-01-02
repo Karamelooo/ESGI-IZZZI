@@ -45,7 +45,7 @@ async function onSubmit(event: Event) {
 </script>
 
 <template>
-  <form class="auth-form auth-form--centered" @submit="onSubmit">
+  <form class="form form--centered" @submit="onSubmit">
     <Input
       v-model="emailInput"
       type="text"

@@ -11,6 +11,8 @@ import ClassesList from '@views/classes/ClassesList.vue';
 import ClassCreate from '@views/classes/ClassCreate.vue';
 import ClassView from '@views/classes/ClassView.vue';
 import ClassEdit from '@views/classes/ClassEdit.vue';
+import SubjectsList from '@views/subjects/SubjectsList.vue';
+import SubjectCreate from '@views/subjects/SubjectCreate.vue';
 import Dashboard from '@views/dashboard/Dashboard.vue';
 import { useAuthStore } from '@stores/auth';
 
@@ -31,6 +33,10 @@ const routes: Array<RouteRecordRaw> = [
   { path: '/classes/new', name: 'class-create', component: ClassCreate },
   { path: '/classes/:id', name: 'class-view', component: ClassView },
   { path: '/classes/:id/edit', name: 'class-edit', component: ClassEdit },
+
+  /* Subjects Routes */
+  { path: '/classes/:id/subjects', name: 'subject-list', component: SubjectsList },
+  { path: '/classes/:id/subjects/new', name: 'subject-create', component: SubjectCreate },
 
   /* Dashboard Routes */
   { path: '/dashboard', name: 'dashboard', component: Dashboard },

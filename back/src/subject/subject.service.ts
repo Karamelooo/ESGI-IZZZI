@@ -21,6 +21,21 @@ export class SubjectService {
     });
   }
 
+  async findAllByClassId(
+    classId: number,
+    institutionId: number,
+    withDeleted: boolean = false,
+  ): Promise<Subject[]> {
+    return this.prisma.subject.findMany({
+      where: {
+        classId,
+        institutionId,
+        ...(withDeleted ? {} : { deletedAt: null }),
+      },
+      orderBy: { id: 'asc' },
+    });
+  }
+
   async findOne(
     id: number,
     institutionId: number,
@@ -43,6 +58,8 @@ export class SubjectService {
     return this.prisma.subject.create({
       data: {
         ...data,
+        startDate: data.startDate ? new Date(data.startDate) : undefined,
+        endDate: data.endDate ? new Date(data.endDate) : undefined,
         institutionId,
       },
     });

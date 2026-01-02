@@ -7,15 +7,21 @@ export interface CreateClassPayload {
   description?: string;
 }
 
-export async function fetchClasses(institutionId: number, withDeleted: boolean = false) {
+export async function fetchClasses(withDeleted: boolean = false) {
   const api = useTypedApi();
-  const response = await api.get(`/classes?institutionId=${institutionId}${withDeleted ? '&withDeleted=true' : ''}`);
+  const response = await api.get(`/classes${withDeleted ? '?withDeleted=true' : ''}`);
   return response.data;
 }
 
-export async function fetchClass(id: string) {
+export async function fetchClass(id: number) {
   const api = useTypedApi();
   const response = await api.get(`/classes/${id}`);
+  return response.data;
+}
+
+export async function fetchSubjectsByClassId(id: number) {
+  const api = useTypedApi();
+  const response = await api.get(`/classes/${id}/subjects`);
   return response.data;
 }
 
@@ -25,7 +31,7 @@ export async function createClass(payload: CreateClassPayload) {
   return response.data;
 }
 
-export async function updateClass(id: string, payload: CreateClassPayload) {
+export async function updateClass(id: number, payload: CreateClassPayload) {
   const api = useTypedApi();
   const response = await api.patch(`/classes/${id}`, payload);
   return response.data;

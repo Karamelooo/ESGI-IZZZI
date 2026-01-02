@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { useRouter } from 'vue-router';
 import { useClassesStore, type Class } from '@stores/classes';
-import { formatDate } from '@utils/date';
+import { toDateFR } from '@utils/date';
 
 defineProps<{
   classItem: Class;
@@ -34,7 +34,7 @@ const handleRemove = async (classId: number) => {
         <p>{{ classItem.description }}</p>
         <span class="semibold">{{ classItem.studentCount }} étudiants</span>
         <span v-if="isArchived && classItem.deletedAt" class="italic">
-          Archivée le {{ formatDate(classItem.deletedAt) }}
+          Archivée le {{ toDateFR(classItem.deletedAt) }}
         </span>
       </div>
 

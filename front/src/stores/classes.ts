@@ -1,5 +1,9 @@
 import { defineStore } from 'pinia';
-import { fetchClasses as fetchClassesApi, deleteClass as deleteClassApi } from '@api/classes';
+import {
+  fetchClasses as fetchClassesApi,
+  fetchClass as fetchClassApi,
+  deleteClass as deleteClassApi,
+} from '@api/classes';
 
 export interface Class {
   id: number;
@@ -12,6 +16,7 @@ export interface Class {
 }
 
 interface ClassesState {
+  class: Class | null;
   classes: Class[];
   archivedClasses: Class[];
   loading: boolean;
@@ -19,6 +24,7 @@ interface ClassesState {
 
 export const useClassesStore = defineStore('classes', {
   state: (): ClassesState => ({
+    class: null,
     classes: [],
     archivedClasses: [],
     loading: false,
@@ -28,7 +34,7 @@ export const useClassesStore = defineStore('classes', {
       if (!institutionId) return;
       this.loading = true;
       try {
-        const data = await fetchClassesApi(institutionId, withDeleted);
+        const data = await fetchClassesApi(withDeleted);
         if (withDeleted) {
           this.archivedClasses = data.filter((c: Class) => c.deletedAt);
         } else {
@@ -38,6 +44,14 @@ export const useClassesStore = defineStore('classes', {
         this.classes = [];
       } finally {
         this.loading = false;
+      }
+    },
+    async fetchClass(id: number) {
+      try {
+        const data = await fetchClassApi(id);
+        this.class = data;
+      } catch (e) {
+        this.class = null;
       }
     },
     async deleteClass(classId: number) {

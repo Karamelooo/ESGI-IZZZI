@@ -1,12 +1,15 @@
 <script lang="ts" setup>
 import { ref, onMounted } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
-import { fetchClass, updateClass, type CreateClassPayload } from '@/api/classes';
 import { isAxiosError } from 'axios';
-import ClassForm from '@/components/forms/ClassForm.vue';
+import { useAuthStore } from '@stores/auth';
+import { fetchClass, updateClass, type CreateClassPayload } from '@api/classes';
+import ClassForm from '@components/forms/ClassForm.vue';
 
 const route = useRoute();
 const router = useRouter();
+const authStore = useAuthStore();
+
 const loadingState = ref(false);
 const initialLoading = ref(true);
 const errorMessages = ref<string[]>([]);
@@ -39,6 +42,12 @@ async function onSubmit(formData: CreateClassPayload) {
 
   loadingState.value = true;
   errorMessages.value = [];
+
+  const institutionId = authStore.user?.institution.id;
+  if (!institutionId) {
+    errorMessages.value.push('Session invalide. Veuillez vous reconnecter.');
+    return;
+  }
 
   try {
     await updateClass(classId, {
