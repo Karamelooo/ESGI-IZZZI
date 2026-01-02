@@ -3,10 +3,12 @@ const props = withDefaults(
   defineProps<{
     tabs: { name: string }[];
     disabled?: boolean;
+    round?: boolean;
     modelValue: number;
   }>(),
   {
     disabled: false,
+    round: false,
   }
 );
 
@@ -28,6 +30,7 @@ const setTab = (index: number) => {
       :variant="modelValue === index ? 'switch' : 'plain'"
       :inSwitchComponent="true"
       :disabled="disabled"
+      :round="round"
       @click="setTab(index)"
     >
       {{ tab.name }}

@@ -14,7 +14,10 @@ import ClassEdit from '@views/classes/ClassEdit.vue';
 import SubjectsList from '@views/subjects/SubjectsList.vue';
 import SubjectCreate from '@views/subjects/SubjectCreate.vue';
 import Dashboard from '@views/dashboard/Dashboard.vue';
+import Survey from '@views/public/Survey.vue';
+import Tarif from '@views/public/Tarif.vue';
 import { useAuthStore } from '@stores/auth';
+
 
 const routes: Array<RouteRecordRaw> = [
   /* Public Routes */
@@ -22,6 +25,8 @@ const routes: Array<RouteRecordRaw> = [
   { path: '/pricing', name: 'pricing', component: Pricing },
   { path: '/ui-kit', name: 'ui-kit', component: UIKit },
   { path: '/survey', name: 'survey', component: Survey },
+  { path: '/tarif', name: 'tarif', component: Tarif },
+  
 
   /* Auth Routes */
   { path: '/auth', name: 'login', component: Auth },
