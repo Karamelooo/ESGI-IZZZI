@@ -4,10 +4,13 @@ import { useAuthStore } from '@stores/auth';
 import AdminNavBar from './AdminNavBar.vue';
 import NavBar from './NavBar.vue';
 import Profile from './Profile.vue';
+import { isAdminRoute } from '@utils/route';
+
+const route = useRoute();
+const authStore = useAuthStore();
 
 const props = withDefaults(
   defineProps<{
-    activeTab: number;
     disabled?: boolean;
   }>(),
   {
@@ -16,42 +19,35 @@ const props = withDefaults(
 );
 
 const emit = defineEmits<{
-  (e: 'update:activeTab', value: number): void;
   (e: 'openMobileMenu'): void;
 }>();
 
 const openMobileMenu = () => {
   emit('openMobileMenu');
 };
-
-const route = useRoute();
-const authStore = useAuthStore();
 </script>
 
 <template>
-  <header class="header">
+  <header class="header" :class="{ 'header--admin': isAdminRoute(route.path) }">
     <Logo :linkToHome="true" />
 
-    <component
-      :is="authStore.isAuthenticated ? AdminNavBar : NavBar"
-      :activeTab="props.activeTab"
-      :activeRoute="route.path"
-      v-bind="
-        authStore.isAuthenticated ? { 'onUpdate:activeTab': (value: number) => emit('update:activeTab', value) } : {}
-      "
-      class="header-component"
-    />
+    <component :is="isAdminRoute(route.path) ? AdminNavBar : NavBar" class="header-component" />
 
     <div class="header-menu-mobile">
       <Button icon="burger" iconPosition="right" @click="openMobileMenu">Menu</Button>
     </div>
 
-    <Profile v-if="authStore.isAuthenticated && authStore.user" :user="authStore.user" />
+    <Profile v-if="authStore.isAuthenticated" />
   </header>
 </template>
 
 <style scoped>
 .header {
+  width: 90%;
+  height: 6em;
+  margin: 1em 0;
+  padding: 0 20px;
+  border-radius: 8px;
   display: grid;
   position: fixed;
   top: 0;
@@ -59,12 +55,14 @@ const authStore = useAuthStore();
   align-self: center;
   justify-self: center;
   grid-template-columns: repeat(auto-fit, minmax(0, 1fr));
-  background-color: var(--bg-secondary, #fafafa);
-  padding: 0 1em;
-  margin: 1em 0;
-  width: 90%;
-  height: 6em;
-  border-radius: 1em;
+  background-color: var(--white);
+}
+
+.header--admin {
+  width: 100%;
+  height: 96px;
+  margin: 0;
+  position: sticky;
 }
 
 .header-menu-mobile {

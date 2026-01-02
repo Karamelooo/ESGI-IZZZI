@@ -50,7 +50,7 @@ import Button from '@components/base/Button.vue';
 
           <div class="footer-column">
             <h4>Nous contacter</h4>
-            <Button link="mailto:hello@izzzi.io" variant="neutral" class="contact-btn"> hello@izzzi.io </Button>
+            <Button link="/" variant="neutral" class="contact-btn"> hello@izzzi.io </Button>
           </div>
         </div>
       </div>
