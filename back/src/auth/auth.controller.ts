@@ -21,6 +21,13 @@ import { CurrentUser } from './decorators/current-user.decorator';
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
+  @Get('me')
+  @UseGuards(AccessTokenGuard)
+  async me(@CurrentUser() data: any) {
+    const user = await this.authService.getPublicUser(Number(data.userId));
+    return { user };
+  }
+
   @Post('register')
   @HttpCode(201)
   @UsePipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }))
@@ -51,13 +58,6 @@ export class AuthController {
     this.setAccessCookie(res, tokens.accessToken);
     this.setRefreshCookie(res, tokens.refreshToken);
     return res.json({ ok: true });
-  }
-
-  @Get('me')
-  @UseGuards(AccessTokenGuard)
-  async me(@CurrentUser() data: any) {
-    const user = await this.authService.getPublicUser(Number(data.userId));
-    return { user };
   }
 
   @Post('logout')

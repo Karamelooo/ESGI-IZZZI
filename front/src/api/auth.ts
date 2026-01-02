@@ -13,6 +13,12 @@ export interface RegisterPayload {
   lastName: string;
 }
 
+export async function fetchMe() {
+  const api = useTypedApi();
+  const response = await api.get('/auth/me');
+  return response.data;
+}
+
 export async function login(payload: LoginPayload) {
   const api = useTypedApi();
   const response = await api.post('/auth/login', payload);

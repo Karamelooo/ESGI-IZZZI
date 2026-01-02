@@ -14,8 +14,8 @@ const props = withDefaults(
     <Button link="/pricing" variant="plain" :class="{ active: activeRoute === '/pricing' }">Nos tarifs</Button>
 
     <div class="auth">
-      <Button link="/auth/register" variant="primary" icon="Arrow" iconPosition="right">S'inscrire</Button>
-      <Button link="/auth/login" variant="neutral" icon="Arrow" iconPosition="right">Se connecter</Button>
+      <Button link="/auth" variant="primary" icon="Arrow" iconPosition="right">S'inscrire</Button>
+      <Button link="/auth" variant="neutral" icon="Arrow" iconPosition="right">Se connecter</Button>
     </div>
   </nav>
 </template>

@@ -8,18 +8,18 @@ import {
 
 export class RegisterDto {
   @IsNotEmpty({ message: "Nom d'école requis" })
-  @MinLength(2, { message: "Nom d'école de 1 caractère min" })
   @MaxLength(10, { message: "Nom d'école de 100 caractères max" })
+  @MinLength(2, { message: "Nom d'école de 1 caractère min" })
   institutionName: string;
 
   @IsNotEmpty({ message: 'Prénom requis' })
-  @MinLength(1, { message: 'Prénom de 1 caractère min' })
   @MaxLength(50, { message: 'Prénom de 50 caractères max' })
+  @MinLength(1, { message: 'Prénom de 1 caractère min' })
   firstName: string;
 
   @IsNotEmpty({ message: 'Nom requis' })
-  @MinLength(1, { message: 'Nom de 1 caractère min' })
   @MaxLength(50, { message: 'Nom de 50 caractères max' })
+  @MinLength(1, { message: 'Nom de 1 caractère min' })
   lastName: string;
 
   @IsEmail({}, { message: 'Email invalide' })
@@ -28,10 +28,10 @@ export class RegisterDto {
   email: string;
 
   @IsNotEmpty({ message: 'Mot de passe requis' })
-  @MinLength(8, { message: 'Mot de passe de 8 caractères min' })
-  @MaxLength(128, { message: 'Mot de passe de 128 caractères max' })
   @Matches(/^(?=.*[a-zA-Z])(?=.*\d)[A-Za-z\d\S]{8,}$/, {
     message: 'Mot de passe alphanumérique',
   })
+  @MaxLength(128, { message: 'Mot de passe de 128 caractères max' })
+  @MinLength(8, { message: 'Mot de passe de 8 caractères min' })
   password: string;
 }

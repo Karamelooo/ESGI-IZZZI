@@ -5,7 +5,7 @@
   --primary: #ffe552;
   --secondary: #fff9d8;
 
-  /* Black & White */
+  /* Neutral */
   --black: #000000;
   --white: #ffffff;
 
@@ -97,6 +97,49 @@ a:active {
   font-weight: 300;
 }
 
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  min-width: 438px;
+}
+
+.form--centered {
+  align-items: center;
+}
+
+.form--full-width {
+  width: 100%;
+}
+
+.form-title {
+  font-weight: 400;
+}
+
+.form .input-wrapper {
+  width: 100%;
+}
+
+.form .button {
+  margin: 0;
+}
+
+.form--centered .button {
+  margin: 0 auto;
+}
+
+.form-row {
+  width: 100%;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.form .separator {
+  font-family: 'Mochiy Pop One';
+  font-size: 1.15rem;
+}
+
 .form-errors {
   width: 100%;
   display: flex;
@@ -133,14 +176,107 @@ h4 {
   font-size: 0.875rem;
 }
 
-p.p14 {
-  font-size: 0.875rem;
+.light {
+  font-weight: 300;
 }
 
-p.p12 {
-  font-size: 0.75rem;
+.regular {
+  font-weight: 400;
 }
 
-p.p10 {
-  font-size: 0.625rem;
+.medium {
+  font-weight: 500;
+}
+
+.semibold {
+  font-weight: 600;
+}
+
+.bold {
+  font-weight: 700;
+}
+
+.extra-bold {
+  font-weight: 800;
+}
+
+.black {
+  font-weight: 900;
+}
+
+.italic {
+  font-style: italic;
+}
+
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+  padding: 12px 20px;
+  height: 100vh;
+}
+
+.page .switch-panels {
+  flex: 1;
+}
+
+.page-content {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.page-actions {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.details-search {
+  display: flex;
+  gap: 56px;
+}
+
+.details-class {
+  display: flex;
+  align-items: end;
+  gap: 20px;
+}
+
+.details-class p {
+  position: relative;
+  bottom: 4px;
+}
+
+.details {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.details h1,
+.details h2,
+.details h3 {
+  font-weight: 400;
+}
+
+.details p {
+  max-width: 412px;
+}
+
+.search-wrapper {
+  display: grid;
+  align-items: center;
+}
+
+.search-input {
+  min-width: 362px;
+  overflow: hidden;
+  background-color: var(--white);
 }

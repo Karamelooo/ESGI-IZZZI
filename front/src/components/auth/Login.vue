@@ -1,9 +1,8 @@
 <script lang="ts" setup>
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
-import Input from '@components/base/Input.vue';
-import Button from '@components/base/Button.vue';
 import { useAuthStore } from '@stores/auth';
+import FormErrors from '@components/FormErrors.vue';
 
 const emit = defineEmits<{
   (e: 'forgot-password'): void;
@@ -15,8 +14,19 @@ const authStore = useAuthStore();
 
 const emailInput = ref('');
 const passwordInput = ref('');
+
 const loadingState = ref(false);
 const errorMessages = ref<string[]>([]);
+
+function fillCredentials(role: 'admin' | 'manager') {
+  if (role === 'admin') {
+    emailInput.value = 'admin@esgi.fr';
+    passwordInput.value = 'Test1234!';
+  } else if (role === 'manager') {
+    emailInput.value = 'manager@esgi.fr';
+    passwordInput.value = 'Test1234!';
+  }
+}
 
 async function onSubmit(event: Event) {
   event.preventDefault();
@@ -35,7 +45,7 @@ async function onSubmit(event: Event) {
 </script>
 
 <template>
-  <form class="auth-form auth-form--centered" @submit="onSubmit">
+  <form class="form form--centered" @submit="onSubmit">
     <Input
       v-model="emailInput"
       type="text"
@@ -56,16 +66,21 @@ async function onSubmit(event: Event) {
       @link-click="$emit('forgot-password')"
     />
 
-    <ul v-if="errorMessages.length" class="form-errors">
-      <li v-for="error in errorMessages" :key="error">{{ error }}.</li>
-    </ul>
+    <FormErrors :messages="errorMessages" />
 
     <div class="auth-actions">
       <Button icon="Arrow" iconPosition="right" :disabled="loadingState" type="submit">{{
         loadingState ? 'Connexion...' : 'Se connecter'
       }}</Button>
+      <!--
       <div class="separator">Ou</div>
       <Button icon="Arrow" variant="neutral" iconPosition="right">Se connecter avec Google</Button>
+      -->
+      <div class="separator">Connexion rapide</div>
+      <div style="display: flex; gap: 8px">
+        <Button variant="neutral" @click="fillCredentials('admin')">Admin</Button>
+        <Button variant="neutral" @click="fillCredentials('manager')">Responsable</Button>
+      </div>
     </div>
 
     <hr />

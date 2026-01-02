@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia';
-import { useApi } from '@api/axios';
+import { login as loginApi, register as registerApi, logout as logoutApi, fetchMe as fetchMeApi } from '@api/auth';
 
 export interface User {
   id: number;
@@ -8,17 +8,23 @@ export interface User {
   lastName: string;
   role: string;
   institutionId: number;
+  institution: {
+    id: number;
+    name: string;
+  };
 }
 
 interface AuthState {
   user: User | null;
   loading: boolean;
+  initialized: boolean;
 }
 
 export const useAuthStore = defineStore('auth', {
   state: (): AuthState => ({
     user: null,
     loading: false,
+    initialized: false,
   }),
   getters: {
     isAuthenticated(state): boolean {
@@ -30,21 +36,26 @@ export const useAuthStore = defineStore('auth', {
       this.user = userData;
     },
     async fetchMe() {
-      if (this.user) return;
-      const api = useApi();
+      if (this.initialized) return;
+      if (!localStorage.getItem('isAuthenticated')) {
+        this.initialized = true;
+        return;
+      }
       try {
-        const res = await api.get('/auth/me');
-        this.setUser(res.data.user);
+        const data = await fetchMeApi();
+        this.setUser(data.user);
       } catch {
         this.setUser(null);
+      } finally {
+        this.initialized = true;
       }
     },
     async login(payload: { email: string; password: string }) {
       this.loading = true;
-      const api = useApi();
       try {
-        const res = await api.post('/auth/login', payload);
-        this.setUser(res.data.user);
+        const data = await loginApi(payload);
+        this.setUser(data.user);
+        localStorage.setItem('isAuthenticated', 'true');
       } catch {
         throw new Error('Connexion échouée');
       } finally {
@@ -59,10 +70,10 @@ export const useAuthStore = defineStore('auth', {
       password: string;
     }) {
       this.loading = true;
-      const api = useApi();
       try {
-        const res = await api.post('/auth/register', payload);
-        this.setUser(res.data.user);
+        const data = await registerApi(payload);
+        this.setUser(data.user);
+        localStorage.setItem('isAuthenticated', 'true');
       } catch {
         throw new Error('Inscription échouée');
       } finally {
@@ -70,11 +81,11 @@ export const useAuthStore = defineStore('auth', {
       }
     },
     async logout() {
-      const api = useApi();
       try {
-        await api.post('/auth/logout');
+        await logoutApi();
       } finally {
         this.setUser(null);
+        localStorage.removeItem('isAuthenticated');
       }
     },
   },

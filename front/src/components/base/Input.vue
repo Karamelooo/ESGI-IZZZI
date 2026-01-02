@@ -170,14 +170,13 @@ const wrapperClass = computed(() => ({
           rows="4"
           :placeholder="placeholder"
           :name="name"
+          :value="modelValue"
           :disabled="disabled"
           :required="required"
           @input="onInput"
           @focus="onFocus"
           @blur="onBlur"
-        >
-          {{ modelValue }}
-        </textarea>
+        ></textarea>
       </template>
 
       <template v-else>

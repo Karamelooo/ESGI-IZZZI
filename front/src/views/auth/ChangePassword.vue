@@ -17,7 +17,7 @@ function handleSubmit() {
     <Logo :size="130" />
 
     <Card>
-      <form class="auth-form">
+      <form class="form">
         <span class="title">Définir un nouveau mot de passe</span>
 
         <Input

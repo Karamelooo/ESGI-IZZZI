@@ -1,29 +1,39 @@
 <script lang="ts" setup>
+import { useRoute } from 'vue-router';
+
 const props = withDefaults(
   defineProps<{
-    activeTab: number;
-    activeRoute?: string;
+    disabled?: boolean;
   }>(),
   {
-    activeRoute: '/',
+    disabled: false,
   }
 );
 
-const emit = defineEmits<{
-  (e: 'update:activeTab', value: number): void;
-}>();
+const route = useRoute();
 
-const switchTabs = [{ name: 'Mes classes' }, { name: 'Dashboard' }];
-
-function onTabChange(index: number) {
-  emit('update:activeTab', index);
-}
+const isDashboard = () => route.path.startsWith('/dashboard');
 </script>
 
 <template>
   <nav class="navbar navbar--authenticated">
-    <div class="">
-      <SwitchTabs :tabs="switchTabs" :modelValue="props.activeTab" @update:modelValue="onTabChange" />
+    <div class="switch-tabs">
+      <Button
+        link="/classes"
+        :variant="!isDashboard() ? 'switch' : 'plain'"
+        :inSwitchComponent="true"
+        :disabled="disabled"
+      >
+        Mes classes
+      </Button>
+      <Button
+        link="/dashboard"
+        :variant="isDashboard() ? 'switch' : 'plain'"
+        :inSwitchComponent="true"
+        :disabled="disabled"
+      >
+        Dashboard
+      </Button>
     </div>
   </nav>
 </template>
@@ -34,5 +44,15 @@ function onTabChange(index: number) {
   align-items: center;
   justify-self: center;
   gap: 40px;
+}
+
+.switch-tabs {
+  width: fit-content;
+  display: flex;
+  align-items: center;
+  padding: 10px;
+  border: 1px solid var(--gray-15);
+  border-radius: 8px;
+  background-color: var(--gray-5);
 }
 </style>

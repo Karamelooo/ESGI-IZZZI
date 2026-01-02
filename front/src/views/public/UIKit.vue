@@ -6,9 +6,9 @@ import CheckBoxGroup from '@components/form/CheckBoxGroup.vue';
 import Loader from '@components/animated/Loader.vue';
 import Live from '@components/animated/Live.vue';
 import Banderole from '@components/animated/Banderole.vue';
-import CardClass from '@/components/layout/CardClass.vue';
-import CardClassButton from '@/components/layout/CardClassButton.vue';
-import CardClassHome from '@/components/layout/CardClassHome.vue';
+import CardClass from '@components/layout/CardClass.vue';
+import CardClassButton from '@components/layout/CardClassButton.vue';
+import CardClassHome from '@components/layout/CardClassHome.vue';
 
 const toast = useToast();
 
@@ -46,7 +46,7 @@ const iconRows = chunk(iconNames, 7);
       <div>
         <CardClassHome
           title="Amélioration continue"
-          text="N’offrez pas à vos étudiants l’occasion d’être déçus. Captez leurs retours avant la fin de du module et ajuster ce qui mérite de l’être en live."
+          text="N'offrez pas à vos étudiants l'occasion d'être déçus. Captez leurs retours avant la fin de du module et ajuster ce qui mérite de l'être en live."
           emphase="Ne soyez plus désolé"
         />
         <br />

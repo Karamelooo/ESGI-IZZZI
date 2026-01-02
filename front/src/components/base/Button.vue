@@ -2,20 +2,28 @@
 const props = withDefaults(
   defineProps<{
     link?: string;
+    width?: 'fill' | 'fit';
     type?: 'button' | 'submit' | 'reset';
     variant?: 'primary' | 'neutral' | 'plain' | 'switch';
     icon?: string;
+    iconOnly?: boolean;
     iconPosition?: 'left' | 'right';
     disabled?: boolean;
     inSwitchComponent?: boolean;
+    flipHorizontal?: boolean;
+    flipVertical?: boolean;
     round?: boolean;
   }>(),
   {
+    width: 'fit',
     type: 'button',
     variant: 'primary',
+    iconOnly: false,
     iconPosition: 'left',
     disabled: false,
     inSwitchComponent: false,
+    flipHorizontal: false,
+    flipVertical: false,
     round: false,
   }
 );
@@ -34,7 +42,12 @@ const handleClick = (event: MouseEvent) => {
 <template>
   <router-link v-if="link" :to="link" custom v-slot="{ navigate, href }">
     <button
-      :class="['button', `button--${variant}`, { 'button--in-switch': inSwitchComponent, 'button--round': round }]"
+      :class="[
+        'button',
+        `button--${variant}`,
+        `button--width-${width}`,
+        { 'button--in-switch': inSwitchComponent, 'button--icon-only': iconOnly, 'button--round': round },
+      ]"
       :type="type"
       :disabled="disabled"
       :href="href"
@@ -45,24 +58,49 @@ const handleClick = (event: MouseEvent) => {
         }
       "
     >
-      <div class="button-container" :style="variant === 'plain' ? 'gap: 10px;' : ''">
-        <Icon v-if="icon && iconPosition === 'left'" :name="icon" />
-        <slot />
-        <Icon v-if="icon && iconPosition === 'right'" :name="icon" />
+      <div class="button-container" :style="{ gap: variant === 'plain' ? '10px' : '' }">
+        <Icon
+          v-if="icon && iconPosition === 'left'"
+          :name="icon"
+          :flip-horizontal="flipHorizontal"
+          :flip-vertical="flipVertical"
+        />
+        <slot v-if="!iconOnly" />
+        <Icon
+          v-if="icon && iconPosition === 'right'"
+          :name="icon"
+          :flip-horizontal="flipHorizontal"
+          :flip-vertical="flipVertical"
+        />
       </div>
     </button>
   </router-link>
   <button
     v-else
-    :class="['button', `button--${variant}`, { 'button--in-switch': inSwitchComponent, 'button--round': round }]"
+    :class="[
+      'button',
+      `button--${variant}`,
+      `button--width-${width}`,
+      { 'button--in-switch': inSwitchComponent, 'button--icon-only': iconOnly, 'button--round': round },
+    ]"
     :type="type"
     :disabled="disabled"
     @click="handleClick"
   >
-    <div class="button-container" :style="variant === 'plain' ? 'gap: 10px;' : ''">
-      <Icon v-if="icon && iconPosition === 'left'" :name="icon" />
-      <slot />
-      <Icon v-if="icon && iconPosition === 'right'" :name="icon" />
+    <div class="button-container" :style="{ gap: variant === 'plain' ? '10px' : '' }">
+      <Icon
+        v-if="icon && iconPosition === 'left'"
+        :name="icon"
+        :flip-horizontal="flipHorizontal"
+        :flip-vertical="flipVertical"
+      />
+      <slot v-if="!iconOnly" />
+      <Icon
+        v-if="icon && iconPosition === 'right'"
+        :name="icon"
+        :flip-horizontal="flipHorizontal"
+        :flip-vertical="flipVertical"
+      />
     </div>
   </button>
 </template>
@@ -89,6 +127,15 @@ const handleClick = (event: MouseEvent) => {
     color 0.2s ease-in-out,
     padding-left 0.2s ease-in-out,
     padding-right 0.2s ease-in-out;
+}
+
+/* Width variants */
+.button--width-fill {
+  width: 100%;
+}
+
+.button--width-fit {
+  width: fit-content;
 }
 
 /* Disabled state */
@@ -198,5 +245,15 @@ const handleClick = (event: MouseEvent) => {
   .button--in-switch {
     padding: 12px 36px;
   }
+}
+
+.button--icon-only {
+  width: 43px;
+  height: 43px;
+  padding: 0;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 </style>

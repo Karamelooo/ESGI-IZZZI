@@ -4,10 +4,14 @@ const props = withDefaults(
     name: string;
     color?: string;
     size?: string;
+    flipHorizontal?: boolean;
+    flipVertical?: boolean;
   }>(),
   {
     color: 'black',
     size: '16px',
+    flipHorizontal: false,
+    flipVertical: false,
   }
 );
 </script>
@@ -19,6 +23,9 @@ const props = withDefaults(
       '--icon-url': `url(/src/assets/svg/icons/${props.name}.svg)`,
       '--icon-color': props.color,
       '--icon-size': props.size,
+      transform: [props.flipHorizontal ? 'scaleX(-1)' : '', props.flipVertical ? 'scaleY(-1)' : '']
+        .filter(Boolean)
+        .join(' '),
     }"
   ></div>
 </template>

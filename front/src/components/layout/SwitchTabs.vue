@@ -1,11 +1,13 @@
 <script lang="ts" setup>
 const props = withDefaults(
   defineProps<{
-    modelValue: number;
     tabs: { name: string }[];
+    disabled?: boolean;
     round?: boolean;
+    modelValue: number;
   }>(),
   {
+    disabled: false,
     round: false,
   }
 );
@@ -15,6 +17,7 @@ const emit = defineEmits<{
 }>();
 
 const setTab = (index: number) => {
+  if (props.disabled) return;
   emit('update:modelValue', index);
 };
 </script>
@@ -26,6 +29,7 @@ const setTab = (index: number) => {
       :key="index"
       :variant="modelValue === index ? 'switch' : 'plain'"
       :inSwitchComponent="true"
+      :disabled="disabled"
       :round="round"
       @click="setTab(index)"
     >

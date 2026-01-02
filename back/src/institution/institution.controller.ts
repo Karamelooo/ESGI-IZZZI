@@ -17,15 +17,19 @@ import { CreateInstitutionDto } from './dto/create-institution.dto';
 import { UpdateInstitutionDto } from './dto/update-institution.dto';
 import { Institution } from '@prisma/client';
 import { AccessTokenGuard } from '../auth/guards/access-token.guard';
+import { PermissionsGuard } from '../auth/guards/permissions.guard';
+import { RequirePermissions } from '../auth/decorators/permissions.decorator';
 import { ApiTags, ApiOperation } from '@nestjs/swagger';
 
 @ApiTags('institutions')
 @Controller('institutions')
+@UseGuards(AccessTokenGuard, PermissionsGuard)
 export class InstitutionController {
   constructor(private readonly institutionService: InstitutionService) {}
 
   @Get()
   @ApiOperation({ summary: 'Get all institutions' })
+  @RequirePermissions('institutions:read')
   async findAll(
     @Query('withDeleted') withDeleted?: string,
   ): Promise<Institution[]> {
@@ -34,6 +38,7 @@ export class InstitutionController {
 
   @Get(':id')
   @ApiOperation({ summary: 'Get an institution by id' })
+  @RequirePermissions('institutions:read')
   async findOne(
     @Param('id', ParseIntPipe) id: number,
     @Query('withDeleted') withDeleted?: string,
@@ -44,6 +49,7 @@ export class InstitutionController {
   @Post()
   @HttpCode(201)
   @ApiOperation({ summary: 'Create a new institution' })
+  @RequirePermissions('institutions:create')
   @UsePipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }))
   async create(
     @Body() createInstitutionDto: CreateInstitutionDto,
@@ -51,9 +57,9 @@ export class InstitutionController {
     return this.institutionService.create(createInstitutionDto);
   }
 
-  @UseGuards(AccessTokenGuard)
   @Patch(':id')
   @ApiOperation({ summary: 'Update institution by id' })
+  @RequirePermissions('institutions:update')
   @UsePipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }))
   async update(
     @Param('id', ParseIntPipe) id: number,
@@ -62,9 +68,9 @@ export class InstitutionController {
     return this.institutionService.update(id, updateInstitutionDto);
   }
 
-  @UseGuards(AccessTokenGuard)
   @Patch(':id/remove')
   @ApiOperation({ summary: 'Soft delete institution' })
+  @RequirePermissions('institutions:delete')
   async remove(
     @Param('id', ParseIntPipe) id: number,
   ): Promise<{ success: boolean }> {
@@ -72,9 +78,9 @@ export class InstitutionController {
     return { success: true };
   }
 
-  @UseGuards(AccessTokenGuard)
   @Patch(':id/restore')
   @ApiOperation({ summary: 'Restore soft deleted institution' })
+  @RequirePermissions('institutions:delete')
   async restore(@Param('id', ParseIntPipe) id: number): Promise<Institution> {
     return this.institutionService.restore(id);
   }

@@ -1,14 +1,9 @@
 <script lang="ts" setup>
-const props = defineProps<{
-  user: {
-    firstName: string;
-    lastName: string;
-    role: string;
-  };
-}>();
+import { useAuthStore } from '@stores/auth';
 
-const isSuper = ['super', 'admin'].includes(props.user.role);
-const isAdmin = ['admin'].includes(props.user.role);
+const authStore = useAuthStore();
+
+const isSuper = true;
 
 function handleNotificationClick() {
   console.log('IconButton clicked!');
@@ -23,7 +18,7 @@ function handleNotificationClick() {
       <Avatar />
 
       <div class="infos">
-        <p class="name">{{ props.user.firstName }} {{ props.user.lastName }}</p>
+        <p class="name" v-if="authStore.user">{{ authStore.user.firstName }} {{ authStore.user.lastName }}</p>
 
         <div v-if="isSuper" class="role-wrapper--admin">
           <Icon name="Crown" color="var(--white)" />
@@ -35,8 +30,6 @@ function handleNotificationClick() {
         </div>
       </div>
     </div>
-
-    <Button v-if="isAdmin">Partager</Button>
   </div>
 </template>
 

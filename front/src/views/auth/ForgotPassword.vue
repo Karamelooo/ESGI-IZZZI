@@ -22,7 +22,7 @@ function goToLogin() {
     <Logo :size="130" />
 
     <Card>
-      <form v-if="!isFormSubmitted" class="auth-form">
+      <form v-if="!isFormSubmitted" class="form">
         <span class="title">Mot de passe oublié</span>
 
         <Input
@@ -37,7 +37,7 @@ function goToLogin() {
         <Button icon="Arrow" iconPosition="right" @click="handleSubmit">Réinitialiser</Button>
       </form>
 
-      <form v-else class="auth-form">
+      <form v-else class="form">
         <span class="title">📩 Email de réinitialisation envoyé !</span>
 
         <p class="description">

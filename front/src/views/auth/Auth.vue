@@ -57,34 +57,6 @@ const activeTab = ref(0);
   justify-content: center;
 }
 
-.auth-form {
-  display: flex;
-  flex-direction: column;
-  gap: 24px;
-  width: 438px;
-}
-
-.auth-form--centered {
-  align-items: center;
-}
-
-.auth-form .input-wrapper {
-  width: 100%;
-}
-
-.auth-form .button {
-  margin: 0;
-}
-
-.auth-form--centered .button {
-  margin: 0 auto;
-}
-
-.auth-form .separator {
-  font-family: 'Mochiy Pop One';
-  font-size: 1.15rem;
-}
-
 .auth-actions {
   display: flex;
   flex-direction: column;
@@ -111,7 +83,7 @@ const activeTab = ref(0);
     width: 100%;
   }
 
-  .auth-form {
+  .form {
     width: 100%;
   }
 }
