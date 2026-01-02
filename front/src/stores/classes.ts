@@ -10,7 +10,7 @@ export interface Class {
   name: string;
   description?: string;
   studentCount: number;
-  studentEmails: string[];
+  studentEmails: string;
   institutionId: number;
   deletedAt?: string | null;
 }

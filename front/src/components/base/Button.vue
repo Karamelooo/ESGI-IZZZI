@@ -1,10 +1,12 @@
 <script lang="ts" setup>
+export type ButtonVariant = 'primary' | 'secondary' | 'neutral' | 'plain' | 'switch';
+
 const props = withDefaults(
   defineProps<{
     link?: string;
     width?: 'fill' | 'fit';
     type?: 'button' | 'submit' | 'reset';
-    variant?: 'primary' | 'neutral' | 'plain' | 'switch';
+    variant?: ButtonVariant;
     icon?: string;
     iconOnly?: boolean;
     iconPosition?: 'left' | 'right';
@@ -156,6 +158,16 @@ const handleClick = (event: MouseEvent) => {
 
 .button--primary:disabled:hover {
   background-color: var(--primary);
+}
+
+/* Secondary variant */
+.button--secondary {
+  background-color: var(--orange);
+  border: 1px solid var(--orange);
+}
+
+.button--secondary:hover {
+  background-color: var(--dark-orange);
 }
 
 /* Neutral variant */

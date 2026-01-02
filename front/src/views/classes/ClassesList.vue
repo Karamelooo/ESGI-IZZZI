@@ -4,6 +4,10 @@ import { useRouter } from 'vue-router';
 import { useAuthStore } from '@stores/auth';
 import { useClassesStore } from '@stores/classes';
 import ClassesListItem from '@components/classes/ClassesListItem.vue';
+import Modal from '@components/base/Modal.vue';
+import ClassForm from '@components/forms/ClassForm.vue';
+import { createClass, type CreateClassPayload } from '@api/classes';
+import { isAxiosError } from 'axios';
 
 const router = useRouter();
 const authStore = useAuthStore();
@@ -11,19 +15,22 @@ const classesStore = useClassesStore();
 
 const searchQuery = ref('');
 const isViewingArchived = ref(false);
+const showCreateModal = ref(false);
+const createLoading = ref(false);
+const createErrors = ref<string[]>([]);
 
-const toggleView = async () => {
+const toggleArchivedView = async () => {
   isViewingArchived.value = !isViewingArchived.value;
   const institutionId = authStore.user?.institution.id;
   if (institutionId) {
     await classesStore.fetchClasses(institutionId, isViewingArchived.value);
+  } else {
+    router.push('/auth');
   }
 };
 
 const currentList = computed(() => (isViewingArchived.value ? classesStore.archivedClasses : classesStore.classes));
-
 const hasClasses = computed(() => currentList.value.length > 0);
-
 const filteredList = computed(() => {
   return currentList.value.filter((c) => c.name.toLowerCase().includes(searchQuery.value.toLowerCase()));
 });
@@ -37,6 +44,48 @@ onMounted(async () => {
     router.push('/auth');
   }
 });
+
+const toggleCreateModal = (value: boolean) => {
+  showCreateModal.value = value;
+};
+
+const confirmCreate = async (formData: CreateClassPayload) => {
+  createLoading.value = true;
+  createErrors.value = [];
+
+  const institutionId = authStore.user?.institution.id;
+  if (!institutionId) {
+    createErrors.value.push('Session invalide. Veuillez vous reconnecter.');
+    createLoading.value = false;
+    return;
+  }
+
+  try {
+    const createdClass = await createClass({
+      name: formData.name,
+      studentCount: formData.studentCount,
+      studentEmails: formData.studentEmails,
+      description: formData.description || undefined,
+    });
+
+    await classesStore.fetchClasses(institutionId, isViewingArchived.value);
+
+    toggleCreateModal(false);
+    router.push('/classes/' + createdClass.id + '/subjects/new');
+  } catch (error) {
+    if (isAxiosError(error) && error.response?.data?.message) {
+      if (Array.isArray(error.response.data.message)) {
+        createErrors.value.push(...error.response.data.message);
+      } else {
+        createErrors.value.push(error.response.data.message);
+      }
+    } else {
+      createErrors.value.push('Une erreur est survenue lors de la création de la classe.');
+    }
+  } finally {
+    createLoading.value = false;
+  }
+};
 </script>
 
 <template>
@@ -60,7 +109,7 @@ onMounted(async () => {
             />
           </div>
         </div>
-        <Button v-if="!isViewingArchived" icon="Plus" iconPosition="right" @click="router.push('/classes/new')">
+        <Button v-if="!isViewingArchived" icon="Plus" iconPosition="right" @click="toggleCreateModal(true)">
           Ajouter une classe
         </Button>
       </div>
@@ -74,7 +123,7 @@ onMounted(async () => {
         />
       </div>
 
-      <Button variant="plain" icon="Arrow" iconPosition="right" @click="toggleView">
+      <Button variant="plain" icon="Arrow" iconPosition="right" @click="toggleArchivedView">
         {{ isViewingArchived ? 'Voir les classes actives' : 'Voir les classes archivées' }}
       </Button>
     </div>
@@ -87,7 +136,7 @@ onMounted(async () => {
       :spacing="36"
     >
       <h2>Pour commencer,<br />créez une classe</h2>
-      <Button icon="Arrow" iconPosition="right" @click="router.push('/classes/new')">Je créé une classe</Button>
+      <Button icon="Arrow" iconPosition="right" @click="toggleCreateModal(true)">Je créé une classe</Button>
     </Card>
 
     <div v-else-if="isViewingArchived && !hasClasses" class="page-content">
@@ -100,8 +149,20 @@ onMounted(async () => {
         </div>
       </div>
 
-      <Button variant="plain" icon="Arrow" iconPosition="right" @click="toggleView"> Voir les classes actives </Button>
+      <Button variant="plain" icon="Arrow" iconPosition="right" @click="toggleArchivedView">
+        Voir les classes actives
+      </Button>
     </div>
+
+    <Modal :isOpen="showCreateModal" title="Nouvelle classe" @close="toggleCreateModal(false)">
+      <ClassForm
+        submitLabel="Créer la classe"
+        :loading="createLoading"
+        :externalErrors="createErrors"
+        @submit="confirmCreate"
+        @cancel="toggleCreateModal(false)"
+      />
+    </Modal>
   </div>
 </template>
 
