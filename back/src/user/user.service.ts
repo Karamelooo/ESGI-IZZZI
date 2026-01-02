@@ -139,9 +139,6 @@ export class UserService {
     institutionId: number,
     data: UpdatePasswordDto,
   ): Promise<UserPublic> {
-    // For password update, we need to check password, so we use findOneWithPassword but we should also check institutionId
-    // But findOneWithPassword doesn't take institutionId in my previous code?
-    // Let's rely on findOneById check first or add check here.
     const checkUser = await this.findOneById(userId, institutionId);
     if (!checkUser) throw new NotFoundException('Utilisateur non trouvé');
 

@@ -7,15 +7,13 @@
       <span>Retours sincères</span><span>•</span> <span>Qualiopi Friendly</span><span>•</span>
       <span>Double satisfaction</span><span>•</span> <span>Pôle qualité</span><span>•</span>
       <span>Version gratuite à vie</span><span>•</span> <span>+73% de retours</span><span>•</span>
-      <span>Amélioration continue</span><span>•</span>
-      <span>Gratuit à vie</span><span>•</span>
+      <span>Amélioration continue</span><span>•</span> <span>Gratuit à vie</span><span>•</span>
 
       <span>100% made in France</span><span>•</span> <span>Assistance via IA</span><span>•</span>
       <span>Retours sincères</span><span>•</span> <span>Qualiopi Friendly</span><span>•</span>
       <span>Double satisfaction</span><span>•</span> <span>Pôle qualité</span><span>•</span>
       <span>Version gratuite à vie</span><span>•</span> <span>+73% de retours</span><span>•</span>
-      <span>Amélioration continue</span><span>•</span>
-      <span>Gratuit à vie</span><span>•</span>
+      <span>Amélioration continue</span><span>•</span> <span>Gratuit à vie</span><span>•</span>
     </p>
   </div>
 </template>
