@@ -9,6 +9,9 @@ import { UserModule } from './user/user.module';
 import { InstitutionModule } from './institution/institution.module';
 import { ClassModule } from './class/class.module';
 import { SubjectModule } from './subject/subject.module';
+import { FormTemplateModule } from './form-template/form-template.module';
+import { FormModule } from './form/form.module';
+import { ResponseModule } from './response/response.module';
 
 @Module({
   imports: [
@@ -24,6 +27,9 @@ import { SubjectModule } from './subject/subject.module';
     InstitutionModule,
     ClassModule,
     SubjectModule,
+    FormTemplateModule,
+    FormModule,
+    ResponseModule,
   ],
   controllers: [AppController],
   providers: [AppService],
