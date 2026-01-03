@@ -118,8 +118,13 @@ onMounted(async () => {
               </div>
               <p class="subject-dates">{{ toDateFR(row.startDate) }} - {{ toDateFR(row.endDate) }}</p>
             </div>
-            <Button icon="Arrow" iconPosition="right" width="fit">Modifier le formulaire</Button>
           </div>
+        </template>
+
+        <template #cell-surveysLinks="{ row }">
+          <Button variant="secondary" icon="Arrow" iconPosition="right" width="fit">
+            Choisir le type de formulaire
+          </Button>
         </template>
       </Table>
     </div>

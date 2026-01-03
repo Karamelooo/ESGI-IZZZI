@@ -13,7 +13,7 @@ import CardClass from '@/components/layout/CardClass.vue';
       <section class="hero-section">
         <div class="hero-content">
           <h1>
-            Collectyez <img src="@assets/svg/icons/Orange-Rounded-Arrow.svg" alt="Arrow" class="rounded-arrow" /> <br />
+            Collectez <img src="@assets/svg/icons/Orange-Rounded-Arrow.svg" alt="Arrow" class="rounded-arrow" /> <br />
             les <span class="highlight">retours</span> des <br />
             étudiants en live
           </h1>
@@ -388,8 +388,7 @@ main {
 }
 
 .highlight {
-  text-decoration: underline;
-  text-decoration-color: var(--dark-orange);
+  border-bottom: 4px solid var(--dark-orange);
 }
 
 .subtitle {

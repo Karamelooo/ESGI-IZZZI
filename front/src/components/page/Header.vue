@@ -51,7 +51,7 @@ const openMobileMenu = () => {
   display: grid;
   position: fixed;
   top: 0;
-  z-index: 1000;
+  z-index: 500;
   align-self: center;
   justify-self: center;
   grid-template-columns: repeat(auto-fit, minmax(0, 1fr));

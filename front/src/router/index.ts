@@ -8,9 +8,7 @@ import Auth from '@views/auth/Auth.vue';
 import ChangePassword from '@views/auth/ChangePassword.vue';
 import ForgotPassword from '@views/auth/ForgotPassword.vue';
 import ClassesList from '@views/classes/ClassesList.vue';
-import ClassCreate from '@views/classes/ClassCreate.vue';
 import ClassView from '@views/classes/ClassView.vue';
-import ClassEdit from '@views/classes/ClassEdit.vue';
 import SubjectsList from '@views/subjects/SubjectsList.vue';
 import SubjectCreate from '@views/subjects/SubjectCreate.vue';
 import Dashboard from '@views/dashboard/Dashboard.vue';
@@ -30,9 +28,7 @@ const routes: Array<RouteRecordRaw> = [
 
   /* Classes Routes */
   { path: '/classes', name: 'classes-list', component: ClassesList },
-  { path: '/classes/new', name: 'class-create', component: ClassCreate },
   { path: '/classes/:id', name: 'class-view', component: ClassView },
-  { path: '/classes/:id/edit', name: 'class-edit', component: ClassEdit },
 
   /* Subjects Routes */
   { path: '/classes/:id/subjects', name: 'subject-list', component: SubjectsList },
