@@ -61,6 +61,7 @@ const openMobileMenu = () => {
 .header--admin {
   width: 100%;
   height: 96px;
+  min-height: 96px;
   margin: 0;
   position: sticky;
 }

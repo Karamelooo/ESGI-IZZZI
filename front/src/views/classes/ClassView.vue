@@ -95,7 +95,7 @@ onMounted(async () => {
             iconPosition="right"
             @click="router.push('/classes/' + classId + '/subjects')"
           >
-            Voir les matières
+            Gérer les matières
           </Button>
           <Button
             variant="primary"

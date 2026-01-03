@@ -32,7 +32,7 @@ const emit = defineEmits<{
 
         <div class="modal-body"><slot></slot></div>
 
-        <div v-if="confirmText || cancelText" class="modal-actions">
+        <div v-if="confirmText || cancelText" class="form-actions">
           <Button v-if="confirmText" :variant="confirmVariant" @click="emit('confirm')">
             {{ confirmText }}
           </Button>
@@ -70,11 +70,5 @@ const emit = defineEmits<{
 
 .modal-body {
   line-height: 1.25;
-}
-
-.modal-actions {
-  display: flex;
-  gap: 24px;
-  width: 100%;
 }
 </style>
