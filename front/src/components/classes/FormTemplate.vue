@@ -1,27 +1,5 @@
 <script lang="ts" setup>
-interface FormTemplateGroup {
-  id: number;
-  name: string;
-  description: string;
-  order: number;
-}
-interface FormTemplateQuestion {
-  id: number;
-  type: 'SHORT_TEXT' | 'LONG_TEXT' | 'SINGLE_CHOICE' | 'MULTIPLE_CHOICE' | 'STAR_RATING';
-  label: string;
-  order: number;
-  required: boolean;
-  options?: string[];
-  groupId?: number;
-}
-
-interface FormTemplate {
-  id: number;
-  name: string;
-  description: string;
-  questions?: FormTemplateQuestion[];
-  questionGroups?: FormTemplateGroup[];
-}
+import type { FormTemplate } from '@api/forms';
 
 const props = defineProps<{
   template: FormTemplate;
@@ -73,6 +51,7 @@ const props = defineProps<{
   display: flex;
   align-items: center;
   justify-content: center;
+  aspect-ratio: 1;
   border-radius: 8px;
   background-color: var(--white);
 }
@@ -80,7 +59,7 @@ const props = defineProps<{
 .form-template-details {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 6px;
 }
 
 .form-template-details h3 {

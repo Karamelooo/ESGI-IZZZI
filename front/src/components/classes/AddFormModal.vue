@@ -1,8 +1,9 @@
 <script lang="ts" setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, computed } from 'vue';
 import { fetchFormTemplates, createSubjectForms } from '@api/forms';
 import type { FormTemplate as FormTemplateType } from '@api/forms';
 import FormTemplate from './FormTemplate.vue';
+import FormTemplatePreview from './FormTemplatePreview.vue';
 
 const props = defineProps<{
   isOpen: boolean;
@@ -18,6 +19,7 @@ const modalTitle = ref('Deux moments clés pour recueillir les retours des étud
 
 const templates = ref<FormTemplateType[]>([]);
 const selectedTemplateId = ref<number | null>(null);
+const selectedTemplate = computed(() => templates.value.find((t) => t.id === selectedTemplateId.value) as any);
 const loading = ref(false);
 const error = ref<string | null>(null);
 
@@ -80,12 +82,9 @@ const handleConfirm = async () => {
           />
         </div>
 
-        <Card :padding="0" :spacing="16" :fullWidth="true" :centered="true" class="afm-template-preview">
-          <div class="form-template-icon">
-            <Icon name="Eyes" />
-          </div>
-          <h3>Sélectionnez un modèle<br />pour le prévisualiser.</h3>
-        </Card>
+        <div class="afm-preview-container">
+          <FormTemplatePreview :template="selectedTemplate" />
+        </div>
       </div>
     </div>
   </Modal>
@@ -128,16 +127,16 @@ const handleConfirm = async () => {
 }
 
 .afm-templates-list {
-  width: 100%;
+  flex: 1;
   display: flex;
   flex-direction: column;
   gap: 20px;
+  overflow-y: auto;
 }
 
-.afm-template-preview h3 {
-  font-size: 14px;
-  font-weight: 400;
-  text-align: center;
+.afm-preview-container {
+  flex: 2;
+  height: 100%;
 }
 
 .form-template-icon {

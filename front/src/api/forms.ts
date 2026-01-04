@@ -1,9 +1,30 @@
 import axiosInstance from './axios';
 
+export interface FormTemplateGroup {
+  id: number;
+  name: string;
+  description: string;
+  order: number;
+  templateId: number;
+}
+
+export interface FormTemplateQuestion {
+  id: number;
+  type: 'SHORT_TEXT' | 'LONG_TEXT' | 'SINGLE_CHOICE' | 'MULTIPLE_CHOICE' | 'STAR_RATING';
+  label: string;
+  order: number;
+  required: boolean;
+  options?: string[];
+  groupId?: number;
+  templateId?: number;
+}
+
 export interface FormTemplate {
   id: number;
   name: string;
   description: string;
+  questions?: FormTemplateQuestion[];
+  questionGroups?: FormTemplateGroup[];
 }
 
 export const fetchFormTemplates = async (): Promise<FormTemplate[]> => {
