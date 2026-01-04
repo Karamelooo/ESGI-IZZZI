@@ -115,8 +115,8 @@ const confirmEdit = async (formData: any) => {
     cancelText="Annuler"
     confirmVariant="primary"
     cancelVariant="plain"
-    @close="toggleArchiveModal(false)"
     @confirm="confirmArchive"
+    @close="toggleArchiveModal(false)"
   >
     Cette classe ne sera plus modifiable ni restaurable, mais restera consultable dans vos classes archivées.
   </Modal>

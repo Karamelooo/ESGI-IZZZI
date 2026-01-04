@@ -32,6 +32,9 @@ export class SubjectService {
         institutionId,
         ...(withDeleted ? {} : { deletedAt: null }),
       },
+      include: {
+        forms: true,
+      },
       orderBy: { id: 'asc' },
     });
   }

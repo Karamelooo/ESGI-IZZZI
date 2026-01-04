@@ -6,6 +6,7 @@ import { isAxiosError } from 'axios';
 import { useSubjectsStore } from '@stores/subjects';
 import { storeToRefs } from 'pinia';
 import { toDateFR } from '@utils/date';
+import AddFormModal from '@components/classes/AddFormModal.vue';
 
 interface Subject {
   name: string;
@@ -23,6 +24,13 @@ interface ClassData {
   subjects: Subject[];
 }
 
+const tableColumns = [
+  { key: 'subject', label: 'Matière' },
+  { key: 'surveysLinks', label: 'Liens des formulaires de retours' },
+  { key: 'qrCode', label: 'Code QR' },
+  { key: 'actions', label: 'Retours' },
+];
+
 const route = useRoute();
 const router = useRouter();
 
@@ -30,11 +38,13 @@ const initialLoading = ref(true);
 const errorMessages = ref<string[]>([]);
 const searchQuery = ref('');
 
-const subjectsStore = useSubjectsStore();
-const { subjects } = storeToRefs(subjectsStore);
-
+const showAddFormModal = ref(false);
 const classId = route.params.id as string;
 const classData = ref<Partial<ClassData>>({});
+const selectedSubjectId = ref<number | null>(null);
+
+const subjectsStore = useSubjectsStore();
+const { subjects } = storeToRefs(subjectsStore);
 
 const filteredSubjects = computed(() => {
   if (!searchQuery.value) return subjects.value;
@@ -44,12 +54,18 @@ const filteredSubjects = computed(() => {
   );
 });
 
-const tableColumns = [
-  { key: 'subject', label: 'Matière' },
-  { key: 'surveysLinks', label: 'Liens des formulaires de retours' },
-  { key: 'qrCode', label: 'Code QR' },
-  { key: 'actions', label: 'Retours' },
-];
+const toggleAddFormModal = (value: boolean) => {
+  showAddFormModal.value = value;
+};
+
+const openAddFormModal = (subjectId: number) => {
+  selectedSubjectId.value = subjectId;
+  toggleAddFormModal(true);
+};
+
+const handleFormsCreated = async () => {
+  await subjectsStore.fetchSubjects(Number(classId));
+};
 
 onMounted(async () => {
   try {
@@ -122,12 +138,26 @@ onMounted(async () => {
         </template>
 
         <template #cell-surveysLinks="{ row }">
-          <Button variant="secondary" icon="Arrow" iconPosition="right" width="fit">
+          <Button
+            v-if="row.forms.length === 0"
+            variant="secondary"
+            icon="Arrow"
+            iconPosition="right"
+            width="fit"
+            @click="openAddFormModal(row.id)"
+          >
             Choisir le type de formulaire
           </Button>
         </template>
       </Table>
     </div>
+
+    <AddFormModal
+      :isOpen="showAddFormModal"
+      :subjectId="selectedSubjectId"
+      @close="toggleAddFormModal(false)"
+      @confirm="handleFormsCreated"
+    />
   </div>
 </template>
 

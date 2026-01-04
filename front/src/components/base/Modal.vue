@@ -60,10 +60,6 @@ const emit = defineEmits<{
   z-index: 1000;
 }
 
-.modal-content {
-  max-width: 500px;
-}
-
 .modal-title {
   font-weight: 400;
 }
