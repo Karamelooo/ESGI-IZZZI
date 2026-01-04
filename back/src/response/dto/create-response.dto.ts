@@ -8,11 +8,14 @@ import {
 } from 'class-validator';
 
 export class CreateAnswerDto {
-  @IsInt()
-  questionId: number;
-
   @IsNotEmpty()
   value: any;
+
+  @IsInt()
+  responseId: number;
+
+  @IsInt()
+  questionId: number;
 }
 
 export class CreateResponseDto {

@@ -1,8 +1,7 @@
 model Response {
-  id           Int      @id @default(autoincrement())
+  id           Int    @id @default(autoincrement())
   studentEmail String
   globalRating Int
-  submittedAt  DateTime @default(now())
   formId       Int
 
   createdAt DateTime  @default(now())

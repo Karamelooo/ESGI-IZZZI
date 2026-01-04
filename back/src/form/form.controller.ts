@@ -30,6 +30,11 @@ export class FormController {
     return this.formService.findOne(+id);
   }
 
+  @Get('public/:id')
+  findPublic(@Param('id') id: string) {
+    return this.formService.findPublic(+id);
+  }
+
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateFormDto: UpdateFormDto) {
     return this.formService.update(+id, updateFormDto);

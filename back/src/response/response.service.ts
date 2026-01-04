@@ -20,9 +20,9 @@ export class ResponseService {
       data: {
         ...rest,
         answers: {
-          create: answers.map((a) => ({
-            questionId: a.questionId,
-            value: a.value,
+          create: answers.map((answer) => ({
+            questionId: answer.questionId,
+            value: { content: answer.value },
           })),
         },
       },

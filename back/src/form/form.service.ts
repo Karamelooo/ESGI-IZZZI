@@ -61,6 +61,37 @@ export class FormService {
     });
   }
 
+  findPublic(id: number) {
+    return this.prisma.form.findUnique({
+      where: { id },
+      include: {
+        template: {
+          include: {
+            questions: {
+              orderBy: {
+                order: 'asc',
+              },
+            },
+            questionGroups: {
+              orderBy: {
+                order: 'asc',
+              },
+            },
+          },
+        },
+        subject: {
+          include: {
+            class: {
+              include: {
+                institution: true,
+              },
+            },
+          },
+        },
+      },
+    });
+  }
+
   update(id: number, updateFormDto: UpdateFormDto) {
     return this.prisma.form.update({
       where: { id },

@@ -27,8 +27,12 @@ interface ClassData {
 const tableColumns = [
   { key: 'subject', label: 'Matière' },
   { key: 'surveysLinks', label: 'Liens des formulaires de retours' },
-  { key: 'qrCode', label: 'Code QR' },
   { key: 'actions', label: 'Retours' },
+];
+
+const formTypes = [
+  { type: 'DURING_COURSE', label: 'Pendant le cours', icon: 'Clock' },
+  { type: 'AFTER_COURSE', label: 'Fin du cours', icon: 'Check-Desktop' },
 ];
 
 const route = useRoute();
@@ -65,6 +69,14 @@ const openAddFormModal = (subjectId: number) => {
 
 const handleFormsCreated = async () => {
   await subjectsStore.fetchSubjects(Number(classId));
+};
+
+const copyLink = (forms: any[], type: string) => {
+  const form = forms.find((form: any) => form.type === type);
+  if (form) {
+    const url = `${window.location.origin}/form/${form.id}`;
+    navigator.clipboard.writeText(url);
+  }
 };
 
 onMounted(async () => {
@@ -148,6 +160,31 @@ onMounted(async () => {
           >
             Choisir le type de formulaire
           </Button>
+
+          <div v-else class="row-forms">
+            <template v-for="formType in formTypes" :key="formType.type">
+              <Card v-if="row.forms.some((form: any) => form.type === formType.type)" :padding="0">
+                <div class="row-form">
+                  <div class="row-form-details">
+                    <Icon :name="formType.icon" />
+                    <p>{{ formType.label }}</p>
+                  </div>
+
+                  <div class="row-form-actions">
+                    <Button
+                      variant="neutral"
+                      icon="Arrow"
+                      iconPosition="right"
+                      @click="copyLink(row.forms, formType.type)"
+                    >
+                      Copier le lien
+                    </Button>
+                    <Button variant="plain" icon="Download" iconPosition="right">QR Code</Button>
+                  </div>
+                </div>
+              </Card>
+            </template>
+          </div>
         </template>
       </Table>
     </div>
@@ -191,5 +228,40 @@ onMounted(async () => {
 
 .subject-dates {
   font-size: 12px;
+}
+
+.row-forms {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.row-form {
+  display: flex;
+  align-items: center;
+  gap: 48px;
+  padding: 16px 18px;
+  background-color: var(--gray-2);
+}
+
+.row-form-details {
+  min-width: 150px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.row-form-details p {
+  font-weight: 700;
+}
+
+.row-form-actions {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.row-form-actions button {
+  background-color: var(--white);
 }
 </style>

@@ -27,16 +27,34 @@ export interface FormTemplate {
   questionGroups?: FormTemplateGroup[];
 }
 
+export interface CreateFormsPayload {
+  subjectId: number;
+  templateId: number;
+}
+
+export interface CreateAnswerDto {
+  questionId: number;
+  value: any;
+}
+
+export interface CreateResponseDto {
+  studentEmail: string;
+  globalRating: number;
+  formId: number;
+  answers: CreateAnswerDto[];
+}
+
 export const fetchFormTemplates = async (): Promise<FormTemplate[]> => {
   const axios = axiosInstance();
   const { data } = await axios.get('/form-templates');
   return data;
 };
 
-export interface CreateFormsPayload {
-  subjectId: number;
-  templateId: number;
-}
+export const fetchPublicForm = async (id: number | string) => {
+  const axios = axiosInstance();
+  const { data } = await axios.get(`/forms/public/${id}`);
+  return data;
+};
 
 export const createSubjectForms = async (payload: CreateFormsPayload): Promise<void> => {
   const axios = axiosInstance();
@@ -52,4 +70,10 @@ export const createSubjectForms = async (payload: CreateFormsPayload): Promise<v
       templateId: payload.templateId,
     }),
   ]);
+};
+
+export const submitFormResponse = async (payload: CreateResponseDto) => {
+  const axios = axiosInstance();
+  const { data } = await axios.post('/responses', payload);
+  return data;
 };
