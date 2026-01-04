@@ -11,8 +11,7 @@ const authStore = useAuthStore();
     <Button link="/pricing" variant="plain" :class="{ active: route.path === '/pricing' }">Nos tarifs</Button>
 
     <div v-if="!authStore.isAuthenticated" class="auth">
-      <Button link="/auth" variant="primary" icon="Arrow" iconPosition="right">S'inscrire</Button>
-      <Button link="/auth" variant="neutral" icon="Arrow" iconPosition="right">Se connecter</Button>
+      <Button link="/auth" variant="primary" icon="Arrow" iconPosition="right">Commencer gratuitement</Button>
     </div>
   </nav>
 </template>
