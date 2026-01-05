@@ -47,7 +47,7 @@ function handleSelect(value: string, index: number) {
       v-for="(option, index) in options"
       :key="option.value ?? `checkbox-${index}`"
       :model-value="modelValue?.includes(option.value ?? `checkbox-${index}`) ?? false"
-      :value="option.value"
+      :value="option.value ?? `checkbox-${index}`"
       :index="index"
       :label="option.label"
       :color="option.color ?? color"

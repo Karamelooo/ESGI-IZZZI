@@ -151,6 +151,12 @@ a:active {
   font-size: 14px;
 }
 
+.form-actions {
+  display: flex;
+  gap: 24px;
+  width: 100%;
+}
+
 h1,
 h2,
 h3,

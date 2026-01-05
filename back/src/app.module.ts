@@ -11,6 +11,9 @@ import { ClassModule } from './class/class.module';
 import { SubjectModule } from './subject/subject.module';
 import { PaymentModule } from './payment/payment.module';
 import { SubscriptionModule } from './subscription/subscription.module';
+import { FormTemplateModule } from './form-template/form-template.module';
+import { FormModule } from './form/form.module';
+import { ResponseModule } from './response/response.module';
 
 @Module({
   imports: [
@@ -28,6 +31,9 @@ import { SubscriptionModule } from './subscription/subscription.module';
     SubjectModule,
     PaymentModule,
     SubscriptionModule,
+    FormTemplateModule,
+    FormModule,
+    ResponseModule,
   ],
   controllers: [AppController],
   providers: [AppService],

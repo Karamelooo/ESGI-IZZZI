@@ -43,7 +43,7 @@ function handleSelect(value: string, index: number) {
       v-for="(option, index) in options"
       :key="option.value ?? `radio-${index}`"
       :model-value="modelValue === (option.value ?? `radio-${index}`)"
-      :value="option.value"
+      :value="option.value ?? `radio-${index}`"
       :index="index"
       :label="option.label"
       :icon="option.icon ?? icon"

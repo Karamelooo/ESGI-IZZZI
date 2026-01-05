@@ -1,0 +1,60 @@
+model FormTemplate {
+  id          Int    @id @default(autoincrement())
+  name        String
+  description String
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+
+  questions      TemplateQuestion[]
+  questionGroups TemplateQuestionGroup[]
+  forms          Form[]
+}
+
+model TemplateQuestionGroup {
+  id          Int     @id @default(autoincrement())
+  name        String
+  description String?
+  order       Int
+  templateId  Int
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+
+  template  FormTemplate       @relation(fields: [templateId], references: [id])
+  questions TemplateQuestion[]
+
+  @@index([templateId])
+}
+
+model TemplateQuestion {
+  id         Int          @id @default(autoincrement())
+  type       QuestionType
+  label      String
+  order      Int
+  required   Boolean      @default(true)
+  options    Json?
+  templateId Int
+  groupId    Int?
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+
+  template FormTemplate           @relation(fields: [templateId], references: [id])
+  group    TemplateQuestionGroup? @relation(fields: [groupId], references: [id])
+  answers  Answer[]
+
+  @@index([templateId])
+  @@index([groupId])
+}
+
+enum QuestionType {
+  SHORT_TEXT
+  LONG_TEXT
+  SINGLE_CHOICE
+  MULTIPLE_CHOICE
+  STAR_RATING
+}
