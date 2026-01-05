@@ -1,27 +1,27 @@
 import { createApp } from 'vue';
-import router from './router';
-import App from './App.vue';
+import { createPinia } from 'pinia';
+import router from '@router';
 
-import './assets/css/main.css';
-
-import Button from './components/Button.vue';
-import Icon from './components/Icon.vue';
-import Input from './components/Input.vue';
-import Logo from './components/Logo.vue';
-import SwitchPanels from './components/SwitchPanels.vue';
-import SwitchTabs from './components/SwitchTabs.vue';
-import ToastContainer from './components/ToastContainer.vue';
+import App from '@/App.vue';
+import '@css/main.css';
 
 const app = createApp(App);
+const pinia = createPinia();
 
-app.component('Button', Button);
-app.component('Icon', Icon);
-app.component('Input', Input);
-app.component('Logo', Logo);
-app.component('SwitchPanels', SwitchPanels);
-app.component('SwitchTabs', SwitchTabs);
-app.component('ToastContainer', ToastContainer);
+const components = {
+  ...import.meta.glob('@components/base/*.vue', { eager: true }),
+  ...import.meta.glob('@components/layout/*.vue', { eager: true }),
+  ...import.meta.glob('@components/page/*.vue', { eager: true }),
+};
 
+Object.entries(components as Record<string, { default: any }>).forEach(([path, module]) => {
+  const fileName: string | undefined = path.split('/').pop();
+  if (!fileName) return;
+
+  const componentName: string = fileName.replace('.vue', '');
+  app.component(componentName, module.default);
+});
+
+app.use(pinia);
 app.use(router);
-
 app.mount('#app');

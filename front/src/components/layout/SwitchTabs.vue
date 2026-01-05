@@ -1,0 +1,51 @@
+<script lang="ts" setup>
+const props = withDefaults(
+  defineProps<{
+    tabs: { name: string }[];
+    disabled?: boolean;
+    round?: boolean;
+    modelValue: number;
+  }>(),
+  {
+    disabled: false,
+    round: false,
+  }
+);
+
+const emit = defineEmits<{
+  (e: 'update:modelValue', value: number): void;
+}>();
+
+const setTab = (index: number) => {
+  if (props.disabled) return;
+  emit('update:modelValue', index);
+};
+</script>
+
+<template>
+  <div class="switch-tabs">
+    <Button
+      v-for="(tab, index) in tabs"
+      :key="index"
+      :variant="modelValue === index ? 'switch' : 'plain'"
+      :inSwitchComponent="true"
+      :disabled="disabled"
+      :round="round"
+      @click="setTab(index)"
+    >
+      {{ tab.name }}
+    </Button>
+  </div>
+</template>
+
+<style scoped>
+.switch-tabs {
+  width: fit-content;
+  display: flex;
+  align-items: center;
+  padding: 10px;
+  border: 1px solid var(--gray-15);
+  border-radius: 8px;
+  background-color: var(--gray-5);
+}
+</style>

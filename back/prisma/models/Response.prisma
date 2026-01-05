@@ -1,0 +1,33 @@
+model Response {
+  id           Int    @id @default(autoincrement())
+  studentEmail String
+  globalRating Int
+  formId       Int
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+
+  form    Form     @relation(fields: [formId], references: [id])
+  answers Answer[]
+
+  @@index([formId])
+  @@index([studentEmail])
+}
+
+model Answer {
+  id         Int  @id @default(autoincrement())
+  value      Json
+  responseId Int
+  questionId Int
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+
+  response Response         @relation(fields: [responseId], references: [id])
+  question TemplateQuestion @relation(fields: [questionId], references: [id])
+
+  @@index([responseId])
+  @@index([questionId])
+}
