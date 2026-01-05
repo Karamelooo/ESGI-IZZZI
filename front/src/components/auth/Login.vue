@@ -18,12 +18,15 @@ const passwordInput = ref('');
 const loadingState = ref(false);
 const errorMessages = ref<string[]>([]);
 
-function fillCredentials(role: 'admin' | 'manager') {
-  if (role === 'admin') {
+function fillCredentials(role: 'owner' | 'admin' | 'manager') {
+  if (role === 'owner') {
+    emailInput.value = 'owner@esgi.fr';
+    passwordInput.value = 'Test1234!';
+  } else if (role === 'admin') {
     emailInput.value = 'admin@esgi.fr';
     passwordInput.value = 'Test1234!';
   } else if (role === 'manager') {
-    emailInput.value = 'manager@esgi.fr';
+    emailInput.value = 'dp@esgi.fr';
     passwordInput.value = 'Test1234!';
   }
 }
@@ -78,8 +81,9 @@ async function onSubmit(event: Event) {
       -->
       <div class="separator">Connexion rapide</div>
       <div style="display: flex; gap: 8px">
+        <Button variant="neutral" @click="fillCredentials('owner')">Owner</Button>
         <Button variant="neutral" @click="fillCredentials('admin')">Admin</Button>
-        <Button variant="neutral" @click="fillCredentials('manager')">Responsable</Button>
+        <Button variant="neutral" @click="fillCredentials('manager')">D. Pédagogique</Button>
       </div>
     </div>
 
