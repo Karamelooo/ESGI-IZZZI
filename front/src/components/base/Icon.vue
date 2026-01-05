@@ -1,4 +1,6 @@
 <script lang="ts" setup>
+import { computed } from 'vue';
+
 const props = withDefaults(
   defineProps<{
     name: string;
@@ -14,13 +16,24 @@ const props = withDefaults(
     flipVertical: false,
   }
 );
+
+const icons = import.meta.glob('/src/assets/svg/icons/*.svg', {
+  eager: true,
+  query: '?url',
+  import: 'default',
+}) as Record<string, string>;
+
+const iconUrl = computed(() => {
+  const path = `/src/assets/svg/icons/${props.name}.svg`;
+  return icons[path] ? `url(${icons[path]})` : '';
+});
 </script>
 
 <template>
   <div
     class="icon"
     :style="{
-      '--icon-url': `url(/src/assets/svg/icons/${props.name}.svg)`,
+      '--icon-url': iconUrl,
       '--icon-color': props.color,
       '--icon-size': props.size,
       transform: [props.flipHorizontal ? 'scaleX(-1)' : '', props.flipVertical ? 'scaleY(-1)' : '']

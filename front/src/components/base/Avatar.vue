@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 const avatarUrl = null;
-const defaultAvatarUrl = '/src/assets/images/avatar-placeholder.png';
+import defaultAvatarUrl from '@assets/images/avatar-placeholder.png';
 </script>
 
 <template>
