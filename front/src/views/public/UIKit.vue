@@ -11,8 +11,8 @@ const passwordInput = ref('');
 const selectedRadio = ref('');
 const selectedCheckBox = ref([]);
 
-function onRadioChange(value: string, index: number) {}
-function onCheckBoxChange(value: string[], index: number) {}
+function onRadioChange() {}
+function onCheckBoxChange() {}
 
 const iconFiles = import.meta.glob('/src/assets/svg/icons/*.svg', {
   eager: true,

@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import Icon from '../base/Icon.vue';
-const props = defineProps<{
+defineProps<{
   title: string;
   desc: string;
 }>();

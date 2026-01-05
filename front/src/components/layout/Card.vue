@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-const props = withDefaults(
+withDefaults(
   defineProps<{
     borderColor?: string;
     backgroundColor?: string;

@@ -9,7 +9,7 @@ import { isAdminRoute } from '@utils/route';
 const route = useRoute();
 const authStore = useAuthStore();
 
-const props = withDefaults(
+withDefaults(
   defineProps<{
     disabled?: boolean;
   }>(),

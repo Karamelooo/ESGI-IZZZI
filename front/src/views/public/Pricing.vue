@@ -4,7 +4,7 @@ import SwitchTabs from '@/components/layout/SwitchTabs.vue';
 import { ref, computed } from 'vue';
 import Card from '@/components/layout/Card.vue';
 import Button from '@/components/base/Button.vue';
-import Icon from '@/components/base/Icon.vue';
+
 import CardTable from '@/components/layout/CardTable.vue';
 import Footer from '@/components/page/Footer.vue';
 import { useRouter } from 'vue-router';
