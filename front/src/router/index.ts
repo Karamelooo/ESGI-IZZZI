@@ -2,6 +2,7 @@ import { createRouter, createWebHistory, type RouteRecordRaw } from 'vue-router'
 
 import Home from '@views/public/Home.vue';
 import Pricing from '@views/public/Pricing.vue';
+import SubscriptionConfirmation from '@views/public/SubscriptionConfirmation.vue';
 import UIKit from '@views/public/UIKit.vue';
 import Auth from '@views/auth/Auth.vue';
 import ChangePassword from '@views/auth/ChangePassword.vue';
@@ -18,6 +19,7 @@ const routes: Array<RouteRecordRaw> = [
   /* Public Routes */
   { path: '/', name: 'home', component: Home },
   { path: '/pricing', name: 'pricing', component: Pricing },
+  { path: '/pricing/confirm', name: 'subscription-confirmation', component: SubscriptionConfirmation },
   { path: '/ui-kit', name: 'ui-kit', component: UIKit },
 
   /* Auth Routes */
