@@ -7,6 +7,7 @@ import { useSubjectsStore } from '@stores/subjects';
 import { storeToRefs } from 'pinia';
 import { toDateFR } from '@utils/date';
 import AddFormModal from '@components/classes/AddFormModal.vue';
+import QRCodeModal from '@components/classes/QRCodeModal.vue';
 
 interface Subject {
   name: string;
@@ -57,6 +58,17 @@ const filteredSubjects = computed(() => {
     (subject) => subject.name.toLowerCase().includes(query) || subject.instructorName.toLowerCase().includes(query)
   );
 });
+
+const showQRCodeModal = ref(false);
+const qrCodeUrl = ref('');
+
+const openQRCodeModal = (forms: any[], type: string) => {
+  const form = forms.find((form: any) => form.type === type);
+  if (form) {
+    qrCodeUrl.value = `${window.location.origin}/form/${form.id}`;
+    showQRCodeModal.value = true;
+  }
+};
 
 const toggleAddFormModal = (value: boolean) => {
   showAddFormModal.value = value;
@@ -179,7 +191,14 @@ onMounted(async () => {
                     >
                       Copier le lien
                     </Button>
-                    <Button variant="plain" icon="Download" iconPosition="right">QR Code</Button>
+                    <Button
+                      variant="plain"
+                      icon="Download"
+                      iconPosition="right"
+                      @click="openQRCodeModal(row.forms, formType.type)"
+                    >
+                      QR Code
+                    </Button>
                   </div>
                 </div>
               </Card>
@@ -195,6 +214,8 @@ onMounted(async () => {
       @close="toggleAddFormModal(false)"
       @confirm="handleFormsCreated"
     />
+
+    <QRCodeModal :isOpen="showQRCodeModal" :url="qrCodeUrl" @close="showQRCodeModal = false" />
   </div>
 </template>
 

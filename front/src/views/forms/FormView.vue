@@ -12,10 +12,17 @@ const formAnswers = ref<Record<number, any>>({});
 const studentEmail = ref('');
 const globalRating = ref<string>('');
 
+const showSuccessModal = ref(false);
+const isSubmitted = ref(false);
+
 const sortedGroups = computed(() => {
   if (!form.value?.template?.questionGroups) return [];
   return [...form.value.template.questionGroups].sort((a: any, b: any) => a.order - b.order);
 });
+
+const toggleSuccessModal = (value: boolean) => {
+  showSuccessModal.value = value;
+};
 
 const getQuestionsByGroupId = (groupId: number) => {
   if (!form.value?.template?.questions) return [];
@@ -34,11 +41,13 @@ const submitForm = async () => {
 
   if (!studentEmail.value || !validateEmail(studentEmail.value)) {
     errorMessages.value.push('Veuillez entrer une adresse email valide.');
+    loading.value = false;
     return;
   }
 
   if (!globalRating.value) {
     errorMessages.value.push('Veuillez donner une note globale.');
+    loading.value = false;
     return;
   }
 
@@ -55,7 +64,8 @@ const submitForm = async () => {
       answers,
     });
 
-    alert('Merci ! Vos réponses ont été envoyées.');
+    isSubmitted.value = true;
+    toggleSuccessModal(true);
   } catch (error) {
     console.error(error);
     alert("Une erreur est survenue lors de l'envoi du formulaire.");
@@ -106,12 +116,21 @@ onMounted(async () => {
         <p v-for="message in errorMessages" :key="message">{{ message }}</p>
       </div>
 
-      <Button @click="submitForm" icon="Arrow" iconPosition="right" :disabled="loading">Envoyer</Button>
+      <Button v-if="!isSubmitted" @click="submitForm" icon="Arrow" iconPosition="right" :disabled="loading">
+        Envoyer
+      </Button>
     </div>
 
     <div class="pfv-content">
       <div v-if="loading">
         <p>Chargement...</p>
+      </div>
+
+      <div v-else-if="isSubmitted">
+        <Card :fullWidth="true" :centered="true" :spacing="16">
+          <h3>Merci pour ton retour !</h3>
+          <p>Tes réponses ont bien été enregistrées.</p>
+        </Card>
       </div>
 
       <div v-else class="pfv-form-groups">
@@ -185,6 +204,16 @@ onMounted(async () => {
       </div>
     </div>
   </div>
+
+  <Modal
+    :isOpen="showSuccessModal"
+    title="Réponses envoyées !"
+    confirmText="Fermer"
+    @confirm="toggleSuccessModal(false)"
+    @close="toggleSuccessModal(false)"
+  >
+    <p>Merci d'avoir répondu à ce formulaire.</p>
+  </Modal>
 </template>
 
 <style>
