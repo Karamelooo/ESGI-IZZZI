@@ -1,0 +1,19 @@
+import { Controller, Post, Body, UseGuards } from '@nestjs/common';
+import { SubscriptionService } from './subscription.service';
+import { CreateSubscriptionDto } from './dto/create-subscription.dto';
+import { AccessTokenGuard } from '../auth/guards/access-token.guard';
+import { CurrentUser } from '../auth/decorators/current-user.decorator';
+
+@Controller('subscription')
+export class SubscriptionController {
+  constructor(private readonly subscriptionService: SubscriptionService) {}
+
+  @Post()
+  @UseGuards(AccessTokenGuard)
+  async create(
+    @CurrentUser() user: any, 
+    @Body() createSubscriptionDto: CreateSubscriptionDto
+  ) {
+    return this.subscriptionService.create(Number(user.userId), createSubscriptionDto);
+  }
+}

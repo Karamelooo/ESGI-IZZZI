@@ -1,0 +1,26 @@
+model Subscription {
+  id                    Int      @id @default(autoincrement())
+  plan                  String
+  billingPeriod         String
+  numberOfClasses       Int
+  amount                Int
+  currency              String   @default("eur")
+  status                String   @default("active")
+  stripePaymentIntentId String?  @unique
+  startDate             DateTime @default(now())
+  endDate               DateTime?
+
+  userId                Int
+  user                  User     @relation(fields: [userId], references: [id])
+
+  billingEmail          String?
+  billingFirstName      String?
+  billingLastName       String?
+  billingAddress        String?
+  billingCity           String?
+  billingPostalCode     String?
+  billingCountry        String?
+
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+}

@@ -9,6 +9,8 @@ import { UserModule } from './user/user.module';
 import { InstitutionModule } from './institution/institution.module';
 import { ClassModule } from './class/class.module';
 import { SubjectModule } from './subject/subject.module';
+import { PaymentModule } from './payment/payment.module';
+import { SubscriptionModule } from './subscription/subscription.module';
 
 @Module({
   imports: [
@@ -24,6 +26,8 @@ import { SubjectModule } from './subject/subject.module';
     InstitutionModule,
     ClassModule,
     SubjectModule,
+    PaymentModule,
+    SubscriptionModule,
   ],
   controllers: [AppController],
   providers: [AppService],

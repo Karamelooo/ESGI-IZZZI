@@ -15,6 +15,7 @@ model User {
 
   institution Institution @relation(fields: [institutionId], references: [id])
   userRoles   UserRole[]
+  subscriptions Subscription[]
 
   @@index([email])
   @@index([institutionId])
