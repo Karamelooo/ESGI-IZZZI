@@ -107,4 +107,14 @@ export class SubscriptionService {
       },
     });
   }
+
+  async getUserSubscription(userId: number) {
+    return this.prisma.subscription.findFirst({
+      where: { 
+        userId,
+        status: 'active'
+      },
+      orderBy: { createdAt: 'desc' }
+    });
+  }
 }

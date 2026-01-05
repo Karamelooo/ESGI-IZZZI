@@ -1,11 +1,32 @@
 <script lang="ts" setup>
+import { ref, onMounted, computed } from 'vue';
 import { useRouter } from 'vue-router';
 import { useAuthStore } from '@stores/auth';
+import { useApi } from '@/api/axios';
 
 const router = useRouter();
 const authStore = useAuthStore();
+const api = useApi();
 
-const isSuper = true;
+const subscription = ref<any>(null);
+
+const planName = computed(() => {
+  if (!subscription.value) return null;
+  return subscription.value.plan;
+});
+
+const isSuper = computed(() => planName.value === 'Super Izzzi');
+const isIzzzi = computed(() => planName.value === 'Izzzi');
+const hasPlan = computed(() => !!planName.value);
+
+onMounted(async () => {
+  try {
+    const { data } = await api.get('/subscription/me');
+    subscription.value = data;
+  } catch (e) {
+    console.log('No active subscription');
+  }
+});
 
 function handleNotificationClick() {
   console.log('IconButton clicked!');
@@ -24,10 +45,9 @@ function handleNotificationClick() {
 
         <div v-if="isSuper" class="role-wrapper--admin">
           <Icon name="Crown" color="var(--white)" />
-          <span class="role">Super</span>
+          <span class="role">Supper Izzzi</span>
         </div>
-
-        <div v-else class="role-wrapper--default">
+        <div v-else-if="isIzzzi" class="role-wrapper--default">
           <span class="role">Plan gratuit</span>
         </div>
       </div>
@@ -75,5 +95,14 @@ function handleNotificationClick() {
   border-radius: 38px;
   background-color: var(--dark-orange);
   color: var(--white);
+}
+
+.role-wrapper--izzzi {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  border-radius: 38px;
+  color: var(--gray-100);
 }
 </style>
