@@ -4,13 +4,7 @@ services:
       context: ./front
       dockerfile: Dockerfile.prod
       args:
-        VITE_API_URL: ${VITE_API_URL:-http://localhost:3500}
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.front.rule=Host(`${DOMAIN_NAME}`)"
-      - "traefik.http.routers.front.entrypoints=websecure"
-      - "traefik.http.routers.front.tls.certresolver=letsencrypt"
-      - "traefik.http.services.front.loadbalancer.server.port=80"
+        API_URL: ${API_URL:-http://localhost:3500}
     restart: always
     depends_on:
       - back
@@ -27,13 +21,6 @@ services:
       - JWT_SECRET=${JWT_SECRET:-supersecret}
       - CORS_ORIGIN=https://${DOMAIN_NAME}
       - PORT=3500
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.back.rule=Host(`${API_DOMAIN_NAME}`)"
-      - "traefik.http.routers.back.entrypoints=websecure"
-      - "traefik.http.routers.back.tls.certresolver=letsencrypt"
-      - "traefik.http.services.back.loadbalancer.server.port=3500"
-    restart: always
     depends_on:
       - db
     networks:
@@ -54,6 +41,7 @@ services:
 
 volumes:
   db_data:
+
 
 networks:
   dokploy-network:
