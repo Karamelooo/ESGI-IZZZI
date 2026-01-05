@@ -95,8 +95,16 @@ const tableData2 = [
 ];
 
 const handleSubscription = (planName: string) => {
-  if (planName === 'Starter') {
-    router.push('/pricing/confirm');
+  if (planName === 'Izzzi') {
+    router.push({ 
+      name: 'subscription-confirmation', 
+      query: { 
+        amount: 0,
+        plan: 'Izzzi',
+        period: 'trial',
+        classes: numberOfClasses.value
+      } 
+    });
   } else {
     let price = 0;
     if (billingPeriod.value === 'annual') {
@@ -109,7 +117,7 @@ const handleSubscription = (planName: string) => {
       name: 'subscription-confirmation', 
       query: { 
         amount: price,
-        plan: planName,
+        plan: 'Super Izzzi',
         period: billingPeriod.value,
         classes: numberOfClasses.value
       } 
@@ -124,11 +132,13 @@ const handleSubscription = (planName: string) => {
     <br />
     <p>Commencez gratuitement et passez au niveau supérieur quand vous êtes prêts.</p>
     <br />
+    <div class="pricing-switch">
     <SwitchTabs
       :model-value="billingPeriod === 'annual' ? 0 : 1"
       :tabs="[{ name: 'Annuel -30%' }, { name: 'Mensuel' }]"
       @update:model-value="(val) => (billingPeriod = val === 0 ? 'annual' : 'monthly')"
     />
+    </div>
     <SwitchPanels :activeTab="0">
       <template #tab-0>
         <div class="annuel-pricing-wrapper">
@@ -136,7 +146,7 @@ const handleSubscription = (planName: string) => {
             <Button variant="neutral" round>👌🏻 Izzzi</Button>
             <h1>0€<span>/ mois</span></h1>
             <br />
-            <Button icon="Arrow" iconPosition="right">Démarrer mes 4 mois gratuits</Button>
+            <Button icon="Arrow" iconPosition="right" @click="handleSubscription('Izzzi')">Démarrer mes 4 mois gratuits</Button>
             <br /><br />
             <div>
               <ul>
@@ -237,7 +247,7 @@ const handleSubscription = (planName: string) => {
               <h3>0€ <span>par mois</span></h3>
               <p class="p10">(4 mois d'essai illimités)</p>
             </div>
-            <Button icon="Arrow" iconPosition="right" @click="handleSubscription('Starter')">Démarrer l'essai gratuit</Button>
+            <Button icon="Arrow" iconPosition="right" @click="handleSubscription('Izzzi')">Démarrer l'essai gratuit</Button>
             <CardTable :rows="tableData" />
           </Card>
         </template>
@@ -251,7 +261,7 @@ const handleSubscription = (planName: string) => {
                 <span>par mois / classe</span>
               </h3>
             </div>
-            <Button icon="Arrow" iconPosition="right" @click="handleSubscription('Izzzi')">Je choisis ce plan</Button>
+            <Button icon="Arrow" iconPosition="right" @click="handleSubscription('Super Izzzi')">Je choisis ce plan</Button>
             <CardTable :rows="tableData2" />
           </Card>
         </template>
@@ -263,7 +273,7 @@ const handleSubscription = (planName: string) => {
             <h3>0€ <span>par mois</span></h3>
             <p class="p10">(4 mois d'essai illimités)</p>
           </div>
-          <Button icon="Arrow" iconPosition="right" @click="handleSubscription('Starter')">Démarrer l'essai gratuit</Button>
+          <Button icon="Arrow" iconPosition="right" @click="handleSubscription('Izzzi')">Démarrer l'essai gratuit</Button>
           <div class="table-wrapper">
             <CardTable :rows="tableData" />
           </div>
@@ -277,7 +287,7 @@ const handleSubscription = (planName: string) => {
               <span>par mois / classe</span>
             </h3>
           </div>
-          <Button icon="Arrow" iconPosition="right" @click="handleSubscription('Izzzi')">Je choisis ce plan</Button>
+          <Button icon="Arrow" iconPosition="right" @click="handleSubscription('Super Izzzi')">Je choisis ce plan</Button>
           <div class="table-wrapper">
             <CardTable :rows="tableData2" />
           </div>
@@ -536,6 +546,10 @@ main {
 
   .table-wrapper {
     padding-top: 2rem;
+  }
+
+  .pricing-switch .switch-tabs {
+    margin: 0 auto 1rem auto;
   }
 }
 </style>

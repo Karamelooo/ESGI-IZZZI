@@ -22,4 +22,10 @@ export class SubscriptionController {
       createSubscriptionDto,
     );
   }
+
+  @Post('free')
+  @UseGuards(AccessTokenGuard)
+  async createFree(@CurrentUser() user: any) {
+    return this.subscriptionService.createFree(Number(user.userId));
+  }
 }

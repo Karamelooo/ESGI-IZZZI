@@ -75,4 +75,36 @@ export class SubscriptionService {
       },
     });
   }
+
+  async createFree(userId: number) {
+    this.logger.log(`Creating free Izzzi subscription for UserID: ${userId}`);
+
+    const existingSubscription = await this.prisma.subscription.findFirst({
+        where: { 
+          userId,
+          status: 'active'
+        },
+    });
+
+    if (existingSubscription) {
+        this.logger.log(`User already has an active subscription`);
+        return existingSubscription;
+    }
+
+    const endDate = new Date();
+    endDate.setMonth(endDate.getMonth() + 4);
+
+    return this.prisma.subscription.create({
+      data: {
+        userId,
+        plan: 'Izzzi',
+        billingPeriod: 'trial',
+        numberOfClasses: 0,
+        amount: 0,
+        status: 'active',
+        startDate: new Date(),
+        endDate: endDate
+      },
+    });
+  }
 }
