@@ -2,7 +2,6 @@ import { createRouter, createWebHistory, type RouteRecordRaw } from 'vue-router'
 
 import Home from '@views/public/Home.vue';
 import Pricing from '@views/public/Pricing.vue';
-import Survey from '@views/public/Survey.vue';
 import UIKit from '@views/public/UIKit.vue';
 import Auth from '@views/auth/Auth.vue';
 import ChangePassword from '@views/auth/ChangePassword.vue';
@@ -12,13 +11,13 @@ import ClassView from '@views/classes/ClassView.vue';
 import SubjectsList from '@views/subjects/SubjectsList.vue';
 import SubjectCreate from '@views/subjects/SubjectCreate.vue';
 import Dashboard from '@views/dashboard/Dashboard.vue';
+import FormView from '@views/forms/FormView.vue';
 import { useAuthStore } from '@stores/auth';
 
 const routes: Array<RouteRecordRaw> = [
   /* Public Routes */
   { path: '/', name: 'home', component: Home },
   { path: '/pricing', name: 'pricing', component: Pricing },
-  { path: '/survey', name: 'survey', component: Survey },
   { path: '/ui-kit', name: 'ui-kit', component: UIKit },
 
   /* Auth Routes */
@@ -36,6 +35,9 @@ const routes: Array<RouteRecordRaw> = [
 
   /* Dashboard Routes */
   { path: '/dashboard', name: 'dashboard', component: Dashboard },
+
+  /* Form Routes */
+  { path: '/form/:id', name: 'form', component: FormView },
 ];
 
 const router = createRouter({

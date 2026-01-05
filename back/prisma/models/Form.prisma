@@ -1,0 +1,29 @@
+model Form {
+  id         Int        @id @default(autoincrement())
+  type       FormType
+  status     FormStatus @default(DRAFT)
+  subjectId  Int
+  templateId Int
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+
+  subject   Subject      @relation(fields: [subjectId], references: [id])
+  template  FormTemplate @relation(fields: [templateId], references: [id])
+  responses Response[]
+
+  @@unique([subjectId, type])
+  @@index([templateId])
+}
+
+enum FormType {
+  DURING_COURSE
+  AFTER_COURSE
+}
+
+enum FormStatus {
+  DRAFT
+  OPEN
+  CLOSED
+}

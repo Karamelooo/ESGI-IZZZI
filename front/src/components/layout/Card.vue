@@ -47,6 +47,7 @@ const props = withDefaults(
   display: flex;
   flex-direction: column;
   border-radius: 8px;
+  overflow: hidden;
 }
 
 @media (max-width: 600px) {

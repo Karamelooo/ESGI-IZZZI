@@ -132,7 +132,7 @@ function onSubmit(event: Event) {
 
     <FormErrors :messages="allErrors" />
 
-    <div class="auth-actions">
+    <div class="form-actions">
       <Button icon="Arrow" iconPosition="right" :disabled="loading" type="submit">{{ submitLabel }}</Button>
     </div>
   </form>

@@ -100,7 +100,7 @@ function onCancel() {
 </script>
 
 <template>
-  <form class="form form--centered" @submit="onSubmit">
+  <form class="form" @submit="onSubmit">
     <Input
       v-model="nameInput"
       type="text"
@@ -143,8 +143,8 @@ function onCancel() {
 
     <FormErrors :messages="allErrors" />
 
-    <div class="auth-actions">
-      <Button icon="Arrow" iconPosition="right" type="submit" :disabled="loading">{{ submitLabel }}</Button>
+    <div class="form-actions">
+      <Button variant="primary" type="submit" :disabled="loading">{{ submitLabel }}</Button>
       <Button variant="neutral" type="button" :disabled="loading" @click="onCancel">Annuler</Button>
     </div>
   </form>
