@@ -18,7 +18,8 @@ services:
       dockerfile: Dockerfile.prod
     environment:
       - DATABASE_URL=postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-password}@db:5432/${POSTGRES_DB:-izzzi}?schema=public
-      - JWT_SECRET=${JWT_SECRET:-supersecret}
+      - JWT_ACCESS_SECRET=${JWT_ACCESS_SECRET:-supersecret}
+      - JWT_REFRESH_SECRET=${JWT_REFRESH_SECRET:-supersecretrefresh}
       - CORS_ORIGIN=https://${DOMAIN_NAME}
       - PORT=3500
     depends_on:
