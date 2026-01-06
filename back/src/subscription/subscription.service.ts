@@ -43,15 +43,57 @@ export class SubscriptionService {
 
     const amount = paymentIntent.amount;
 
-    this.logger.log(`Creating subscription for UserID: ${userId}`);
+    this.logger.log(`Creating/Upgrading subscription for UserID: ${userId}`);
 
-    const existingSubscription = await this.prisma.subscription.findUnique({
+    const existingPayment = await this.prisma.subscription.findUnique({
         where: { stripePaymentIntentId: paymentIntentId },
     });
 
-    if (existingSubscription) {
+    if (existingPayment) {
         this.logger.log(`Subscription already exists for PaymentIntent: ${paymentIntentId}`);
-        return existingSubscription;
+        return existingPayment;
+    }
+
+    const existingTrial = await this.prisma.subscription.findFirst({
+      where: {
+        userId,
+        status: 'active',
+        billingPeriod: 'trial'
+      }
+    });
+
+    if (existingTrial) {
+      this.logger.log(`Upgrading trial subscription ID: ${existingTrial.id} to ${plan}`);
+      
+      const currentEndDate = existingTrial.endDate ? new Date(existingTrial.endDate) : new Date();
+      let newEndDate: Date;
+      
+      if (billingPeriod === 'annual') {
+        newEndDate = new Date(currentEndDate);
+        newEndDate.setFullYear(newEndDate.getFullYear() + 1);
+      } else {
+        newEndDate = new Date(currentEndDate);
+        newEndDate.setMonth(newEndDate.getMonth() + 1);
+      }
+
+      return this.prisma.subscription.update({
+        where: { id: existingTrial.id },
+        data: {
+          plan,
+          billingPeriod,
+          numberOfClasses,
+          amount,
+          stripePaymentIntentId: paymentIntentId,
+          endDate: newEndDate,
+          billingAddress: address,
+          billingCity: city,
+          billingPostalCode: postalCode,
+          billingCountry: country,
+          billingEmail: email,
+          billingFirstName: firstName,
+          billingLastName: lastName,
+        },
+      });
     }
 
     return this.prisma.subscription.create({
