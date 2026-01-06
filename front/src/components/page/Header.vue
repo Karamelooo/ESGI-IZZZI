@@ -34,7 +34,10 @@ async function logout() {
 </script>
 
 <template>
-  <header class="header" :class="{ 'header--admin': isAdminRoute(route.path) }">
+  <header
+    class="header"
+    :class="{ 'header--admin': isAdminRoute(route.path), 'header--authenticated': authStore.isAuthenticated }"
+  >
     <Logo :linkToHome="true" />
 
     <component :is="isAdminRoute(route.path) ? AdminNavBar : NavBar" class="header-component" />
@@ -65,8 +68,12 @@ async function logout() {
   z-index: 500;
   align-self: center;
   justify-self: center;
-  grid-template-columns: auto 1fr auto auto;
+  grid-template-columns: auto 1fr auto;
   background-color: var(--white);
+}
+
+.header--authenticated {
+  grid-template-columns: auto 1fr auto auto;
 }
 
 .header--admin {
