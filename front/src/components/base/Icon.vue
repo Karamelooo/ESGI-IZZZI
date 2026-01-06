@@ -17,24 +17,8 @@ const props = withDefaults(
   }
 );
 
-const icons = import.meta.glob('/src/assets/svg/icons/*.svg', {
-  eager: true,
-  query: '?url',
-  import: 'default',
-}) as Record<string, string>;
-
-// Create a map of filename -> url for robust lookup
-const iconMap = Object.fromEntries(
-  Object.entries(icons).map(([path, url]) => {
-    const filename = path.split('/').pop()?.replace('.svg', '');
-    return [filename, url];
-  })
-);
-
 const iconUrl = computed(() => {
-  // Try exact match first, then by filename
-  if (!iconMap[props.name]) return '';
-  return `url(${iconMap[props.name]})`;
+  return `url(/icons/${props.name}.svg)`;
 });
 </script>
 
