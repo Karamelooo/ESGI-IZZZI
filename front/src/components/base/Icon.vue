@@ -58,7 +58,13 @@ const iconUrl = computed(() => {
   height: var(--icon-size);
   width: var(--icon-size);
   background-color: var(--icon-color);
-  mask: var(--icon-url) no-repeat center / contain;
-  -webkit-mask: var(--icon-url) no-repeat center / contain;
+  -webkit-mask-image: var(--icon-url);
+  -webkit-mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  -webkit-mask-size: contain;
+  mask-image: var(--icon-url);
+  mask-repeat: no-repeat;
+  mask-position: center;
+  mask-size: contain;
 }
 </style>
