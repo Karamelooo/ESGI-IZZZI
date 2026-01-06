@@ -5,10 +5,6 @@ import { PrismaService } from '../prisma/prisma.service';
 export class PermissionsService {
   constructor(private prisma: PrismaService) {}
 
-  /**
-   * Retrieves a list of permission keys for a given user.
-   * This method can be enhanced with caching strategies (e.g., Redis) in the future.
-   */
   async getPermissionsForUser(userId: number): Promise<string[]> {
     if (!userId) {
       return [];
@@ -41,18 +37,13 @@ export class PermissionsService {
       return [];
     }
 
-    // Flatten permissions from all roles
     const permissions = user.userRoles
       .flatMap((userRole) => userRole.role.rolePermissions)
       .map((rolePermission) => rolePermission.permission.key);
 
-    // Remove duplicates
     return Array.from(new Set(permissions));
   }
 
-  /**
-   * Checks if a user possesses all the required permissions.
-   */
   async checkPermissions(
     userId: number,
     requiredPermissions: string[],
@@ -64,12 +55,10 @@ export class PermissionsService {
     const userPermissions = await this.getPermissionsForUser(userId);
 
     return requiredPermissions.every((required) => {
-      // 1. Exact match
       if (userPermissions.includes(required)) {
         return true;
       }
 
-      // 2. Hierarchical match (resource:manage > resource:*)
       const [resource] = required.split(':');
       if (resource) {
         const managePermission = `${resource}:manage`;
