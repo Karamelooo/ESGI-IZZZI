@@ -1,6 +1,13 @@
 import { defineStore } from 'pinia';
 import { fetchSubjects } from '@api/subjects';
 import { fetchSubjectsByClassId } from '@api/classes';
+import { type Class } from '@stores/classes';
+
+export interface Form {
+  id: number;
+  type: 'DURING_COURSE' | 'AFTER_COURSE';
+  status: 'DRAFT' | 'OPEN' | 'CLOSED';
+}
 
 export interface Subject {
   id: number;
@@ -9,8 +16,8 @@ export interface Subject {
   instructorEmail: string;
   startDate: string;
   endDate: string;
-  classId: number;
-  institutionId: number;
+  class: Class;
+  forms: Form[];
 }
 
 interface SubjectsState {

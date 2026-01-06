@@ -17,6 +17,14 @@ export class SubjectService {
         institutionId,
         ...(withDeleted ? {} : { deletedAt: null }),
       },
+      include: {
+        class: {
+          include: {
+            institution: true,
+          },
+        },
+        forms: true,
+      },
       orderBy: { id: 'asc' },
     });
   }

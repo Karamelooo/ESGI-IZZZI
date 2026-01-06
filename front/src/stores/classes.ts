@@ -11,7 +11,6 @@ export interface Class {
   description?: string;
   studentCount: number;
   studentEmails: string;
-  institutionId: number;
   deletedAt?: string | null;
 }
 

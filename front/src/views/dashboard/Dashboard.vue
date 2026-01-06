@@ -34,7 +34,12 @@ const filteredSubjects = computed(() => {
 
   if (searchQuery.value) {
     const query = searchQuery.value.toLowerCase();
-    subjects = subjects.filter((s) => s.name.toLowerCase().includes(query));
+    subjects = subjects.filter(
+      (subject) =>
+        subject.name.toLowerCase().includes(query) ||
+        subject.instructorName.toLowerCase().includes(query) ||
+        subject.class.name.toLowerCase().includes(query)
+    );
   }
 
   const now = new Date();
@@ -86,7 +91,7 @@ onMounted(async () => {
         </div>
       </div>
 
-      <div>
+      <div class="subjects-list">
         <DashboardSubjectItem v-for="subject in filteredSubjects" :key="subject.id" :subjectItem="subject" />
       </div>
     </div>
@@ -126,5 +131,23 @@ onMounted(async () => {
 
 .filters .select-wrapper {
   flex: 1;
+}
+
+.subjects-list {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 24px;
+}
+
+@media (min-width: 1280px) {
+  .subjects-list {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 2500px) {
+  .subjects-list {
+    grid-template-columns: repeat(3, 1fr);
+  }
 }
 </style>
