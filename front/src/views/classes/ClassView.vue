@@ -3,6 +3,7 @@ import { ref, onMounted, computed } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import { fetchClass } from '@api/classes';
 import { isAxiosError } from 'axios';
+import { useAuthStore } from '@stores/auth';
 import { useSubjectsStore } from '@stores/subjects';
 import { storeToRefs } from 'pinia';
 import { toDateFR } from '@utils/date';
@@ -48,6 +49,7 @@ const classId = route.params.id as string;
 const classData = ref<Partial<ClassData>>({});
 const selectedSubjectId = ref<number | null>(null);
 
+const authStore = useAuthStore();
 const subjectsStore = useSubjectsStore();
 const { subjects } = storeToRefs(subjectsStore);
 
@@ -80,7 +82,12 @@ const openAddFormModal = (subjectId: number) => {
 };
 
 const handleFormsCreated = async () => {
-  await subjectsStore.fetchSubjects(Number(classId));
+  const institutionId = authStore.user?.institution.id;
+  if (institutionId) {
+    await subjectsStore.fetchSubjectsByClass(Number(classId));
+  } else {
+    router.push('/auth');
+  }
 };
 
 const copyLink = (forms: any[], type: string) => {
@@ -93,8 +100,14 @@ const copyLink = (forms: any[], type: string) => {
 
 onMounted(async () => {
   try {
-    classData.value = await fetchClass(Number(classId));
-    await subjectsStore.fetchSubjects(Number(classId));
+    const institutionId = authStore.user?.institution.id;
+
+    if (institutionId) {
+      classData.value = await fetchClass(Number(classId));
+      await subjectsStore.fetchSubjectsByClass(Number(classId));
+    } else {
+      router.push('/auth');
+    }
   } catch (error) {
     if (isAxiosError(error) && error.response?.status === 404) {
       router.push('/classes');
@@ -120,8 +133,9 @@ onMounted(async () => {
           </div>
           <div class="search-wrapper">
             <Input
-              class="search-input"
               v-model="searchQuery"
+              class="search-input"
+              icon-right="Search"
               placeholder="Rechercher par intervenant, cours..."
               @update:modelValue="searchQuery"
             />

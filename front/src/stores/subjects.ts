@@ -1,7 +1,8 @@
 import { defineStore } from 'pinia';
+import { fetchSubjects } from '@api/subjects';
 import { fetchSubjectsByClassId } from '@api/classes';
 
-interface Subject {
+export interface Subject {
   id: number;
   name: string;
   instructorName: string;
@@ -9,6 +10,7 @@ interface Subject {
   startDate: string;
   endDate: string;
   classId: number;
+  institutionId: number;
 }
 
 interface SubjectsState {
@@ -22,13 +24,26 @@ export const useSubjectsStore = defineStore('subjects', {
     loading: false,
   }),
   actions: {
-    async fetchSubjects(classId: number) {
+    async fetchSubjects(withDeleted: boolean = false) {
+      this.loading = true;
+      try {
+        const subjects = await fetchSubjects(withDeleted);
+        this.subjects = subjects;
+      } catch (error) {
+        console.error('Failed to load subjects', error);
+        this.subjects = [];
+      } finally {
+        this.loading = false;
+      }
+    },
+    async fetchSubjectsByClass(classId: number) {
       this.loading = true;
       try {
         const subjects = await fetchSubjectsByClassId(classId);
         this.subjects = subjects;
       } catch (error) {
         console.error('Failed to load subjects', error);
+        this.subjects = [];
       } finally {
         this.loading = false;
       }

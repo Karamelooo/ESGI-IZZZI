@@ -17,13 +17,13 @@ const emit = defineEmits<{
 </script>
 
 <template>
-  <div class="wrapper" @click="!props.disabled && emit('click')" :class="{ disabled: props.disabled }">
+  <div class="icon-button-wrapper" @click="!props.disabled && emit('click')" :class="{ disabled: props.disabled }">
     <Icon :name="icon" :size="size" />
   </div>
 </template>
 
 <style scoped>
-.wrapper {
+.icon-button-wrapper {
   width: 46px;
   height: 46px;
 

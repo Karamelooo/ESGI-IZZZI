@@ -1,13 +1,13 @@
 <script lang="ts" setup>
 import { ref, onMounted, computed } from 'vue';
 import { useRouter } from 'vue-router';
+import { isAxiosError } from 'axios';
 import { useAuthStore } from '@stores/auth';
 import { useClassesStore } from '@stores/classes';
+import { createClass, type CreateClassPayload } from '@api/classes';
 import ClassesListItem from '@components/classes/ClassesListItem.vue';
 import Modal from '@components/base/Modal.vue';
 import ClassForm from '@components/forms/ClassForm.vue';
-import { createClass, type CreateClassPayload } from '@api/classes';
-import { isAxiosError } from 'axios';
 
 const router = useRouter();
 const authStore = useAuthStore();
@@ -23,7 +23,7 @@ const toggleArchivedView = async () => {
   isViewingArchived.value = !isViewingArchived.value;
   const institutionId = authStore.user?.institution.id;
   if (institutionId) {
-    await classesStore.fetchClasses(institutionId, isViewingArchived.value);
+    await classesStore.fetchClasses(isViewingArchived.value);
   } else {
     router.push('/auth');
   }
@@ -39,7 +39,7 @@ onMounted(async () => {
   const institutionId = authStore.user?.institution.id;
 
   if (institutionId) {
-    await classesStore.fetchClasses(institutionId);
+    await classesStore.fetchClasses();
   } else {
     router.push('/auth');
   }
@@ -68,7 +68,7 @@ const confirmCreate = async (formData: CreateClassPayload) => {
       description: formData.description || undefined,
     });
 
-    await classesStore.fetchClasses(institutionId, isViewingArchived.value);
+    await classesStore.fetchClasses(isViewingArchived.value);
 
     toggleCreateModal(false);
     router.push('/classes/' + createdClass.id + '/subjects/new');
@@ -102,8 +102,9 @@ const confirmCreate = async (formData: CreateClassPayload) => {
           </div>
           <div class="search-wrapper">
             <Input
-              class="search-input"
               v-model="searchQuery"
+              class="search-input"
+              icon-right="Search"
               placeholder="Rechercher une classe..."
               @update:modelValue="searchQuery"
             />

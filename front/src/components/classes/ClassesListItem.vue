@@ -62,7 +62,7 @@ const confirmEdit = async (formData: any) => {
 
     const institutionId = authStore.user?.institution.id;
     if (institutionId) {
-      await classesStore.fetchClasses(institutionId);
+      await classesStore.fetchClasses();
     } else {
       router.push('/auth');
     }

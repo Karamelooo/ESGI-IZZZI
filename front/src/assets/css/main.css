@@ -284,5 +284,6 @@ h4 {
 .search-input {
   min-width: 362px;
   overflow: hidden;
+  border-radius: 6px;
   background-color: var(--white);
 }
