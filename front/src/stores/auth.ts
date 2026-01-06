@@ -12,6 +12,10 @@ export interface User {
     id: number;
     name: string;
   };
+  subscription?: {
+    plan: string;
+    endDate: string | null;
+  } | null;
 }
 
 interface AuthState {
