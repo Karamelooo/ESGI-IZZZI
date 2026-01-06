@@ -49,7 +49,7 @@ async function logout() {
     <Profile v-if="authStore.isAuthenticated" />
 
     <div v-if="authStore.isAuthenticated" class="header-logout">
-      <Button @click="logout">Déconnexion</Button>
+      <Button variant="neutral" @click="logout">Déconnexion</Button>
     </div>
   </header>
 </template>

@@ -118,7 +118,7 @@ const confirmEdit = async (formData: any) => {
     @confirm="confirmArchive"
     @close="toggleArchiveModal(false)"
   >
-    Cette classe ne sera plus modifiable ni restaurable, mais restera consultable dans vos classes archivées.
+    Cette classe ne sera plus modifiable ni restaurable,<br />mais restera consultable dans vos classes archivées.
   </Modal>
 
   <Modal :isOpen="showEditModal" title="Modifier la classe" @close="toggleEditModal(false)">
