@@ -1,70 +1,136 @@
 export type Permission =
-  | 'users:read'
-  | 'users:create'
-  | 'users:update'
-  | 'users:delete'
-  | 'classes:read'
-  | 'classes:create'
-  | 'classes:update'
-  | 'classes:delete'
-  | 'subjects:read'
-  | 'subjects:create'
-  | 'subjects:update'
-  | 'subjects:delete'
-  | 'institutions:read'
-  | 'institutions:create'
-  | 'institutions:update'
-  | 'institutions:delete';
+  | 'user:manage'
+  | 'user:read'
+  | 'user:create'
+  | 'user:update'
+  | 'user:delete'
+  | 'self:manage'
+  | 'self:read'
+  | 'self:update'
+  | 'self:delete'
+  | 'invitation:manage'
+  | 'invitation:read'
+  | 'invitation:create'
+  | 'invitation:update'
+  | 'invitation:delete'
+  | 'institution:manage'
+  | 'institution:read'
+  | 'institution:create'
+  | 'institution:update'
+  | 'institution:delete'
+  | 'class:manage'
+  | 'class:read'
+  | 'class:create'
+  | 'class:update'
+  | 'class:delete'
+  | 'subject:manage'
+  | 'subject:read'
+  | 'subject:create'
+  | 'subject:update'
+  | 'subject:delete'
+  | 'form:manage'
+  | 'form:read'
+  | 'form:create'
+  | 'form:update'
+  | 'form:delete'
+  | 'response:manage'
+  | 'response:read'
+  | 'response:create'
+  | 'response:update'
+  | 'response:delete';
 
 export const PERMISSIONS: Permission[] = [
-  'users:read',
-  'users:create',
-  'users:update',
-  'users:delete',
-  'classes:read',
-  'classes:create',
-  'classes:update',
-  'classes:delete',
-  'subjects:read',
-  'subjects:create',
-  'subjects:update',
-  'subjects:delete',
-  'institutions:read',
-  'institutions:create',
-  'institutions:update',
-  'institutions:delete',
+  'user:manage',
+  'user:read',
+  'user:create',
+  'user:update',
+  'user:delete',
+  'self:manage',
+  'self:read',
+  'self:update',
+  'self:delete',
+  'invitation:manage',
+  'invitation:read',
+  'invitation:create',
+  'invitation:update',
+  'invitation:delete',
+  'institution:manage',
+  'institution:read',
+  'institution:create',
+  'institution:update',
+  'institution:delete',
+  'class:manage',
+  'class:read',
+  'class:create',
+  'class:update',
+  'class:delete',
+  'subject:manage',
+  'subject:read',
+  'subject:create',
+  'subject:update',
+  'subject:delete',
+  'form:manage',
+  'form:read',
+  'form:create',
+  'form:update',
+  'form:delete',
+  'response:manage',
+  'response:read',
+  'response:create',
+  'response:update',
+  'response:delete',
 ];
 
 export const DEFAULT_ROLES: Record<string, Permission[]> = {
+  owner: [
+    'user:read',
+    'self:manage',
+    'invitation:create',
+    'invitation:delete',
+    'institution:read',
+    'institution:update',
+    'class:manage',
+    'subject:manage',
+    'form:read',
+    'form:create',
+    'form:update',
+    'response:read',
+  ],
   admin: [
-    'users:read',
-    'users:create',
-    'users:update',
-    'users:delete',
-    'classes:read',
-    'classes:create',
-    'classes:update',
-    'classes:delete',
-    'subjects:read',
-    'subjects:create',
-    'subjects:update',
-    'subjects:delete',
-    'institutions:read',
-    'institutions:create',
-    'institutions:update',
-    'institutions:delete',
+    'user:read',
+    'self:update',
+    'invitation:create',
+    'invitation:delete',
+    'institution:read',
+    'institution:update',
+    'class:manage',
+    'subject:manage',
+    'form:read',
+    'form:create',
+    'form:update',
+    'response:read',
   ],
   manager: [
-    'users:read',
-    'users:create',
-    'users:update',
-    'classes:read',
-    'classes:create',
-    'classes:update',
-    'subjects:read',
-    'subjects:create',
-    'subjects:update',
-    'institutions:read',
+    'user:read',
+    'self:update',
+    'institution:read',
+    'class:manage',
+    'subject:manage',
+    'form:read',
+    'form:create',
+    'form:update',
+    'response:read',
   ],
-  student: ['users:read', 'classes:read', 'subjects:read', 'institutions:read'],
+  // Student permissions inferred/added for completeness based on usage, though not in initialData.yaml explicitly as a role def
+  student: [
+    'user:read',
+    'self:read',
+    'self:update',
+    'class:read',
+    'subject:read',
+    'institution:read',
+    'form:read',
+    'response:create',
+    'response:read',
+  ],
 };
