@@ -3,9 +3,10 @@ import { SubscriptionService } from './subscription.service';
 import { SubscriptionController } from './subscription.controller';
 import { PrismaModule } from '../prisma/prisma.module';
 import { ConfigModule } from '@nestjs/config';
+import { AuthModule } from '../auth/auth.module';
 
 @Module({
-  imports: [PrismaModule, ConfigModule],
+  imports: [PrismaModule, ConfigModule, AuthModule],
   providers: [SubscriptionService],
   controllers: [SubscriptionController],
 })

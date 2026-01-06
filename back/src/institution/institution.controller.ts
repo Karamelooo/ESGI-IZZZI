@@ -29,7 +29,7 @@ export class InstitutionController {
 
   @Get()
   @ApiOperation({ summary: 'Get all institutions' })
-  @RequirePermissions('institutions:read')
+  @RequirePermissions('institution:read')
   async findAll(
     @Query('withDeleted') withDeleted?: string,
   ): Promise<Institution[]> {
@@ -38,7 +38,7 @@ export class InstitutionController {
 
   @Get(':id')
   @ApiOperation({ summary: 'Get an institution by id' })
-  @RequirePermissions('institutions:read')
+  @RequirePermissions('institution:read')
   async findOne(
     @Param('id', ParseIntPipe) id: number,
     @Query('withDeleted') withDeleted?: string,
@@ -49,7 +49,7 @@ export class InstitutionController {
   @Post()
   @HttpCode(201)
   @ApiOperation({ summary: 'Create a new institution' })
-  @RequirePermissions('institutions:create')
+  @RequirePermissions('institution:create')
   @UsePipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }))
   async create(
     @Body() createInstitutionDto: CreateInstitutionDto,
@@ -59,7 +59,7 @@ export class InstitutionController {
 
   @Patch(':id')
   @ApiOperation({ summary: 'Update institution by id' })
-  @RequirePermissions('institutions:update')
+  @RequirePermissions('institution:update')
   @UsePipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }))
   async update(
     @Param('id', ParseIntPipe) id: number,
@@ -70,7 +70,7 @@ export class InstitutionController {
 
   @Patch(':id/remove')
   @ApiOperation({ summary: 'Soft delete institution' })
-  @RequirePermissions('institutions:delete')
+  @RequirePermissions('institution:delete')
   async remove(
     @Param('id', ParseIntPipe) id: number,
   ): Promise<{ success: boolean }> {
@@ -80,7 +80,7 @@ export class InstitutionController {
 
   @Patch(':id/restore')
   @ApiOperation({ summary: 'Restore soft deleted institution' })
-  @RequirePermissions('institutions:delete')
+  @RequirePermissions('institution:delete')
   async restore(@Param('id', ParseIntPipe) id: number): Promise<Institution> {
     return this.institutionService.restore(id);
   }
