@@ -25,8 +25,8 @@ const resetFilters = () => {
 
 const filterOptions = [
   { label: 'Tous', value: 'all' },
-  { label: 'Pendant le cours', value: 'ongoing' },
-  { label: 'Fin de cours', value: 'finished' },
+  { label: 'Pendant le cours', value: 'during_course' },
+  { label: 'Fin de cours', value: 'after_course' },
 ];
 
 const filteredSubjects = computed(() => {
@@ -42,11 +42,10 @@ const filteredSubjects = computed(() => {
     );
   }
 
-  const now = new Date();
-  if (filterOption.value === 'ongoing') {
-    subjects = subjects.filter((s) => new Date(s.endDate) > now);
-  } else if (filterOption.value === 'finished') {
-    subjects = subjects.filter((s) => new Date(s.endDate) <= now);
+  if (filterOption.value === 'during_course') {
+    subjects = subjects.filter((subject) => subject.forms.some((form) => form.type === 'DURING_COURSE'));
+  } else if (filterOption.value === 'after_course') {
+    subjects = subjects.filter((subject) => subject.forms.some((form) => form.type === 'AFTER_COURSE'));
   }
 
   subjects.sort((a, b) => {
@@ -92,7 +91,12 @@ onMounted(async () => {
       </div>
 
       <div class="subjects-list">
-        <DashboardSubjectItem v-for="subject in filteredSubjects" :key="subject.id" :subjectItem="subject" />
+        <DashboardSubjectItem
+          v-for="subject in filteredSubjects"
+          :key="subject.id"
+          :subjectItem="subject"
+          :activeFilter="filterOption"
+        />
       </div>
     </div>
   </div>

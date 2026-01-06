@@ -1,15 +1,25 @@
 <script lang="ts" setup>
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
 import { useRouter } from 'vue-router';
 import type { Subject } from '@stores/subjects';
 
 const props = defineProps<{
   subjectItem: Subject;
+  activeFilter?: string;
 }>();
 
 const router = useRouter();
 
 const showAISynthesisModal = ref(false);
+
+const filteredForms = computed(() => {
+  if (props.activeFilter === 'during_course') {
+    return props.subjectItem.forms.filter((form) => form.type === 'DURING_COURSE');
+  } else if (props.activeFilter === 'after_course') {
+    return props.subjectItem.forms.filter((form) => form.type === 'AFTER_COURSE');
+  }
+  return props.subjectItem.forms;
+});
 
 const toggleAISynthesisModal = (value: boolean) => {
   showAISynthesisModal.value = value;
@@ -25,7 +35,7 @@ const handleRemindStudents = (subjectId: number, formType: string) => {
 </script>
 
 <template>
-  <Card v-for="form in subjectItem.forms" :key="form.id" :fullWidth="true" :padding="36" class="dashboard-subject-item">
+  <Card v-for="form in filteredForms" :key="form.id" :fullWidth="true" :padding="36" class="dashboard-subject-item">
     <div class="dsi-header">
       <div class="dsi-details">
         <div class="dsi-subject-details">
@@ -36,7 +46,13 @@ const handleRemindStudents = (subjectId: number, formType: string) => {
           </div>
         </div>
 
-        <div class="dsi-form-type">
+        <div
+          class="dsi-form-type"
+          :class="{
+            'dsi-during-course': form.type === 'DURING_COURSE',
+            'dsi-after-course': form.type === 'AFTER_COURSE',
+          }"
+        >
           <span v-if="form.type === 'DURING_COURSE'">Formulaire pendant le cours</span>
           <span v-if="form.type === 'AFTER_COURSE'">Formulaire fin de cours</span>
         </div>
@@ -154,8 +170,16 @@ const handleRemindStudents = (subjectId: number, formType: string) => {
   text-transform: uppercase;
   padding: 6px 14px;
   border-radius: 8px;
-  border: 1px solid var(--blue);
   color: var(--gray-100);
+}
+
+.dsi-during-course {
+  border: 1px solid var(--orange);
+  background-color: color-mix(in srgb, var(--orange), transparent 80%);
+}
+
+.dsi-after-course {
+  border: 1px solid var(--blue);
   background-color: color-mix(in srgb, var(--blue), transparent 80%);
 }
 
