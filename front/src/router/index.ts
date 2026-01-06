@@ -13,6 +13,7 @@ import SubjectsList from '@views/subjects/SubjectsList.vue';
 import SubjectCreate from '@views/subjects/SubjectCreate.vue';
 import Dashboard from '@views/dashboard/Dashboard.vue';
 import FormView from '@views/forms/FormView.vue';
+import Profile from '@views/profile/Profile.vue';
 import { useAuthStore } from '@stores/auth';
 
 const routes: Array<RouteRecordRaw> = [
@@ -40,6 +41,9 @@ const routes: Array<RouteRecordRaw> = [
 
   /* Form Routes */
   { path: '/form/:id', name: 'form', component: FormView },
+
+  /* Profile Routes */
+  { path: '/profile', name: 'profile', component: Profile },
 ];
 
 const router = createRouter({
