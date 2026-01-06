@@ -31,7 +31,7 @@ export class UserController {
 
   @Get()
   @ApiOperation({ summary: 'Get all users' })
-  @RequirePermissions('users:read')
+  @RequirePermissions('user:read')
   async findAll(
     @CurrentUser() user: any,
     @Query('withDeleted') withDeleted?: string,
@@ -41,7 +41,7 @@ export class UserController {
 
   @Get(':id')
   @ApiOperation({ summary: 'Get one user by id' })
-  @RequirePermissions('users:read')
+  @RequirePermissions('user:read')
   async findOne(
     @Param('id', ParseIntPipe) id: number,
     @CurrentUser() user: any,
@@ -58,7 +58,7 @@ export class UserController {
   @HttpCode(201)
   @ApiOperation({ summary: 'Create a new user' })
   @UsePipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }))
-  @RequirePermissions('users:create')
+  @RequirePermissions('user:create')
   async create(
     @Body() createUserDto: CreateUserDto,
     @CurrentUser() user: any,
@@ -69,7 +69,7 @@ export class UserController {
   @Patch(':id')
   @ApiOperation({ summary: 'Update user by id' })
   @UsePipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }))
-  @RequirePermissions('users:update')
+  @RequirePermissions('user:update')
   async update(
     @Param('id', ParseIntPipe) id: number,
     @CurrentUser() user: any,
@@ -81,7 +81,7 @@ export class UserController {
   @Patch(':id/update-password')
   @ApiOperation({ summary: 'Change user password' })
   @UsePipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }))
-  @RequirePermissions('users:update')
+  @RequirePermissions('user:update')
   async updatePassword(
     @Param('id', ParseIntPipe) id: number,
     @CurrentUser() user: any,
@@ -96,7 +96,7 @@ export class UserController {
 
   @Patch(':id/remove')
   @ApiOperation({ summary: 'Soft delete user' })
-  @RequirePermissions('users:delete')
+  @RequirePermissions('user:delete')
   async remove(
     @Param('id', ParseIntPipe) id: number,
     @CurrentUser() user: any,
@@ -106,7 +106,7 @@ export class UserController {
 
   @Patch(':id/restore')
   @ApiOperation({ summary: 'Restore soft deleted user' })
-  @RequirePermissions('users:delete')
+  @RequirePermissions('user:delete')
   async restore(
     @Param('id', ParseIntPipe) id: number,
     @CurrentUser() user: any,

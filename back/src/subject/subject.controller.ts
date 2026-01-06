@@ -30,7 +30,7 @@ export class SubjectController {
 
   @Get()
   @ApiOperation({ summary: 'Get all subjects' })
-  @RequirePermissions('subjects:read')
+  @RequirePermissions('subject:read')
   async findAll(
     @CurrentUser() user: any,
     @Query('withDeleted') withDeleted?: string,
@@ -43,7 +43,7 @@ export class SubjectController {
 
   @Get(':id')
   @ApiOperation({ summary: 'Get a subject by id' })
-  @RequirePermissions('subjects:read')
+  @RequirePermissions('subject:read')
   async findOne(
     @Param('id', ParseIntPipe) id: number,
     @CurrentUser() user: any,
@@ -59,7 +59,7 @@ export class SubjectController {
   @Post()
   @HttpCode(201)
   @ApiOperation({ summary: 'Create a new subject' })
-  @RequirePermissions('subjects:create')
+  @RequirePermissions('subject:create')
   @UsePipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }))
   async create(
     @Body() createSubjectDto: CreateSubjectDto,
@@ -70,7 +70,7 @@ export class SubjectController {
 
   @Patch(':id')
   @ApiOperation({ summary: 'Update subject by id' })
-  @RequirePermissions('subjects:update')
+  @RequirePermissions('subject:update')
   @UsePipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }))
   async update(
     @Param('id', ParseIntPipe) id: number,
@@ -82,7 +82,7 @@ export class SubjectController {
 
   @Patch(':id/remove')
   @ApiOperation({ summary: 'Soft delete subject' })
-  @RequirePermissions('subjects:delete')
+  @RequirePermissions('subject:delete')
   async remove(
     @Param('id', ParseIntPipe) id: number,
     @CurrentUser() user: any,
@@ -93,7 +93,7 @@ export class SubjectController {
 
   @Patch(':id/restore')
   @ApiOperation({ summary: 'Restore soft deleted subject' })
-  @RequirePermissions('subjects:delete')
+  @RequirePermissions('subject:delete')
   async restore(
     @Param('id', ParseIntPipe) id: number,
     @CurrentUser() user: any,

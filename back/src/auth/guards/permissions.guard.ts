@@ -5,15 +5,15 @@ import {
   ForbiddenException,
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
-import { PrismaService } from '../../prisma/prisma.service';
 import { PERMISSIONS_KEY } from '../decorators/permissions.decorator';
 import { Permission } from '../permissions.constants';
+import { PermissionsService } from '../permissions.service';
 
 @Injectable()
 export class PermissionsGuard implements CanActivate {
   constructor(
     private reflector: Reflector,
-    private prisma: PrismaService,
+    private permissionsService: PermissionsService,
   ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
@@ -33,33 +33,9 @@ export class PermissionsGuard implements CanActivate {
       throw new ForbiddenException('User not authenticated');
     }
 
-    const user = await this.prisma.user.findUnique({
-      where: { id: Number(userId) },
-      select: {
-        userRoles: {
-          select: {
-            role: {
-              select: {
-                rolePermissions: {
-                  select: { permission: { select: { key: true } } },
-                },
-              },
-            },
-          },
-        },
-      },
-    });
-
-    if (!user) {
-      throw new ForbiddenException('User not found');
-    }
-
-    const userPermissions = user.userRoles
-      .flatMap((ur) => ur.role.rolePermissions)
-      .map((rp) => rp.permission.key);
-
-    const hasPermission = requiredPermissions.every((permission) =>
-      userPermissions.includes(permission),
+    const hasPermission = await this.permissionsService.checkPermissions(
+      Number(userId),
+      requiredPermissions,
     );
 
     if (!hasPermission) {

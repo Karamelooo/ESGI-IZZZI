@@ -34,7 +34,7 @@ export class ClassController {
 
   @Get()
   @ApiOperation({ summary: 'Get all classes' })
-  @RequirePermissions('classes:read')
+  @RequirePermissions('class:read')
   async findAll(
     @CurrentUser() user: any,
     @Query('withDeleted') withDeleted?: string,
@@ -47,7 +47,7 @@ export class ClassController {
 
   @Get(':id')
   @ApiOperation({ summary: 'Get a class by id' })
-  @RequirePermissions('classes:read')
+  @RequirePermissions('class:read')
   async findOne(
     @Param('id', ParseIntPipe) id: number,
     @CurrentUser() user: any,
@@ -62,7 +62,7 @@ export class ClassController {
 
   @Get(':id/subjects')
   @ApiOperation({ summary: 'Get all subjects by class id' })
-  @RequirePermissions('classes:read')
+  @RequirePermissions('class:read')
   async findAllSubjectsByClassId(
     @Param('id', ParseIntPipe) id: number,
     @CurrentUser() user: any,
@@ -78,7 +78,7 @@ export class ClassController {
   @Post()
   @HttpCode(201)
   @ApiOperation({ summary: 'Create a new class' })
-  @RequirePermissions('classes:create')
+  @RequirePermissions('class:create')
   @UsePipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }))
   async create(
     @Body() createClassDto: CreateClassDto,
@@ -89,7 +89,7 @@ export class ClassController {
 
   @Patch(':id')
   @ApiOperation({ summary: 'Update class by id' })
-  @RequirePermissions('classes:update')
+  @RequirePermissions('class:update')
   @UsePipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }))
   async update(
     @Param('id', ParseIntPipe) id: number,
@@ -101,7 +101,7 @@ export class ClassController {
 
   @Patch(':id/remove')
   @ApiOperation({ summary: 'Soft delete class' })
-  @RequirePermissions('classes:delete')
+  @RequirePermissions('class:delete')
   async remove(
     @Param('id', ParseIntPipe) id: number,
     @CurrentUser() user: any,
@@ -112,7 +112,7 @@ export class ClassController {
 
   @Patch(':id/restore')
   @ApiOperation({ summary: 'Restore soft deleted class' })
-  @RequirePermissions('classes:delete')
+  @RequirePermissions('class:delete')
   async restore(
     @Param('id', ParseIntPipe) id: number,
     @CurrentUser() user: any,
