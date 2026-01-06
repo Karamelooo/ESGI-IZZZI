@@ -92,6 +92,11 @@ export class AuthService {
       include: {
         userRoles: { include: { role: true } },
         institution: true,
+        subscriptions: {
+          where: { status: 'active' },
+          orderBy: { createdAt: 'desc' },
+          take: 1,
+        },
       },
     });
 
@@ -166,6 +171,7 @@ export class AuthService {
       lastName: user.lastName,
       role: user.userRoles?.[0]?.role?.name || null,
       institution: user.institution,
+      subscription: user.subscriptions?.[0] || null,
     };
   }
 

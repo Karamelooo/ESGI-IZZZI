@@ -218,6 +218,7 @@ const userInitials = computed(() => {
 <style scoped>
 .profile-page {
   min-height: 100vh;
+  margin-top:6rem;
   background-color: var(--gray-1);
 }
 
@@ -242,7 +243,7 @@ const userInitials = computed(() => {
 .user-summary-card {
   text-align: center;
   align-items: center;
-  width: 100%;
+  width: 100% !important;
 }
 
 .avatar-container {
