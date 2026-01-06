@@ -8,7 +8,7 @@ interface TableRow {
   [key: string]: any;
 }
 
-const props = withDefaults(
+withDefaults(
   defineProps<{
     columns: Array<TableColumn>;
     rows: Array<TableRow>;

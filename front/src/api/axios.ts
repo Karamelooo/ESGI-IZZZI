@@ -5,8 +5,10 @@ import { useAuthStore } from '@stores/auth';
 export function useApi() {
   const router = useRouter();
   const authStore = useAuthStore();
+  /* eslint-disable-next-line no-console */
+  console.log('Runtime Config:', (window as any).config);
   const instance = axios.create({
-    baseURL: import.meta.env.API_URL || 'http://localhost:3500',
+    baseURL: (window as any).config?.API_URL || import.meta.env.API_URL || 'http://localhost:3500',
     headers: { 'Content-Type': 'application/json' },
     withCredentials: true,
   });

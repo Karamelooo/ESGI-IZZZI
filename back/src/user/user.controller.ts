@@ -25,13 +25,14 @@ import { CurrentUser } from '../auth/decorators/current-user.decorator';
 
 @ApiTags('users')
 @Controller('users')
-@UseGuards(AccessTokenGuard, PermissionsGuard)
+@UseGuards(AccessTokenGuard)
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @Get()
   @ApiOperation({ summary: 'Get all users' })
-  @RequirePermissions('users:read')
+  @UseGuards(PermissionsGuard)
+  @RequirePermissions('user:read')
   async findAll(
     @CurrentUser() user: any,
     @Query('withDeleted') withDeleted?: string,
@@ -39,9 +40,57 @@ export class UserController {
     return this.userService.findAll(user.institutionId, withDeleted === 'true');
   }
 
+  @Get('me')
+  @ApiOperation({ summary: 'Get current user profile' })
+  async getMe(@CurrentUser() user: any): Promise<UserPublic | null> {
+    return this.userService.findOneById(
+      Number(user.userId),
+      Number(user.institutionId),
+      false,
+    );
+  }
+
+  @Patch('me')
+  @ApiOperation({ summary: 'Update current user profile' })
+  @UsePipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }))
+  async updateMe(
+    @CurrentUser() user: any,
+    @Body() updateUserDto: UpdateUserDto,
+  ): Promise<UserPublic> {
+    return this.userService.update(
+      Number(user.userId),
+      Number(user.institutionId),
+      updateUserDto,
+    );
+  }
+
+  @Patch('me/update-password')
+  @ApiOperation({ summary: 'Update current user password' })
+  @UsePipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }))
+  async updateMyPassword(
+    @CurrentUser() user: any,
+    @Body() updatePasswordDto: UpdatePasswordDto,
+  ): Promise<UserPublic> {
+    return this.userService.updatePassword(
+      Number(user.userId),
+      Number(user.institutionId),
+      updatePasswordDto,
+    );
+  }
+
+  @Patch('me/remove')
+  @ApiOperation({ summary: 'Soft delete current user account' })
+  async removeMe(@CurrentUser() user: any): Promise<UserPublic> {
+    return this.userService.remove(
+      Number(user.userId),
+      Number(user.institutionId),
+    );
+  }
+
   @Get(':id')
   @ApiOperation({ summary: 'Get one user by id' })
-  @RequirePermissions('users:read')
+  @UseGuards(PermissionsGuard)
+  @RequirePermissions('user:read')
   async findOne(
     @Param('id', ParseIntPipe) id: number,
     @CurrentUser() user: any,
@@ -58,7 +107,8 @@ export class UserController {
   @HttpCode(201)
   @ApiOperation({ summary: 'Create a new user' })
   @UsePipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }))
-  @RequirePermissions('users:create')
+  @UseGuards(PermissionsGuard)
+  @RequirePermissions('user:create')
   async create(
     @Body() createUserDto: CreateUserDto,
     @CurrentUser() user: any,
@@ -69,7 +119,8 @@ export class UserController {
   @Patch(':id')
   @ApiOperation({ summary: 'Update user by id' })
   @UsePipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }))
-  @RequirePermissions('users:update')
+  @UseGuards(PermissionsGuard)
+  @RequirePermissions('user:update')
   async update(
     @Param('id', ParseIntPipe) id: number,
     @CurrentUser() user: any,
@@ -81,7 +132,8 @@ export class UserController {
   @Patch(':id/update-password')
   @ApiOperation({ summary: 'Change user password' })
   @UsePipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }))
-  @RequirePermissions('users:update')
+  @UseGuards(PermissionsGuard)
+  @RequirePermissions('user:update')
   async updatePassword(
     @Param('id', ParseIntPipe) id: number,
     @CurrentUser() user: any,
@@ -96,7 +148,8 @@ export class UserController {
 
   @Patch(':id/remove')
   @ApiOperation({ summary: 'Soft delete user' })
-  @RequirePermissions('users:delete')
+  @UseGuards(PermissionsGuard)
+  @RequirePermissions('user:delete')
   async remove(
     @Param('id', ParseIntPipe) id: number,
     @CurrentUser() user: any,
@@ -106,7 +159,8 @@ export class UserController {
 
   @Patch(':id/restore')
   @ApiOperation({ summary: 'Restore soft deleted user' })
-  @RequirePermissions('users:delete')
+  @UseGuards(PermissionsGuard)
+  @RequirePermissions('user:delete')
   async restore(
     @Param('id', ParseIntPipe) id: number,
     @CurrentUser() user: any,

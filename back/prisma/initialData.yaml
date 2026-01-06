@@ -1,0 +1,360 @@
+permissions:
+  - 'user:manage'
+  - 'user:read'
+  - 'user:create'
+  - 'user:update'
+  - 'user:delete'
+  - 'self:manage'
+  - 'self:read'
+  - 'self:update'
+  - 'self:delete'
+  - 'invitation:manage'
+  - 'invitation:read'
+  - 'invitation:create'
+  - 'invitation:update'
+  - 'invitation:delete'
+  - 'institution:manage'
+  - 'institution:read'
+  - 'institution:create'
+  - 'institution:update'
+  - 'institution:delete'
+  - 'class:manage'
+  - 'class:read'
+  - 'class:create'
+  - 'class:update'
+  - 'class:delete'
+  - 'subject:manage'
+  - 'subject:read'
+  - 'subject:create'
+  - 'subject:update'
+  - 'subject:delete'
+  - 'form:manage'
+  - 'form:read'
+  - 'form:create'
+  - 'form:update'
+  - 'form:delete'
+  - 'response:manage'
+  - 'response:read'
+  - 'response:create'
+  - 'response:update'
+  - 'response:delete'
+
+roles:
+  - name: 'owner'
+    description: "Propriétaire de l'espace"
+    system: true
+    permissions:
+      - 'user:read'
+      - 'self:manage'
+      - 'invitation:create'
+      - 'invitation:delete'
+      - 'institution:read'
+      - 'institution:update'
+      - 'class:manage'
+      - 'subject:manage'
+      - 'form:read'
+      - 'form:create'
+      - 'form:update'
+      - 'response:read'
+  - name: 'admin'
+    description: 'Administrateur'
+    system: true
+    permissions:
+      - 'user:read'
+      - 'self:update'
+      - 'invitation:create'
+      - 'invitation:delete'
+      - 'institution:read'
+      - 'institution:update'
+      - 'class:manage'
+      - 'subject:manage'
+      - 'form:read'
+      - 'form:create'
+      - 'form:update'
+      - 'response:read'
+  - name: 'manager'
+    description: 'Directeur pédagogique'
+    system: true
+    permissions:
+      - 'user:read'
+      - 'self:update'
+      - 'institution:read'
+      - 'class:manage'
+      - 'subject:manage'
+      - 'form:read'
+      - 'form:create'
+      - 'form:update'
+      - 'response:read'
+
+institutions:
+  - name: 'ESGI'
+    users:
+      - firstName: 'Owner'
+        lastName: 'ESGI'
+        email: 'owner@esgi.fr'
+        password: 'Test1234!'
+        refreshTokenVersion: 1
+        authorizationVersion: 1
+        role: 'owner'
+      - firstName: 'Admin'
+        lastName: 'ESGI'
+        email: 'admin@esgi.fr'
+        password: 'Test1234!'
+        refreshTokenVersion: 1
+        authorizationVersion: 1
+        role: 'admin'
+      - firstName: 'DP'
+        lastName: 'ESGI'
+        email: 'dp@esgi.fr'
+        password: 'Test1234!'
+        refreshTokenVersion: 1
+        authorizationVersion: 1
+        role: 'manager'
+    classes:
+      - name: '4AL'
+        description: 'Architecture des Logiciels'
+        studentCount: 28
+        studentEmails:
+          - 'student1@esgi.fr'
+          - 'student2@esgi.fr'
+          - 'student3@esgi.fr'
+        subjects:
+          - name: 'Microservices'
+            instructorName: 'Microservices TEACHER'
+            instructorEmail: 'microservices.teacher@esgi.fr'
+            startDate: '2026-01-12'
+            endDate: '2026-03-25'
+          - name: 'Design Patterns'
+            instructorName: 'Design Patterns TEACHER'
+            instructorEmail: 'design-patterns.teacher@esgi.fr'
+            startDate: '2026-04-05'
+            endDate: '2026-06-15'
+          - name: 'Cloud Computing'
+            instructorName: 'Cloud Computing TEACHER'
+            instructorEmail: 'cloud-computing.teacher@esgi.fr'
+            startDate: '2026-09-10'
+            endDate: '2026-12-18'
+
+      - name: '3JV'
+        description: 'Jeu Vidéo'
+        studentCount: 15
+        studentEmails:
+          - 'student4@esgi.fr'
+          - 'student5@esgi.fr'
+          - 'student6@esgi.fr'
+        subjects:
+          - name: 'Unreal Engine'
+            instructorName: 'Unreal Engine TEACHER'
+            instructorEmail: 'unreal-engine.teacher@esgi.fr'
+            startDate: '2026-02-15'
+            endDate: '2026-05-30'
+          - name: 'Game Design'
+            instructorName: 'Game Design TEACHER'
+            instructorEmail: 'game-design.teacher@esgi.fr'
+            startDate: '2026-06-01'
+            endDate: '2026-07-15'
+          - name: 'Modélisation 3D'
+            instructorName: 'Modélisation 3D TEACHER'
+            instructorEmail: 'modelisation-3d.teacher@esgi.fr'
+            startDate: '2026-09-20'
+            endDate: '2026-11-25'
+
+      - name: '4MOC'
+        description: 'Mobilité et Objets Connectés'
+        studentCount: 12
+        studentEmails:
+          - 'student7@esgi.fr'
+          - 'student8@esgi.fr'
+          - 'student9@esgi.fr'
+        subjects:
+          - name: 'Développement Mobile'
+            instructorName: 'Développement Mobile TEACHER'
+            instructorEmail: 'developpement-mobile.teacher@esgi.fr'
+            startDate: '2026-01-20'
+            endDate: '2026-06-10'
+          - name: 'Protocoles IoT'
+            instructorName: 'Protocoles IoT TEACHER'
+            instructorEmail: 'protocoles-iot.teacher@esgi.fr'
+            startDate: '2026-03-12'
+            endDate: '2026-05-04'
+          - name: 'Sécurité IoT'
+            instructorName: 'Sécurité IoT TEACHER'
+            instructorEmail: 'securite-iot.teacher@esgi.fr'
+            startDate: '2026-10-05'
+            endDate: '2026-12-15'
+
+      - name: '3IABD'
+        description: 'Intelligence Artificielle et Big Data'
+        studentCount: 24
+        studentEmails:
+          - 'student10@esgi.fr'
+          - 'student11@esgi.fr'
+          - 'student12@esgi.fr'
+        subjects:
+          - name: 'Machine Learning'
+            instructorName: 'Machine Learning TEACHER'
+            instructorEmail: 'machine-learning.teacher@esgi.fr'
+            startDate: '2026-01-05'
+            endDate: '2026-04-20'
+          - name: 'Big Data'
+            instructorName: 'Big Data TEACHER'
+            instructorEmail: 'big-data.teacher@esgi.fr'
+            startDate: '2026-05-10'
+            endDate: '2026-07-25'
+          - name: 'NLP'
+            instructorName: 'NLP TEACHER'
+            instructorEmail: 'nlp.teacher@esgi.fr'
+            startDate: '2026-09-15'
+            endDate: '2026-12-10'
+
+      - name: '5IW'
+        description: 'Ingénierie du Web'
+        studentCount: 21
+        studentEmails:
+          - 'student13@esgi.fr'
+          - 'student14@esgi.fr'
+          - 'student15@esgi.fr'
+        subjects:
+          - name: 'React NextJS'
+            instructorName: 'React NextJS TEACHER'
+            instructorEmail: 'react-nextjs.teacher@esgi.fr'
+            startDate: '2026-02-01'
+            endDate: '2026-06-30'
+            forms:
+              - type: 'DURING_COURSE'
+                status: 'DRAFT'
+                templateId: 1
+              - type: 'AFTER_COURSE'
+                status: 'DRAFT'
+                templateId: 1
+          - name: 'Sécurité Web'
+            instructorName: 'Sécurité Web TEACHER'
+            instructorEmail: 'securite-web.teacher@esgi.fr'
+            startDate: '2026-09-01'
+            endDate: '2026-10-15'
+          - name: 'Performance Web'
+            instructorName: 'Performance Web TEACHER'
+            instructorEmail: 'performance-web.teacher@esgi.fr'
+            startDate: '2026-11-02'
+            endDate: '2026-12-22'
+
+formTemplates:
+  - name: 'Basique'
+    description: 'Un formulaire adapté à tous les cours.'
+    groups:
+      - name: 'Vous'
+        description: "Informations sur l'étudiant répondant."
+        order: 1
+        questions:
+          - label: 'Quel est votre niveau dans la thématique du cours ?'
+            type: 'SINGLE_CHOICE'
+            order: 1
+            options:
+              - 'Je découvre'
+              - 'Je connais'
+              - "J'y suis familier"
+          - label: 'Avez-vous assisté régulièrement à ce cours ?'
+            type: 'SINGLE_CHOICE'
+            order: 2
+            options:
+              - 'Oui'
+              - 'Non'
+      - name: 'Le cours'
+        description: 'Contenu et organisation du cours.'
+        order: 2
+        questions:
+          - label: 'Les objectifs du cours sont-ils clairs ?'
+            type: 'SINGLE_CHOICE'
+            order: 1
+            options:
+              - 'Oui'
+              - 'Non'
+          - label: 'La difficulté du cours est :'
+            type: 'SINGLE_CHOICE'
+            order: 2
+            options:
+              - 'Trop basique'
+              - 'Adaptée'
+              - 'Trop élevée'
+          - label: 'Le cours répond-il à vos attentes ?'
+            type: 'SINGLE_CHOICE'
+            order: 3
+            options:
+              - 'Oui'
+              - 'Non'
+          - label: 'Quels thèmes du cours vous paraissent-ils utiles ?'
+            type: 'SHORT_TEXT'
+            order: 4
+      - name: 'Pédagogie et supports'
+        description: 'Méthodes pédagogiques et supports de cours.'
+        order: 3
+        questions:
+          - label: "Quelle méthode est utilisée par l'intervenant ?"
+            type: 'MULTIPLE_CHOICE'
+            order: 1
+            options:
+              - 'Cours magistral'
+              - 'Travaux dirigés (TD)'
+              - 'Travaux pratiques (TP)'
+          - label: 'Les supports pédagogiques sont-ils clairs et utiles ?'
+            type: 'SINGLE_CHOICE'
+            order: 2
+            options:
+              - 'Oui'
+              - 'Non'
+      - name: 'Intervenant'
+        description: 'Intervenant dispensant le cours.'
+        order: 4
+        questions:
+          - label: "L'intervenant maîtrise-t-il le sujet enseigné ?"
+            type: 'SINGLE_CHOICE'
+            order: 1
+            options:
+              - 'Oui'
+              - 'Non'
+          - label: 'Est-ce facile de poser des questions ?'
+            type: 'SINGLE_CHOICE'
+            order: 2
+            options:
+              - 'Oui'
+              - 'Non'
+          - label: "Quels points forts retenez-vous de l'intervenant ?"
+            type: 'LONG_TEXT'
+            order: 3
+      - name: 'Charge de travail et évaluation'
+        description: 'Travail demandé pour le cours.'
+        order: 5
+        questions:
+          - label: 'La charge de travail demandée est :'
+            type: 'SINGLE_CHOICE'
+            order: 1
+            options:
+              - 'Faible'
+              - 'Adaptée'
+              - 'Élevée'
+          - label: 'Comment avez-vous été évalués ?'
+            type: 'MULTIPLE_CHOICE'
+            order: 2
+            options:
+              - 'Examen écrit'
+              - 'Examen oral'
+              - 'Projet'
+          - label: "Les modalités d'évaluation sont-elles cohérentes avec le cours ?"
+            type: 'SINGLE_CHOICE'
+            order: 3
+            options:
+              - 'Oui'
+              - 'Non'
+      - name: 'Appréciation globale'
+        description: 'Dernière étape !'
+        order: 6
+        questions:
+          - label: "Recommanderiez-vous ce cours à d'autres étudiants ?"
+            type: 'SINGLE_CHOICE'
+            order: 1
+            options:
+              - 'Oui'
+              - 'Non'
+          - label: 'Commentaires et suggestions additionnelles'
+            type: 'LONG_TEXT'
+            order: 2

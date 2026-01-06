@@ -1,312 +1,259 @@
-import { PrismaClient, QuestionType } from '@prisma/client';
-import { PERMISSIONS, DEFAULT_ROLES } from '../src/auth/permissions.constants';
+import { PrismaClient } from '@prisma/client';
+import * as yaml from 'js-yaml';
+import * as fs from 'fs';
+import * as path from 'path';
 import * as argon2 from 'argon2';
 
 const prisma = new PrismaClient();
 
-interface SeedQuestion {
-  label: string;
-  type: QuestionType;
-  order: number;
-  options?: string[];
-}
+async function main() {
+  try {
+    const yamlPath = path.join(__dirname, 'initialData.yaml');
+    const fileContents = fs.readFileSync(yamlPath, 'utf8');
+    const data: any = yaml.load(fileContents);
 
-interface SeedGroup {
-  name: string;
-  description: string;
-  order: number;
-  questions: SeedQuestion[];
-}
-
-interface SeedTemplate {
-  id: number;
-  name: string;
-  description: string;
-  groups: SeedGroup[];
-}
-
-async function seedAuth(prisma: PrismaClient) {
-  await prisma.permission.createMany({
-    data: PERMISSIONS.map((permission) => ({ key: permission })),
-    skipDuplicates: true,
-  });
-
-  const roles = await Promise.all(
-    Object.keys(DEFAULT_ROLES).map((roleName) =>
-      prisma.role.upsert({
-        where: { name: roleName },
+    const permissionMap = new Map<string, number>();
+    for (const key of data.permissions) {
+      const permission = await prisma.permission.upsert({
+        where: { key: key },
         update: {},
-        create: { name: roleName, system: true },
-      }),
-    ),
-  );
-  const rolesByName = new Map(roles.map((role) => [role.name, role]));
+        create: { key: key },
+      });
+      permissionMap.set(key, permission.id);
+    }
 
-  const permissions = await prisma.permission.findMany();
-  const permissionsByKey = new Map(
-    permissions.map((permission) => [permission.key, permission]),
-  );
-
-  for (const [roleName, permissionKeys] of Object.entries(DEFAULT_ROLES)) {
-    await prisma.rolePermission.createMany({
-      data: permissionKeys.map((key) => ({
-        roleId: rolesByName.get(roleName)!.id,
-        permissionId: permissionsByKey.get(key)!.id,
-      })),
-      skipDuplicates: true,
-    });
-  }
-  const institution = await prisma.institution.findFirst({
-    where: { name: 'ESGI' },
-  });
-
-  const institutionId =
-    institution?.id ??
-    (
-      await prisma.institution.create({
-        data: { name: 'ESGI' },
-      })
-    ).id;
-
-  const password = await argon2.hash('password123');
-
-  for (const roleName of Object.keys(DEFAULT_ROLES)) {
-    const email = `${roleName}@izizzi.fr`;
-    
-    // Create or update user
-    const user = await prisma.user.upsert({
-      where: { email },
-      update: {
-        password, // Update password if user exists to ensure it matches
-      },
-      create: {
-        email,
-        password,
-        firstName: roleName.charAt(0).toUpperCase() + roleName.slice(1),
-        lastName: 'User',
-        institutionId,
-      },
-    });
-
-    const role = rolesByName.get(roleName);
-    if (role) {
-      await prisma.userRole.upsert({
-        where: {
-          userId_roleId: {
-            userId: user.id,
-            roleId: role.id,
+    for (const roleData of data.roles) {
+      await prisma.role.upsert({
+        where: { name: roleData.name },
+        update: {
+          description: roleData.description,
+          system: roleData.system,
+          rolePermissions: {
+            deleteMany: {},
+            create: roleData.permissions.map((permKey: string) => ({
+              permission: { connect: { key: permKey } },
+            })),
           },
         },
-        update: {},
         create: {
-          userId: user.id,
-          roleId: role.id,
-        },
-      });
-    }
-  }
-}
-
-async function createFormTemplate(
-  prisma: PrismaClient,
-  template: SeedTemplate,
-) {
-  await prisma.formTemplate.upsert({
-    where: { id: template.id },
-    update: {
-      name: template.name,
-      description: template.description,
-    },
-    create: {
-      id: template.id,
-      name: template.name,
-      description: template.description,
-    },
-  });
-
-  const groupCount = await prisma.templateQuestionGroup.count({
-    where: { templateId: template.id },
-  });
-
-  if (groupCount === 0) {
-    for (const group of template.groups) {
-      await prisma.templateQuestionGroup.create({
-        data: {
-          name: group.name,
-          description: group.description,
-          order: group.order,
-          templateId: template.id,
-          questions: {
-            create: group.questions.map((q) => ({
-              label: q.label,
-              type: q.type,
-              order: q.order,
-              options: q.options,
-              templateId: template.id,
+          name: roleData.name,
+          description: roleData.description,
+          system: roleData.system,
+          rolePermissions: {
+            create: roleData.permissions.map((permKey: string) => ({
+              permission: { connect: { key: permKey } },
             })),
           },
         },
       });
     }
+
+    const templateIdMap = new Map<string, number>();
+    let templateCounter = 1;
+
+    for (const templateData of data.formTemplates) {
+      const existing = await prisma.formTemplate.findFirst({
+        where: { name: templateData.name },
+      });
+
+      let templateId: number;
+
+      if (existing) {
+        templateId = existing.id;
+        await prisma.formTemplate.update({
+          where: { id: existing.id },
+          data: {
+            description: templateData.description,
+            questionGroups: { deleteMany: {} },
+            questions: { deleteMany: {} },
+          },
+        });
+      } else {
+        const created = await prisma.formTemplate.create({
+          data: {
+            name: templateData.name,
+            description: templateData.description,
+          },
+        });
+        templateId = created.id;
+      }
+
+      if (templateData.groups) {
+        const groupMap = new Map<string, number>();
+        for (const group of templateData.groups) {
+          const createdGroup = await prisma.templateQuestionGroup.create({
+            data: {
+              name: group.name,
+              description: group.description,
+              order: group.order,
+              templateId: templateId,
+            },
+          });
+          groupMap.set(group.name, createdGroup.id);
+
+          if (group.questions) {
+            for (const q of group.questions) {
+              await prisma.templateQuestion.create({
+                data: {
+                  label: q.label,
+                  type: q.type,
+                  order: q.order,
+                  required: true,
+                  options: q.options || [],
+                  templateId: templateId,
+                  groupId: createdGroup.id,
+                },
+              });
+            }
+          }
+        }
+      }
+    }
+
+    const basiqueTemplate = await prisma.formTemplate.findFirst({
+      where: { name: 'Basique' },
+    });
+    const basiqueTemplateId = basiqueTemplate?.id;
+
+    for (const instData of data.institutions) {
+      let institution = await prisma.institution.findFirst({
+        where: { name: instData.name },
+      });
+
+      if (!institution) {
+        institution = await prisma.institution.create({
+          data: { name: instData.name },
+        });
+      }
+
+      if (instData.users) {
+        for (const userData of instData.users) {
+          const hashedPassword = await argon2.hash(userData.password);
+          await prisma.user.upsert({
+            where: { email: userData.email },
+            update: {},
+            create: {
+              firstName: userData.firstName,
+              lastName: userData.lastName,
+              email: userData.email,
+              password: hashedPassword,
+              institutionId: institution.id,
+              userRoles: {
+                create: {
+                  role: { connect: { name: userData.role } },
+                },
+              },
+            },
+          });
+        }
+      }
+
+      if (instData.classes) {
+        for (const classData of instData.classes) {
+          const studentEmailsStr = Array.isArray(classData.studentEmails)
+            ? classData.studentEmails.join(';')
+            : '';
+
+          let cls = await prisma.class.findFirst({
+            where: {
+              name: classData.name,
+              institutionId: institution.id,
+            },
+          });
+
+          if (!cls) {
+            cls = await prisma.class.create({
+              data: {
+                name: classData.name,
+                description: classData.description,
+                studentCount: classData.studentCount,
+                studentEmails: studentEmailsStr,
+                institutionId: institution.id,
+              },
+            });
+          } else {
+            await prisma.class.update({
+              where: { id: cls.id },
+              data: {
+                description: classData.description,
+                studentCount: classData.studentCount,
+                studentEmails: studentEmailsStr,
+              },
+            });
+          }
+
+          if (classData.subjects) {
+            for (const subjectData of classData.subjects) {
+              let subject = await prisma.subject.findFirst({
+                where: {
+                  name: subjectData.name,
+                  classId: cls.id,
+                },
+              });
+
+              const subjectPayload = {
+                name: subjectData.name,
+                instructorName: subjectData.instructorName,
+                instructorEmail: subjectData.instructorEmail,
+                startDate: subjectData.startDate
+                  ? new Date(subjectData.startDate)
+                  : null,
+                endDate: subjectData.endDate
+                  ? new Date(subjectData.endDate)
+                  : null,
+                institutionId: institution.id,
+                classId: cls.id,
+              };
+
+              if (!subject) {
+                subject = await prisma.subject.create({
+                  data: subjectPayload,
+                });
+              } else {
+                subject = await prisma.subject.update({
+                  where: { id: subject.id },
+                  data: subjectPayload,
+                });
+              }
+
+              if (subjectData.forms) {
+                for (const formData of subjectData.forms) {
+                  let effectiveTemplateId = formData.templateId;
+                  if (formData.templateId === 1 && basiqueTemplateId) {
+                    effectiveTemplateId = basiqueTemplateId;
+                  }
+
+                  await prisma.form.upsert({
+                    where: {
+                      subjectId_type: {
+                        subjectId: subject.id,
+                        type: formData.type,
+                      },
+                    },
+                    update: {
+                      status: formData.status,
+                      templateId: effectiveTemplateId,
+                    },
+                    create: {
+                      type: formData.type,
+                      status: formData.status,
+                      subjectId: subject.id,
+                      templateId: effectiveTemplateId,
+                    },
+                  });
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  } catch (e) {
+    console.error(e);
+    process.exit(1);
+  } finally {
+    await prisma.$disconnect();
   }
 }
 
-async function main() {
-  await seedAuth(prisma);
-
-  const basiqueTemplate: SeedTemplate = {
-    id: 1,
-    name: 'Basique',
-    description: 'Un formulaire adapté à tous les cours.',
-    groups: [
-      {
-        name: 'Vous',
-        description: "Informations sur l'étudiant répondant.",
-        order: 1,
-        questions: [
-          {
-            label: 'Quel est votre niveau dans la thématique du cours ?',
-            type: QuestionType.SINGLE_CHOICE,
-            order: 1,
-            options: ['Je découvre', 'Je connais', "J'y suis familier"],
-          },
-          {
-            label: 'Avez-vous assisté régulièrement à ce cours ?',
-            type: QuestionType.SINGLE_CHOICE,
-            order: 2,
-            options: ['Oui', 'Non'],
-          },
-        ],
-      },
-      {
-        name: 'Le cours',
-        description: 'Contenu et organisation du cours.',
-        order: 2,
-        questions: [
-          {
-            label: 'Les objectifs du cours sont-ils clairs ?',
-            type: QuestionType.SINGLE_CHOICE,
-            order: 1,
-            options: ['Oui', 'Non'],
-          },
-          {
-            label: 'La difficulté du cours est :',
-            type: QuestionType.SINGLE_CHOICE,
-            order: 2,
-            options: ['Trop basique', 'Adaptée', 'Trop élevée'],
-          },
-          {
-            label: 'Le cours répond-il à vos attentes ?',
-            type: QuestionType.SINGLE_CHOICE,
-            order: 3,
-            options: ['Oui', 'Non'],
-          },
-          {
-            label: 'Quels thèmes du cours vous paraissent-ils utiles ?',
-            type: QuestionType.SHORT_TEXT,
-            order: 4,
-          },
-        ],
-      },
-      {
-        name: 'Pédagogie et supports',
-        description: 'Méthodes pédagogiques et supports de cours.',
-        order: 3,
-        questions: [
-          {
-            label: "Quelle méthode est utilisée par l'intervenant ?",
-            type: QuestionType.MULTIPLE_CHOICE,
-            order: 1,
-            options: [
-              'Cours magistral',
-              'Travaux dirigés (TD)',
-              'Travaux pratiques (TP)',
-            ],
-          },
-          {
-            label: 'Les supports pédagogiques sont-ils clairs et utiles ?',
-            type: QuestionType.SINGLE_CHOICE,
-            order: 2,
-            options: ['Oui', 'Non'],
-          },
-        ],
-      },
-      {
-        name: 'Intervenant',
-        description: 'Intervenant dispensant le cours.',
-        order: 4,
-        questions: [
-          {
-            label: "L'intervenant maîtrise-t-il le sujet enseigné ?",
-            type: QuestionType.SINGLE_CHOICE,
-            order: 1,
-            options: ['Oui', 'Non'],
-          },
-          {
-            label: 'Est-ce facile de poser des questions ?',
-            type: QuestionType.SINGLE_CHOICE,
-            order: 2,
-            options: ['Oui', 'Non'],
-          },
-          {
-            label: "Quels points forts retenez-vous de l'intervenant ?",
-            type: QuestionType.LONG_TEXT,
-            order: 3,
-          },
-        ],
-      },
-      {
-        name: 'Charge de travail et évaluation',
-        description: 'Travail demandé pour le cours.',
-        order: 5,
-        questions: [
-          {
-            label: 'La charge de travail demandée est :',
-            type: QuestionType.SINGLE_CHOICE,
-            order: 1,
-            options: ['Faible', 'Adaptée', 'Élevée'],
-          },
-          {
-            label: 'Comment avez-vous été évalués ?',
-            type: QuestionType.MULTIPLE_CHOICE,
-            order: 2,
-            options: ['Examen écrit', 'Examen oral', 'Projet'],
-          },
-          {
-            label:
-              "Les modalités d'évaluation sont-elles cohérentes avec le cours ?",
-            type: QuestionType.SINGLE_CHOICE,
-            order: 3,
-            options: ['Oui', 'Non'],
-          },
-        ],
-      },
-      {
-        name: 'Appréciation globale',
-        description: 'Dernière étape !',
-        order: 6,
-        questions: [
-          {
-            label: "Recommanderiez-vous ce cours à d'autres étudiants ?",
-            type: QuestionType.SINGLE_CHOICE,
-            order: 1,
-            options: ['Oui', 'Non'],
-          },
-          {
-            label: 'Commentaires et suggestions additionnelles',
-            type: QuestionType.LONG_TEXT,
-            order: 2,
-          },
-        ],
-      },
-    ],
-  };
-
-  await createFormTemplate(prisma, basiqueTemplate);
-
-  console.log('Seeding completed.');
-}
-
-main().finally(async () => {
-  await prisma.$disconnect();
-});
+main();

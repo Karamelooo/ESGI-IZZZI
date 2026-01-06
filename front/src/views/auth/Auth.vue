@@ -7,6 +7,7 @@ import { useAuthStore } from '@stores/auth';
 
 const router = useRouter();
 const authStore = useAuthStore();
+console.log(authStore.user);
 
 function goToForgotPassword() {
   router.push('/auth/forgot-password');
@@ -25,7 +26,7 @@ const activeTab = ref(0);
 
 <template>
   <main class="auth-main">
-    <Logo :size="130" />
+    <Logo :size="130" :linkToHome="true" />
 
     <Card :centered="true">
       <SwitchTabs v-model="activeTab" :tabs="[{ name: 'Se connecter' }, { name: 'S\'inscrire' }]" />

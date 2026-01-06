@@ -1,7 +1,7 @@
 <script lang="ts" setup>
-import { computed } from 'vue';
 
-const props = defineProps<{
+
+defineProps<{
   title: string;
   text: string;
   emphase?: string;
