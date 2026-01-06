@@ -3,8 +3,8 @@ services:
     build:
       context: ./front
       dockerfile: Dockerfile.prod
-      args:
-        API_URL: ${API_URL:-http://localhost:3500}
+    environment:
+      - API_URL=${API_URL:-http://localhost:3500}
     restart: always
     depends_on:
       - back
