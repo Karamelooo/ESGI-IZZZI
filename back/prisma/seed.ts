@@ -151,7 +151,7 @@ async function main() {
       if (instData.classes) {
         for (const classData of instData.classes) {
           const studentEmailsStr = Array.isArray(classData.studentEmails)
-            ? classData.studentEmails.join(',')
+            ? classData.studentEmails.join(';')
             : '';
 
           let cls = await prisma.class.findFirst({
