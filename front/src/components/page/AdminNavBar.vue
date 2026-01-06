@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { useRoute } from 'vue-router';
 
-const props = withDefaults(
+withDefaults(
   defineProps<{
     disabled?: boolean;
   }>(),

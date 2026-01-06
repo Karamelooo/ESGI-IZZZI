@@ -10,7 +10,7 @@ const route = useRoute();
 const router = useRouter();
 const authStore = useAuthStore();
 
-const props = withDefaults(
+withDefaults(
   defineProps<{
     disabled?: boolean;
   }>(),

@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import type { FormTemplate } from '@api/forms';
 
-const props = defineProps<{
+defineProps<{
   template: FormTemplate;
   selected: boolean;
 }>();

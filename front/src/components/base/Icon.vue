@@ -1,4 +1,6 @@
 <script lang="ts" setup>
+import { computed } from 'vue';
+
 const props = withDefaults(
   defineProps<{
     name: string;
@@ -14,13 +16,17 @@ const props = withDefaults(
     flipVertical: false,
   }
 );
+
+const iconUrl = computed(() => {
+  return `url(/icons/${props.name}.svg)`;
+});
 </script>
 
 <template>
   <div
     class="icon"
     :style="{
-      '--icon-url': `url(/src/assets/svg/icons/${props.name}.svg)`,
+      '--icon-url': iconUrl,
       '--icon-color': props.color,
       '--icon-size': props.size,
       transform: [props.flipHorizontal ? 'scaleX(-1)' : '', props.flipVertical ? 'scaleY(-1)' : '']
@@ -36,7 +42,13 @@ const props = withDefaults(
   height: var(--icon-size);
   width: var(--icon-size);
   background-color: var(--icon-color);
-  mask: var(--icon-url) no-repeat center / contain;
-  -webkit-mask: var(--icon-url) no-repeat center / contain;
+  -webkit-mask-image: var(--icon-url);
+  -webkit-mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  -webkit-mask-size: contain;
+  mask-image: var(--icon-url);
+  mask-repeat: no-repeat;
+  mask-position: center;
+  mask-size: contain;
 }
 </style>

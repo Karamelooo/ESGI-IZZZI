@@ -4,7 +4,7 @@ import { useRoute } from 'vue-router';
 import AdminNavBar from './AdminNavBar.vue';
 import NavBar from './NavBar.vue';
 
-const props = defineProps<{
+defineProps<{
   isOpen: boolean;
   isAuthenticated: boolean;
   activeTab?: number;

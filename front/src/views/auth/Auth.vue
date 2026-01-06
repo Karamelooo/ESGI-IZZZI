@@ -7,6 +7,7 @@ import { useAuthStore } from '@stores/auth';
 
 const router = useRouter();
 const authStore = useAuthStore();
+console.log(authStore.user);
 
 function goToForgotPassword() {
   router.push('/auth/forgot-password');
