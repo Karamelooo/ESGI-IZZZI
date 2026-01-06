@@ -121,7 +121,6 @@ export const DEFAULT_ROLES: Record<string, Permission[]> = {
     'form:update',
     'response:read',
   ],
-  // Student permissions inferred/added for completeness based on usage, though not in initialData.yaml explicitly as a role def
   student: [
     'user:read',
     'self:read',
