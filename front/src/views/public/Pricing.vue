@@ -1,15 +1,35 @@
 <script lang="ts" setup>
 import SwitchPanels from '@/components/layout/SwitchPanels.vue';
 import SwitchTabs from '@/components/layout/SwitchTabs.vue';
-import { ref, computed } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import Card from '@/components/layout/Card.vue';
 import Button from '@/components/base/Button.vue';
-
 import CardTable from '@/components/layout/CardTable.vue';
 import Footer from '@/components/page/Footer.vue';
 import { useRouter } from 'vue-router';
+import { useAuthStore } from '@stores/auth';
+import { useApi } from '@/api/axios';
 
 const router = useRouter();
+const authStore = useAuthStore();
+const api = useApi();
+
+const subscription = ref<any>(null);
+
+onMounted(async () => {
+  if (authStore.isAuthenticated) {
+    try {
+      const { data } = await api.get('/subscription/me');
+      subscription.value = data;
+    } catch (e) {
+    }
+  }
+});
+
+const currentPlan = computed(() => {
+  if (!subscription.value) return null;
+  return subscription.value.plan;
+});
 
 const activeTab2 = ref(0);
 const billingPeriod = ref<'annual' | 'monthly'>('annual');
@@ -143,10 +163,13 @@ const handleSubscription = (planName: string) => {
       <template #tab-0>
         <div class="annuel-pricing-wrapper">
           <Card class="annuel-pricing">
-            <Button variant="neutral" round>👌🏻 Izzzi</Button>
+            <div class="plan-header">
+              <Button variant="neutral" round>👌🏻 Izzzi</Button>
+              <span v-if="currentPlan === 'Izzzi'" class="current-plan-badge">Plan actuel</span>
+            </div>
             <h1>0€<span>/ mois</span></h1>
             <br />
-            <Button icon="Arrow" iconPosition="right" @click="handleSubscription('Izzzi')">Démarrer mes 4 mois gratuits</Button>
+            <Button v-if="!currentPlan" icon="Arrow" iconPosition="right" @click="handleSubscription('Izzzi')">Démarrer mes 4 mois gratuits</Button>
             <br /><br />
             <div>
               <ul>
@@ -169,7 +192,10 @@ const handleSubscription = (planName: string) => {
             <Button icon="Arrow" iconPosition="right" variant="neutral">Voir les détails du plan</Button>
           </Card>
           <Card class="annuel-pricing annuel-pricing-orange annuel-pricing-desktop">
-            <Button variant="primary" round>🙌 Super Izzzi</Button>
+            <div class="plan-header">
+              <Button variant="primary" round>🙌 Super Izzzi</Button>
+              <span v-if="currentPlan === 'Super Izzzi'" class="current-plan-badge current-plan-badge--white">Plan actuel</span>
+            </div>
             <br />
             <br />
             <h4>Estimez le prix de votre abonnement</h4>
@@ -207,7 +233,7 @@ const handleSubscription = (planName: string) => {
             </div>
             <h1 v-if="totalPrice !== null">{{ totalPrice }}€<span> par mois</span></h1>
             <br />
-            <Button icon="Arrow" iconPosition="right" @click="handleSubscription('Izzzi')">{{ buttonText }}</Button>
+            <Button icon="Arrow" iconPosition="right" @click="handleSubscription('Super Izzzi')">{{ buttonText }}</Button>
             <br />
             <br />
             <div>
@@ -229,20 +255,22 @@ const handleSubscription = (planName: string) => {
             <Button icon="Arrow" iconPosition="right" variant="neutral">Voir les détails du plan</Button>
           </Card>
         </div>
-        <h2>Comparez nos plans</h2>
       </template>
     </SwitchPanels>
+    <h2 v-if="!currentPlan">Comparez nos plans</h2>
     <SwitchTabs
+      v-if="!currentPlan"
       v-model="activeTab2"
       round
       :tabs="[{ name: '👌🏻 Izzzi' }, { name: '🙌 Super Izzzi' }]"
       class="plans-tabs"
     />
-    <div class="plans-container">
+    <div v-if="!currentPlan" class="plans-container">
       <SwitchPanels :activeTab="activeTab2" class="plans-panels-mobile">
         <template #tab-0>
           <Card class="plans">
             <Button variant="neutral" round>👌🏻 Izzzi</Button>
+            <span v-if="currentPlan === 'Izzzi'" class="current-plan-badge">Plan actuel</span>
             <div>
               <h3>0€ <span>par mois</span></h3>
               <p class="p10">(4 mois d'essai illimités)</p>
@@ -254,6 +282,7 @@ const handleSubscription = (planName: string) => {
         <template #tab-1>
           <Card class="plans">
             <Button variant="primary" round>🙌 Super Izzzi</Button>
+            <span v-if="currentPlan === 'Super Izzzi'" class="current-plan-badge">Plan actuel</span>
             <div>
               <p class="p10">À partir de</p>
               <h3>
@@ -551,5 +580,29 @@ main {
   .pricing-switch .switch-tabs {
     margin: 0 auto 1rem auto;
   }
+}
+
+.plan-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.current-plan-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.5rem 1rem;
+  border-radius: 38px;
+  background-color: var(--dark-orange);
+  color: var(--white);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.current-plan-badge--white {
+  background-color: var(--white);
+  color: var(--dark-orange);
 }
 </style>

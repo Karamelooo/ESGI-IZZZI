@@ -37,17 +37,17 @@ function handleNotificationClick() {
   <div class="wrapper">
     <IconButton @click="handleNotificationClick" icon="Bell-Mobile" size="26px" />
 
-    <div @click="router.push('/classes')" class="profile">
-      <Avatar />
+    <div class="profile">
+      <Avatar @click="router.push('/profile')" />
 
       <div class="infos">
-        <p class="name">{{ authStore.user?.firstName }} {{ authStore.user?.lastName }}</p>
+        <p @click="router.push('/profile')" class="name">{{ authStore.user?.firstName }} {{ authStore.user?.lastName }}</p>
 
-        <div v-if="isSuper" class="role-wrapper--admin">
+        <div v-if="isSuper" @click="router.push('/pricing')" class="role-wrapper--admin">
           <Icon name="Crown" color="var(--white)" />
-          <span class="role">Supper Izzzi</span>
+          <span class="role">Super Izzzi</span>
         </div>
-        <div v-else-if="isIzzzi" class="role-wrapper--default">
+        <div v-else-if="isIzzzi" @click="router.push('/pricing')" class="role-wrapper--default">
           <span class="role">Plan gratuit</span>
         </div>
       </div>
