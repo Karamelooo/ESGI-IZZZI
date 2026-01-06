@@ -63,8 +63,22 @@ export class PermissionsService {
 
     const userPermissions = await this.getPermissionsForUser(userId);
 
-    return requiredPermissions.every((required) =>
-      userPermissions.includes(required),
-    );
+    return requiredPermissions.every((required) => {
+      // 1. Exact match
+      if (userPermissions.includes(required)) {
+        return true;
+      }
+
+      // 2. Hierarchical match (resource:manage > resource:*)
+      const [resource] = required.split(':');
+      if (resource) {
+        const managePermission = `${resource}:manage`;
+        if (userPermissions.includes(managePermission)) {
+          return true;
+        }
+      }
+
+      return false;
+    });
   }
 }
