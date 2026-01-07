@@ -5,7 +5,7 @@ import { useAuthStore } from '@stores/auth';
 import AdminNavBar from './AdminNavBar.vue';
 import NavBar from './NavBar.vue';
 import Profile from './Profile.vue';
-import InviteModal from './InviteModal.vue'; // Import Modal
+import InviteModal from './InviteModal.vue'; 
 import { isAdminRoute } from '@utils/route';
 
 const route = useRoute();

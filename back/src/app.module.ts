@@ -15,6 +15,7 @@ import { FormTemplateModule } from './form-template/form-template.module';
 import { FormModule } from './form/form.module';
 import { ResponseModule } from './response/response.module';
 import { InvitationModule } from './invitation/invitation.module';
+import { MailModule } from './mail/mail.module';
 
 @Module({
   imports: [
@@ -36,6 +37,7 @@ import { InvitationModule } from './invitation/invitation.module';
     FormModule,
     ResponseModule,
     InvitationModule,
+    MailModule,
   ],
   controllers: [AppController],
   providers: [AppService],
