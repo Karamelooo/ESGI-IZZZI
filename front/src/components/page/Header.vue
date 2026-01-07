@@ -1,14 +1,22 @@
 <script lang="ts" setup>
+import { ref, computed } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useAuthStore } from '@stores/auth';
 import AdminNavBar from './AdminNavBar.vue';
 import NavBar from './NavBar.vue';
 import Profile from './Profile.vue';
+import InviteModal from './InviteModal.vue'; // Import Modal
 import { isAdminRoute } from '@utils/route';
 
 const route = useRoute();
 const router = useRouter();
 const authStore = useAuthStore();
+
+const showInviteModal = ref(false);
+
+const canShare = computed(() => {
+  return authStore.isAuthenticated && ['admin', 'owner'].includes(authStore.user?.role ?? '');
+});
 
 withDefaults(
   defineProps<{
@@ -36,7 +44,11 @@ async function logout() {
 <template>
   <header
     class="header"
-    :class="{ 'header--admin': isAdminRoute(route.path), 'header--authenticated': authStore.isAuthenticated }"
+    :class="{
+      'header--admin': isAdminRoute(route.path),
+      'header--authenticated': authStore.isAuthenticated,
+      'header--with-share': canShare
+    }"
   >
     <Logo :linkToHome="true" />
 
@@ -48,9 +60,15 @@ async function logout() {
 
     <Profile v-if="authStore.isAuthenticated" />
 
+    <div v-if="canShare" class="header-share">
+      <Button variant="primary" @click="showInviteModal = true">Partager</Button>
+    </div>
+
     <div v-if="authStore.isAuthenticated" class="header-logout">
       <Button variant="neutral" @click="logout">Déconnexion</Button>
     </div>
+
+    <InviteModal :isOpen="showInviteModal" @close="showInviteModal = false" />
   </header>
 </template>
 
@@ -76,6 +94,10 @@ async function logout() {
   grid-template-columns: auto 1fr auto auto;
 }
 
+.header--authenticated.header--with-share {
+  grid-template-columns: auto 1fr auto auto auto;
+}
+
 .header--admin {
   width: 100%;
   height: 96px;
@@ -88,7 +110,7 @@ async function logout() {
   display: none;
 }
 
-.header-logout {
+.header-logout, .header-share {
   margin: auto 0;
 }
 
