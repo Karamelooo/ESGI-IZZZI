@@ -12,6 +12,7 @@ import ClassView from '@views/classes/ClassView.vue';
 import SubjectsList from '@views/subjects/SubjectsList.vue';
 import SubjectCreate from '@views/subjects/SubjectCreate.vue';
 import Dashboard from '@views/dashboard/Dashboard.vue';
+import Feedbacks from '@views/dashboard/Feedbacks.vue';
 import FormView from '@views/forms/FormView.vue';
 import { useAuthStore } from '@stores/auth';
 
@@ -37,6 +38,7 @@ const routes: Array<RouteRecordRaw> = [
 
   /* Dashboard Routes */
   { path: '/dashboard', name: 'dashboard', component: Dashboard },
+  { path: '/dashboard/:id/feedbacks', name: 'feedbacks', component: Feedbacks },
 
   /* Form Routes */
   { path: '/form/:id', name: 'form', component: FormView },

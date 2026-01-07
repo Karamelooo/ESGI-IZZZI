@@ -16,7 +16,8 @@ const ALLOWED_TYPES = ['text', 'password', 'email', 'number', 'search', 'tel', '
 
 const props = withDefaults(
   defineProps<{
-    modelValue: string | number;
+    modelValue?: string | number;
+    value?: string | number;
     type?: string;
     label?: string;
     placeholder?: string;
@@ -59,6 +60,10 @@ const inputType = computed(() => {
 
 const isTextArea = computed(() => normalizedType.value === 'textarea');
 
+const computedValue = computed(() => {
+  return props.modelValue ?? props.value ?? '';
+});
+
 const emit = defineEmits<{
   (e: 'update:modelValue', value: string | number): void;
   (e: 'focus', event: FocusEvent): void;
@@ -86,7 +91,7 @@ const inputId = computed(() => props.name ?? `input-${Math.random().toString(36)
 const emailRule = { type: 'email' as const };
 
 const rulesResults = computed(() => {
-  const value = typeof props.modelValue === 'string' ? props.modelValue : String(props.modelValue ?? '');
+  const value = typeof computedValue.value === 'string' ? computedValue.value : String(computedValue.value);
   const propRules = [...(props.rules || [])];
 
   if (normalizedType.value === 'email') {
@@ -170,7 +175,7 @@ const wrapperClass = computed(() => ({
           rows="4"
           :placeholder="placeholder"
           :name="name"
-          :value="modelValue"
+          :value="computedValue"
           :disabled="disabled"
           :required="required"
           @input="onInput"
@@ -186,7 +191,7 @@ const wrapperClass = computed(() => ({
           :type="inputType"
           :placeholder="placeholder"
           :name="name"
-          :value="modelValue"
+          :value="computedValue"
           :disabled="disabled"
           :required="required"
           @input="onInput"
@@ -338,6 +343,11 @@ textarea.input {
 
 .input-rule--hidden {
   display: none;
+}
+
+.fb-sidebar-content .input-container {
+  font-size: 12px;
+  font-weight: 600;
 }
 
 @media (max-width: 600px) {

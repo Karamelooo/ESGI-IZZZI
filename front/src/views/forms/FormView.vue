@@ -92,19 +92,12 @@ onMounted(async () => {
       <Logo alt="Logo IZZZI" />
       <h1>{{ form?.subject?.name ?? 'Matière' }}</h1>
 
-      <div class="pfv-class-details">
-        <div class="pfv-class-detail">
-          <Icon name="School" />
-          <p>{{ form?.subject?.class?.institution?.name ?? 'École' }}</p>
-        </div>
-
-        <div class="pfv-class-detail-separator"></div>
-
-        <div class="pfv-class-detail">
-          <Icon name="People" />
-          <p>{{ form?.subject?.class?.name ?? 'Classe' }}</p>
-        </div>
-      </div>
+      <IconTextList
+        :items="[
+          { icon: 'School', text: form?.subject?.class?.institution?.name ?? 'École' },
+          { icon: 'People', text: form?.subject?.class?.name ?? 'Classe' },
+        ]"
+      />
 
       <p>Sois honnête, sinon ça ne sert à rien !</p>
       <p>
@@ -247,30 +240,6 @@ onMounted(async () => {
 
 .pfv-sidebar p {
   line-height: 1.5;
-}
-
-.pfv-class-details {
-  width: fit-content;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 16px 20px;
-  border-radius: 8px;
-  border: 1px solid var(--gray-15);
-}
-
-.pfv-class-detail {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  font-size: 12px;
-  font-weight: 700;
-}
-
-.pfv-class-detail-separator {
-  width: 1px;
-  height: 100%;
-  background-color: var(--gray-15);
 }
 
 .pfv-error-messages {
