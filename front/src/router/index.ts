@@ -18,33 +18,33 @@ import Profile from '@views/profile/Profile.vue';
 import { useAuthStore } from '@stores/auth';
 
 const routes: Array<RouteRecordRaw> = [
-  /* Public Routes */
+  
   { path: '/', name: 'home', component: Home },
   { path: '/pricing', name: 'pricing', component: Pricing },
   { path: '/pricing/confirm', name: 'subscription-confirmation', component: SubscriptionConfirmation },
   { path: '/ui-kit', name: 'ui-kit', component: UIKit },
 
-  /* Auth Routes */
+  
   { path: '/auth', name: 'login', component: Auth },
-  { path: '/register', name: 'register', component: Register }, // Invitation registration
+  { path: '/register', name: 'register', component: Register }, 
   { path: '/auth/change-password', name: 'change-password', component: ChangePassword },
   { path: '/auth/forgot-password', name: 'forgot-password', component: ForgotPassword },
 
-  /* Classes Routes */
+  
   { path: '/classes', name: 'classes-list', component: ClassesList },
   { path: '/classes/:id', name: 'class-view', component: ClassView },
 
-  /* Subjects Routes */
+  
   { path: '/classes/:id/subjects', name: 'subject-list', component: SubjectsList },
   { path: '/classes/:id/subjects/new', name: 'subject-create', component: SubjectCreate },
 
-  /* Dashboard Routes */
+  
   { path: '/dashboard', name: 'dashboard', component: Dashboard },
 
-  /* Form Routes */
+  
   { path: '/form/:id', name: 'form', component: FormView },
 
-  /* Profile Routes */
+  
   { path: '/profile', name: 'profile', component: Profile },
 ];
 

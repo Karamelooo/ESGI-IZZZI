@@ -24,7 +24,7 @@ export class InvitationController {
     @Post()
     @UseGuards(AccessTokenGuard, PermissionsGuard)
     @ApiOperation({ summary: 'Create invitation' })
-    // @RequirePermissions('invitation:create')
+    
     @UsePipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }))
     async create(
         @CurrentUser() user: any,
@@ -36,7 +36,7 @@ export class InvitationController {
     @Get()
     @UseGuards(AccessTokenGuard, PermissionsGuard)
     @ApiOperation({ summary: 'List invitations' })
-    // @RequirePermissions('invitation:read')
+    
     async findAll(@CurrentUser() user: any) {
         return this.invitationService.findAll(user.institutionId);
     }
@@ -53,16 +53,16 @@ export class InvitationController {
     @ApiOperation({ summary: 'Accept invitation' })
     async acceptInvitation(
         @Param('token') token: string,
-        @Body() body: any // In real app use DTO
+        @Body() body: any 
     ) {
-        // Logic for accepting invite:
-        // 1. Verify token
-        // 2. Create user (using UserService)
-        // 3. Link to institution
-        // 4. Invalidate token
+        
+        
+        
+        
+        
 
-        // Since I don't have direct access to UserService here easily without injecting it wildly or circular deps...
-        // I should update InvitationService to handle this.
+        
+        
         return this.invitationService.accept(token, body);
     }
 }

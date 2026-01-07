@@ -4,14 +4,19 @@ import { CreateInvitationDto } from './dto/create-invitation.dto';
 import { randomBytes } from 'crypto';
 import * as argon2 from 'argon2';
 
+import { MailService } from '../mail/mail.service';
+
 @Injectable()
 export class InvitationService {
-    constructor(private readonly prisma: PrismaService) { }
+    constructor(
+        private readonly prisma: PrismaService,
+        private readonly mailService: MailService,
+    ) { }
 
     async create(institutionId: number, createInvitationDto: CreateInvitationDto) {
         const token = randomBytes(32).toString('hex');
         const expirationDate = new Date();
-        expirationDate.setDate(expirationDate.getDate() + 7); // 7 days expiration
+        expirationDate.setDate(expirationDate.getDate() + 7); 
 
         const invitation = await this.prisma.invitation.create({
             data: {
@@ -24,7 +29,58 @@ export class InvitationService {
         });
 
         if (createInvitationDto.email) {
-            console.log(`[MOCK EMAIL] Invitation sent to ${createInvitationDto.email} with link: http://localhost:5173/register?token=${token}`);
+            const inviteLink = `${process.env.VITE_FRONT_URL || 'http://localhost:5173'}/register?token=${token}`;
+
+            const htmlContent = `
+            <!DOCTYPE html>
+            <html>
+            <head>
+                <meta charset="utf-8">
+                <style>
+                    body { font-family: 'Poppins', sans-serif; margin: 0; padding: 0; background-color: #f4f4f4; }
+                    .container { max-width: 600px; margin: 0 auto; background-color: #ffffff; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+                    .header { background-color: #ffe552; padding: 32px; text-align: center; }
+                    .header h1 { margin: 0; color: #000000; font-family: sans-serif; font-size: 28px; letter-spacing: 2px; }
+                    .content { padding: 40px 32px; color: #2f2e2c; text-align: center; }
+                    .title { font-size: 24px; font-weight: 600; margin-bottom: 16px; color: #000000; }
+                    .message { font-size: 16px; line-height: 1.6; margin-bottom: 32px; color: #555555; }
+                    .button { display: inline-block; background-color: #f69d04; color: #ffffff; text-decoration: none; padding: 14px 32px; border-radius: 50px; font-weight: 600; font-size: 16px; transition: background-color 0.3s; }
+                    .button:hover { background-color: #d98600; }
+                    .footer { background-color: #fbfbfb; padding: 24px; text-align: center; font-size: 12px; color: #888888; }
+                </style>
+            </head>
+            <body>
+                <div style="padding: 40px 0;">
+                    <div class="container">
+                        <div class="header">
+                            <h1>IZZZI</h1>
+                        </div>
+                        <div class="content">
+                            <h2 class="title">Vous avez été invité !</h2>
+                            <p class="message">
+                                Bonjour,<br><br>
+                                Vous avez été invité à rejoindre l'espace de travail <strong>IZZZI</strong>.<br>
+                                Cliquez sur le bouton ci-dessous pour accepter l'invitation et créer votre compte.
+                            </p>
+                            <a href="${inviteLink}" class="button" style="color: #ffffff;">Rejoindre IZZZI</a>
+                            <p style="margin-top: 32px; font-size: 14px; color: #999;">
+                                Ce lien expirera dans 7 jours.
+                            </p>
+                        </div>
+                        <div class="footer">
+                            &copy; ${new Date().getFullYear()} IZZZI. Tous droits réservés.
+                        </div>
+                    </div>
+                </div>
+            </body>
+            </html>
+            `;
+
+            await this.mailService.sendExampleEmail(
+                createInvitationDto.email,
+                'Invitation à rejoindre IZZZI',
+                htmlContent 
+            );
         }
 
         return invitation;
@@ -55,7 +111,7 @@ export class InvitationService {
 
         const hash = await argon2.hash(userData.password);
 
-        // Check if email already exists
+        
         const existingUser = await this.prisma.user.findUnique({ where: { email: userData.email } });
         if (existingUser) throw new BadRequestException('Email déjà utilisé');
 
@@ -69,7 +125,7 @@ export class InvitationService {
             }
         });
 
-        // Assign Role
+        
         const role = await this.prisma.role.findUnique({ where: { name: invitation.role } });
         if (role) {
             await this.prisma.userRole.create({
@@ -80,7 +136,7 @@ export class InvitationService {
             });
         }
 
-        // Update Invitation Status
+        
         await this.prisma.invitation.update({
             where: { id: invitation.id },
             data: { status: 'ACCEPTED' }

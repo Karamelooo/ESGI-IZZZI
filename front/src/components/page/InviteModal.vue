@@ -29,7 +29,7 @@ interface User {
   firstName: string;
   lastName: string;
   email: string;
-  role: string | null; // Role might be null if not loaded or different structure
+  role: string | null; 
   UserRole?: { role: { name: string } }[];
 }
 
@@ -52,7 +52,7 @@ const inviteUser = async () => {
           role: selectedRole.value
       });
       email.value = '';
-      // Optionally show success message
+      
       alert('Invitation envoyée !');
   } catch (e) {
       console.error('Failed to send invitation', e);
@@ -62,7 +62,7 @@ const inviteUser = async () => {
 
 const copyLink = async () => {
   try {
-      const { data } = await api.post('/invitations', { role: selectedRole.value }); // No email = link generation
+      const { data } = await api.post('/invitations', { role: selectedRole.value }); 
       const link = `${window.location.origin}/register?token=${data.token}`;
       await navigator.clipboard.writeText(link);
       alert('Lien copié dans le presse-papier !');
@@ -76,20 +76,20 @@ onMounted(() => {
 });
 
 const getInitials = (user: User) => {
-    return (user.firstName[0] + user.lastName[0]).toUpperCase();
+    return ((user.firstName?.[0] || '') + (user.lastName?.[0] || '')).toUpperCase();
 }
 
 const getUserRole = (user: User) => {
-    const userRole = user.userRoles?.[0];
+    const userRole = user.UserRole?.[0];
     if (userRole) {
         const roleName = userRole.role.name;
-        // capitalize
+        
         const formatted = roleName.charAt(0).toUpperCase() + roleName.slice(1);
-        // Translate specific roles if needed
+        
         if (formatted === 'Owner') return 'Propriétaire';
         return formatted;
     }
-    return 'Membre'; // Fallback
+    return 'Membre'; 
 }
 
 const colors = ['#F25C05', '#F2994A', '#2F80ED', '#27AE60', '#EB5757', '#9B51E0'];
@@ -247,7 +247,7 @@ const getUserColor = (id: number) => colors[id % colors.length];
     color: var(--gray-80);
 }
 
-/* Adjustments to match global styles if needed */
+
 :global(.modal-content) {
     max-width: 600px;
 }

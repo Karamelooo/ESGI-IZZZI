@@ -115,7 +115,7 @@ const handleClick = (event: MouseEvent) => {
   gap: 12px;
 }
 
-/* Base styles */
+
 .button {
   color: var(--gray-100);
   padding: 12px 18px;
@@ -131,7 +131,7 @@ const handleClick = (event: MouseEvent) => {
     padding-right 0.2s ease-in-out;
 }
 
-/* Width variants */
+
 .button--width-fill {
   width: 100%;
 }
@@ -140,13 +140,13 @@ const handleClick = (event: MouseEvent) => {
   width: fit-content;
 }
 
-/* Disabled state */
+
 .button:disabled {
   opacity: 0.3;
   cursor: not-allowed;
 }
 
-/* Primary variant */
+
 .button--primary {
   background-color: var(--primary);
   border: 1px solid var(--primary);
@@ -160,7 +160,7 @@ const handleClick = (event: MouseEvent) => {
   background-color: var(--primary);
 }
 
-/* Secondary variant */
+
 .button--secondary {
   background-color: var(--orange);
   border: 1px solid var(--orange);
@@ -170,7 +170,7 @@ const handleClick = (event: MouseEvent) => {
   background-color: var(--dark-orange);
 }
 
-/* Neutral variant */
+
 .button--neutral {
   background-color: var(--gray-2);
   border: 1px solid var(--gray-10);
@@ -184,7 +184,7 @@ const handleClick = (event: MouseEvent) => {
   background-color: var(--gray-2);
 }
 
-/* Plain variant */
+
 .button--plain {
   background-color: transparent;
   border: none;
@@ -200,7 +200,7 @@ const handleClick = (event: MouseEvent) => {
   text-decoration: none;
 }
 
-/* Switch variant */
+
 .button--switch {
   background-color: var(--gray-100);
   border: 1px solid var(--gray-100);
@@ -208,7 +208,7 @@ const handleClick = (event: MouseEvent) => {
   padding: 12px 60px;
 }
 
-/* Round style modifier */
+
 .button--round {
   border-radius: 50px;
   font-family: 'Mochiy Pop One', sans-serif;

@@ -17,7 +17,6 @@ const planName = computed(() => {
 
 const isSuper = computed(() => planName.value === 'Super Izzzi');
 const isIzzzi = computed(() => planName.value === 'Izzzi');
-const hasPlan = computed(() => !!planName.value);
 
 onMounted(async () => {
   try {
