@@ -1,6 +1,6 @@
 const AUTH_ROUTES = ['/auth'];
 const UIKIT_ROUTES = ['/ui-kit'];
-const ADMIN_ROUTES = ['/classes', '/dashboard'];
+const ADMIN_ROUTES = ['/classes', '/dashboard', '/feedbacks'];
 const FORM_ROUTES = ['/form'];
 
 const isPathInRoutes = (pathname: string, routes: string[]): boolean =>

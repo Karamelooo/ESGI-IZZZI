@@ -38,7 +38,7 @@ const routes: Array<RouteRecordRaw> = [
 
   /* Dashboard Routes */
   { path: '/dashboard', name: 'dashboard', component: Dashboard },
-  { path: '/dashboard/:id/feedbacks', name: 'feedbacks', component: Feedbacks },
+  { path: '/feedbacks/:id', name: 'feedbacks', component: Feedbacks },
 
   /* Form Routes */
   { path: '/form/:id', name: 'form', component: FormView },

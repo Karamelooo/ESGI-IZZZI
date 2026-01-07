@@ -348,6 +348,7 @@ textarea.input {
 .fb-sidebar-content .input-container {
   font-size: 12px;
   font-weight: 600;
+  cursor: pointer;
 }
 
 @media (max-width: 600px) {
