@@ -29,7 +29,7 @@ defineProps<{
 
 .auth-card {
   width: 100%;
-  max-width: 440px;
+  max-width: 50vw;
   background: white;
   padding: 40px;
   border-radius: 12px;

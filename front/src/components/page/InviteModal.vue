@@ -18,11 +18,10 @@ const emit = defineEmits<{
 
 const api = useApi();
 const email = ref('');
-const selectedRole = ref('editor');
+const selectedRole = ref('manager');
 const roles = [
   { label: 'Admin', value: 'admin' },
   { label: 'Manager', value: 'manager' },
-  { label: 'Éditeur', value: 'editor' },
 ];
 
 interface User {
@@ -81,14 +80,16 @@ const getInitials = (user: User) => {
 }
 
 const getUserRole = (user: User) => {
-    // Logic to extract role from user object if it's nested
-    // Assuming backend returns a structure where we can find the role.
-    // Based on UserPublic dto, it might not have roles directly mapped as a string.
-    // Let's assume for now we display 'Membre' if not found or the first role.
-    if (user.UserRole && user.UserRole.length > 0) {
-        return user.UserRole[0].role.name;
+    const userRole = user.userRoles?.[0];
+    if (userRole) {
+        const roleName = userRole.role.name;
+        // capitalize
+        const formatted = roleName.charAt(0).toUpperCase() + roleName.slice(1);
+        // Translate specific roles if needed
+        if (formatted === 'Owner') return 'Propriétaire';
+        return formatted;
     }
-    return 'Membre';
+    return 'Membre'; // Fallback
 }
 
 const colors = ['#F25C05', '#F2994A', '#2F80ED', '#27AE60', '#EB5757', '#9B51E0'];

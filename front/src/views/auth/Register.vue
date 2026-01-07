@@ -1,7 +1,3 @@
-
-
-
-
 <script lang="ts" setup>
 import { ref, onMounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
@@ -10,11 +6,13 @@ import { useApi } from '@/api/axios';
 import AuthLayout from '@components/layout/AuthLayout.vue';
 import Input from '@components/base/Input.vue';
 import Button from '@components/base/Button.vue';
+import { useToast } from '@composables/useToast';
 
 const route = useRoute();
 const router = useRouter();
 const authStore = useAuthStore();
 const api = useApi();
+const toast = useToast();
 
 const token = route.query.token as string;
 const invitation = ref<any>(null);
@@ -47,39 +45,11 @@ onMounted(async () => {
 
 const submit = async () => {
     if (password.value !== confirmPassword.value) {
-        alert('Les mots de passe ne correspondent pas');
+        toast.negative('Erreur', 'Les mots de passe ne correspondent pas');
         return;
     }
 
     try {
-        await authStore.register({
-            email: email.value,
-            password: password.value,
-            firstName: firstName.value,
-            lastName: lastName.value,
-            institutionName: 'Join via Invite', // Not used effectively for invites but required by type?
-            // We might need a specific registerWithInvite action in store or handle here
-        }); 
-        // NOTE: The standard register might create a new institution. 
-        // We likely need a dedicated endpoint backend-side to "accept invitation" which registers the user AND links to institution.
-        // For now, let's assume the user has to fill details and we call a specific endpoint or modify register.
-        
-        // Actually, looking at the plan/backend, we didn't implement "accept invitation" endpoint logic fully for user creation + linking.
-        // But for time being, let's create the UI and assume we might need a custom endpoint.
-        // Wait, standard register creates a NEW institution.
-        // We need an endpoint POST /auth/register-invite or similar? 
-        // Or POST /invitations/:token/accept taking user details.
-        
-        // Let's implement call to specific invite acceptance if it existed, or standard register with token?
-        // Let's call a new action we'll mock or implement.
-        
-        // For this step, I will implement a direct call to a hypothetical accept endpoint or standard register with extra param.
-        // Let's use the register action but we need to pass token to link to institution.
-        // Standard register: { institutionName, firstName, lastName, email, password }
-        
-        // Workaround: We probably need to update the backend register to accept an invitation token OR create a new endpoint.
-        // Given constraints, I will add an endpoint in InvitationController: POST /:token/accept
-        
         await api.post(`/invitations/token/${token}/accept`, {
             firstName: firstName.value,
             lastName: lastName.value,
@@ -87,19 +57,19 @@ const submit = async () => {
             password: password.value
         });
         
-        // Login after register
         await authStore.login({ email: email.value, password: password.value });
+        toast.success('Compte créé', 'Bienvenue sur la plateforme !');
         router.push('/dashboard');
         
     } catch (e) {
         console.error(e);
-        alert('Erreur lors de l\'inscription');
+        toast.negative('Erreur', 'Une erreur est survenue lors de l\'inscription');
     }
 }
 </script>
 
 <template>
-  <AuthLayout title="Rejoindre l'équipe" :subtitle="invitation ? `Invitation pour ${invitation.institution.name}` : ''">
+  <AuthLayout title="Rejoindre l'équipe" :subtitle="invitation ? `Invitation pour ${invitation.institution.name}` : ''" class="auth">
     <div v-if="loading">Chargement...</div>
     <div v-else-if="error" class="error">{{ error }}</div>
     <div v-else class="form">
@@ -122,11 +92,18 @@ const submit = async () => {
 </template>
 
 <style scoped>
+.auth {
+  margin-top: 5vh;
+}
+
 .form {
   display: flex;
   flex-direction: column;
   gap: 20px;
-  width: 100%;
+}
+
+.form input {
+  width: 15vw;
 }
 
 .row {
