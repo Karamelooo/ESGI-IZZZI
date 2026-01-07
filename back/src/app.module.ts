@@ -14,6 +14,7 @@ import { SubscriptionModule } from './subscription/subscription.module';
 import { FormTemplateModule } from './form-template/form-template.module';
 import { FormModule } from './form/form.module';
 import { ResponseModule } from './response/response.module';
+import { InvitationModule } from './invitation/invitation.module';
 
 @Module({
   imports: [
@@ -34,8 +35,9 @@ import { ResponseModule } from './response/response.module';
     FormTemplateModule,
     FormModule,
     ResponseModule,
+    InvitationModule,
   ],
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule {}
+export class AppModule { }

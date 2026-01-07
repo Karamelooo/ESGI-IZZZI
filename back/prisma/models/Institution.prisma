@@ -6,7 +6,8 @@ model Institution {
   updatedAt DateTime  @updatedAt
   deletedAt DateTime?
 
-  users    User[]
-  classes  Class[]
-  subjects Subject[]
+  users       User[]
+  classes     Class[]
+  subjects    Subject[]
+  invitations Invitation[]
 }

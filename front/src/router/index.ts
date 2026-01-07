@@ -7,6 +7,7 @@ import UIKit from '@views/public/UIKit.vue';
 import Auth from '@views/auth/Auth.vue';
 import ChangePassword from '@views/auth/ChangePassword.vue';
 import ForgotPassword from '@views/auth/ForgotPassword.vue';
+import Register from '@views/auth/Register.vue';
 import ClassesList from '@views/classes/ClassesList.vue';
 import ClassView from '@views/classes/ClassView.vue';
 import SubjectsList from '@views/subjects/SubjectsList.vue';
@@ -25,6 +26,7 @@ const routes: Array<RouteRecordRaw> = [
 
   /* Auth Routes */
   { path: '/auth', name: 'login', component: Auth },
+  { path: '/register', name: 'register', component: Register }, // Invitation registration
   { path: '/auth/change-password', name: 'change-password', component: ChangePassword },
   { path: '/auth/forgot-password', name: 'forgot-password', component: ForgotPassword },
 
