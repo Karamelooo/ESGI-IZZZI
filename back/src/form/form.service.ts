@@ -2,10 +2,14 @@ import { Injectable, ConflictException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateFormDto } from './dto/create-form.dto';
 import { UpdateFormDto } from './dto/update-form.dto';
+import { MailService } from '../mail/mail.service';
 
 @Injectable()
 export class FormService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly mailService: MailService,
+  ) { }
 
   async create(createFormDto: CreateFormDto) {
     const existing = await this.prisma.form.findUnique({
@@ -103,5 +107,33 @@ export class FormService {
     return this.prisma.form.delete({
       where: { id },
     });
+  }
+
+  async remind(id: number) {
+    const form = await this.prisma.form.findUnique({
+      where: { id },
+      include: {
+        subject: {
+          include: {
+            class: true,
+          },
+        },
+      },
+    });
+
+    if (!form) return;
+
+    const studentEmails = form.subject.class.studentEmails.split(';');
+    const formUrl = `${process.env.FRONTEND_URL || 'http://localhost:5173'}/form/${form.id}`;
+
+    for (const email of studentEmails) {
+      if (email) {
+        await this.mailService.sendFormReminderEmail(
+          email,
+          form.subject.name,
+          formUrl,
+        );
+      }
+    }
   }
 }
