@@ -7,6 +7,10 @@ export interface Form {
   id: number;
   type: 'DURING_COURSE' | 'AFTER_COURSE';
   status: 'DRAFT' | 'OPEN' | 'CLOSED';
+  _count?: {
+    responses: number;
+  };
+  averageRating?: number;
 }
 
 export interface Subject {

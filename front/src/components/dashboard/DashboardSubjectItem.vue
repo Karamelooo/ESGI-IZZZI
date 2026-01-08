@@ -25,12 +25,8 @@ const toggleAISynthesisModal = (value: boolean) => {
   showAISynthesisModal.value = value;
 };
 
-const handleViewFeedback = (subjectId: number, formType: string) => {
-  router.push('dashboard/feedbacks/' + subjectId + '/' + formType);
-};
-
-const handleRemindStudents = (subjectId: number, formType: string) => {
-  console.log('Reminding students for subject ' + subjectId + ' and ' + formType + ' form...');
+const handleRemindStudents = (formId: number) => {
+  console.log('Reminding students for form ' + formId + '...');
 };
 </script>
 
@@ -61,11 +57,11 @@ const handleRemindStudents = (subjectId: number, formType: string) => {
       <div class="dsi-counters">
         <div class="dsi-counter">
           <p>Retours</p>
-          <span>17</span>
+          <span>{{ form._count?.responses || 0 }}</span>
         </div>
         <div class="dsi-counter">
           <p>Score</p>
-          <span>7,8</span>
+          <span>{{ form.averageRating ? form.averageRating.toFixed(1).replace('.', ',') : '-' }}</span>
         </div>
       </div>
     </div>
@@ -88,12 +84,7 @@ const handleRemindStudents = (subjectId: number, formType: string) => {
           <p>En essai jusqu'au 25 septembre. Retours visibles en anonyme sur le plan gratuit.</p>
         </div>
 
-        <Button
-          variant="primary"
-          icon="Arrow"
-          iconPosition="right"
-          @click="handleViewFeedback(subjectItem.id, form.type.toLowerCase())"
-        >
+        <Button variant="primary" icon="Arrow" iconPosition="right" @click="router.push('feedbacks/' + form.id)">
           Voir les retours
         </Button>
 
@@ -101,7 +92,7 @@ const handleRemindStudents = (subjectId: number, formType: string) => {
           variant="plain"
           icon="Reload"
           iconPosition="right"
-          @click="handleRemindStudents(subjectItem.id, form.type.toLowerCase())"
+          @click="handleRemindStudents(subjectItem.id, form.id)"
         >
           Relancer les étudiants
         </Button>
