@@ -15,7 +15,7 @@ import { MailService } from './mail.service';
                 };
 
                 const mailUser = config.get('MAIL_USER');
-                const mailPassword = config.get('MAIL_PASSWORD');
+                const mailPassword = config.get('MAIL_PASS');
 
                 if (mailUser && mailPassword) {
                     transport.auth = {
