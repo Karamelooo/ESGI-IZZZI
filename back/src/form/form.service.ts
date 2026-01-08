@@ -124,7 +124,7 @@ export class FormService {
     if (!form) return;
 
     const studentEmails = form.subject.class.studentEmails.split(';');
-    const formUrl = `${process.env.FRONTEND_URL || 'http://localhost:5173'}/form/${form.id}`;
+    const formUrl = `${process.env.VITE_ALLOWED_HOST || 'http://localhost:5173'}/form/${form.id}`;
 
     for (const email of studentEmails) {
       if (email) {

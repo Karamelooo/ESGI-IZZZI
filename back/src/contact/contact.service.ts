@@ -8,6 +8,11 @@ export class ContactService {
 
   async handleContactRequest(createContactDto: CreateContactDto) {
     await this.mailService.sendContactRequestEmail(createContactDto);
+    await this.mailService.sendContactConfirmationEmail(
+      createContactDto.email,
+      createContactDto.lastName,
+      createContactDto.firstName,
+    );
     return { success: true, message: 'Contact request sent successfully' };
   }
 }
