@@ -1,17 +1,21 @@
 <script lang="ts" setup>
 import { ref, onMounted, computed } from 'vue';
 import { useRoute } from 'vue-router';
+import { useAuthStore } from '@stores/auth';
 import { fetchFormStatistics, type FormStatistics, type GroupDistribution } from '@api/forms';
+import TrialBanner from '@components/page/TrialBanner.vue';
 import DoughnutChart from '@components/charts/DoughnutChart.vue';
 import BarChart from '@components/charts/BarChart.vue';
 import LineChart from '@components/charts/LineChart.vue';
 
 const route = useRoute();
-const formId = computed(() => route.params.id as string);
+const authStore = useAuthStore();
 
 const statistics = ref<FormStatistics | null>(null);
 const loading = ref(true);
 const error = ref<string | null>(null);
+
+const formId = computed(() => route.params.id as string);
 
 onMounted(async () => {
   try {
@@ -58,6 +62,7 @@ const copyToClipboard = () => {
 <template>
   <div class="page">
     <Header />
+    <TrialBanner v-if="authStore.user?.subscription?.plan === 'Izzzi'" />
 
     <div class="page-content">
       <div class="fb-content">

@@ -2,7 +2,6 @@
 import { computed } from 'vue';
 import { useRouter } from 'vue-router';
 import { useAuthStore } from '@stores/auth';
-import Icon from '@/components/base/Icon.vue';
 
 const router = useRouter();
 const authStore = useAuthStore();
@@ -42,19 +41,14 @@ const trialEndDate = computed(() => {
 
 <style scoped>
 .trial-banner {
-  max-width: 1200px;
-  margin: 110px auto -80px;
-  padding: 16px 24px;
-  background-color: #FFF0D9;
-  border: 1px solid var(--dark-orange);
-  border-radius: 12px;
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 16px;
-  z-index: 400;
-  position: relative;
-  top:2rem;
+  padding: 16px 24px;
+  background-color: #fff0d9;
+  border-radius: 12px;
+  border: 1px solid var(--dark-orange);
 }
 
 .trial-banner-left {
@@ -100,7 +94,7 @@ const trialEndDate = computed(() => {
     align-items: flex-start;
     margin: 90px 20px -60px;
   }
-  
+
   .trial-banner-right {
     width: 100%;
     justify-content: flex-end;

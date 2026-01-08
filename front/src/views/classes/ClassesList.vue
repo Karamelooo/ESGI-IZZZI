@@ -91,6 +91,7 @@ const confirmCreate = async (formData: CreateClassPayload) => {
 <template>
   <div class="page" :style="{ gap: hasClasses || (!hasClasses && isViewingArchived) ? '32px' : undefined }">
     <Header :disabled="!hasClasses && !isViewingArchived" />
+    <TrialBanner v-if="authStore.user?.subscription?.plan === 'Izzzi'" />
 
     <div v-if="hasClasses" class="page-content">
       <div class="page-header">
