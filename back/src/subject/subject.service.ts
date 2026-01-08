@@ -11,32 +11,97 @@ export class SubjectService {
   async findAll(
     institutionId: number,
     withDeleted: boolean = false,
-  ): Promise<Subject[]> {
-    return this.prisma.subject.findMany({
+  ): Promise<any> {
+    const subjects = await this.prisma.subject.findMany({
       where: {
         institutionId,
         ...(withDeleted ? {} : { deletedAt: null }),
       },
+      include: {
+        class: {
+          include: {
+            institution: true,
+          },
+        },
+        forms: {
+          include: {
+            _count: {
+              select: { responses: true },
+            },
+            responses: {
+              select: { globalRating: true },
+            },
+          },
+        },
+      },
       orderBy: { id: 'asc' },
     });
+
+    return subjects.map((subject) => ({
+      ...subject,
+      forms: subject.forms.map((form) => {
+        const totalRating = form.responses.reduce(
+          (sum, r) => sum + r.globalRating,
+          0,
+        );
+        const averageRating =
+          form.responses.length > 0 ? totalRating / form.responses.length : 0;
+        const { responses, ...formRest } = form;
+        return {
+          ...formRest,
+          averageRating,
+        };
+      }),
+    }));
   }
 
   async findAllByClassId(
     classId: number,
     institutionId: number,
     withDeleted: boolean = false,
-  ): Promise<Subject[]> {
-    return this.prisma.subject.findMany({
+  ): Promise<any> {
+    const subjects = await this.prisma.subject.findMany({
       where: {
         classId,
         institutionId,
         ...(withDeleted ? {} : { deletedAt: null }),
       },
       include: {
-        forms: true,
+        class: {
+          include: {
+            institution: true,
+          },
+        },
+        forms: {
+          include: {
+            _count: {
+              select: { responses: true },
+            },
+            responses: {
+              select: { globalRating: true },
+            },
+          },
+        },
       },
       orderBy: { id: 'asc' },
     });
+
+    return subjects.map((subject) => ({
+      ...subject,
+      forms: subject.forms.map((form) => {
+        const totalRating = form.responses.reduce(
+          (sum, r) => sum + r.globalRating,
+          0,
+        );
+        const averageRating =
+          form.responses.length > 0 ? totalRating / form.responses.length : 0;
+        const { responses, ...formRest } = form;
+        return {
+          ...formRest,
+          averageRating,
+        };
+      }),
+    }));
   }
 
   async findOne(

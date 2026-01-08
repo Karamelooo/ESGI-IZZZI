@@ -37,7 +37,7 @@ onMounted(async () => {
 
   if (institutionId) {
     await classesStore.fetchClass(Number(classId));
-    await subjectsStore.fetchSubjects(Number(classId));
+    await subjectsStore.fetchSubjectsByClass(Number(classId));
   } else {
     router.push('/auth');
   }

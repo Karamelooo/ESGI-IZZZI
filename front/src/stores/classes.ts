@@ -11,7 +11,6 @@ export interface Class {
   description?: string;
   studentCount: number;
   studentEmails: string;
-  institutionId: number;
   deletedAt?: string | null;
 }
 
@@ -30,17 +29,17 @@ export const useClassesStore = defineStore('classes', {
     loading: false,
   }),
   actions: {
-    async fetchClasses(institutionId: number, withDeleted: boolean = false) {
-      if (!institutionId) return;
+    async fetchClasses(withDeleted: boolean = false) {
       this.loading = true;
       try {
         const data = await fetchClassesApi(withDeleted);
         if (withDeleted) {
-          this.archivedClasses = data.filter((c: Class) => c.deletedAt);
+          this.archivedClasses = data.filter((classItem: Class) => classItem.deletedAt);
         } else {
           this.classes = data;
         }
-      } catch (e) {
+      } catch (error) {
+        console.error('Failed to load classes', error);
         this.classes = [];
       } finally {
         this.loading = false;
@@ -50,17 +49,18 @@ export const useClassesStore = defineStore('classes', {
       try {
         const data = await fetchClassApi(id);
         this.class = data;
-      } catch (e) {
+      } catch (error) {
+        console.error('Failed to load class', error);
         this.class = null;
       }
     },
     async deleteClass(classId: number) {
       try {
         await deleteClassApi(classId);
-        this.classes = this.classes.filter((c) => c.id !== classId);
-      } catch (e) {
-        console.error(e);
-        throw e;
+        this.classes = this.classes.filter((classItem) => classItem.id !== classId);
+      } catch (error) {
+        console.error('Failed to delete class', error);
+        throw error;
       }
     },
   },

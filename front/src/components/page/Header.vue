@@ -54,7 +54,7 @@ async function logout() {
 
     <component :is="isAdminRoute(route.path) ? AdminNavBar : NavBar" class="header-component" />
 
-    <div class="header-menu-mobile">
+    <div v-if="!authStore.isAuthenticated" class="header-menu-mobile">
       <Button icon="burger" iconPosition="right" @click="openMobileMenu">Menu</Button>
     </div>
 
@@ -86,7 +86,7 @@ async function logout() {
   z-index: 500;
   align-self: center;
   justify-self: center;
-  grid-template-columns: auto 1fr auto;
+  grid-template-columns: auto 1fr;
   background-color: var(--white);
 }
 
@@ -115,11 +115,27 @@ async function logout() {
 }
 
 @media screen and (max-width: 768px) {
+  .header--authenticated {
+    grid-template-columns: auto 1fr;
+  }
+
   .header .header-component {
     display: none;
   }
 
-  .header .header-menu-mobile {
+  .header-logout {
+    display: none;
+  }
+
+  :deep(.icon-button-wrapper) {
+    display: none;
+  }
+
+  :deep(.profile .infos) {
+    display: none;
+  }
+
+  .header-menu-mobile {
     display: block;
     justify-self: end;
     align-self: center;

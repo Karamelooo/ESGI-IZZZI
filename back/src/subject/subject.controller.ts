@@ -34,7 +34,7 @@ export class SubjectController {
   async findAll(
     @CurrentUser() user: any,
     @Query('withDeleted') withDeleted?: string,
-  ): Promise<Subject[]> {
+  ): Promise<any> {
     return this.subjectService.findAll(
       user.institutionId,
       withDeleted === 'true',
