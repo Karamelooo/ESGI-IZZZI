@@ -117,3 +117,9 @@ export const fetchFormStatistics = async (formId: number | string): Promise<Form
   const { data } = await axios.get(`/forms/${formId}/statistics`);
   return data;
 };
+
+export const generateFormSynthesis = async (formId: number): Promise<{ aiSynthesis: string }> => {
+  const axios = axiosInstance();
+  const { data } = await axios.post(`/forms/${formId}/generate-synthesis`);
+  return data;
+};

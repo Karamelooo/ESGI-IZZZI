@@ -1,15 +1,21 @@
-import { Injectable, ConflictException } from '@nestjs/common';
+import {
+  Injectable,
+  ConflictException,
+  NotFoundException,
+} from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateFormDto } from './dto/create-form.dto';
 import { UpdateFormDto } from './dto/update-form.dto';
 import { MailService } from '../mail/mail.service';
+import { GeminiService } from '../gemini/gemini.service';
 
 @Injectable()
 export class FormService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly mailService: MailService,
-  ) { }
+    private readonly geminiService: GeminiService,
+  ) {}
 
   async create(createFormDto: CreateFormDto) {
     const existing = await this.prisma.form.findUnique({
@@ -135,5 +141,55 @@ export class FormService {
         );
       }
     }
+  }
+
+  async generateSynthesis(id: number) {
+    const form = await this.prisma.form.findUnique({
+      where: { id },
+      include: {
+        responses: {
+          include: {
+            answers: {
+              include: {
+                question: true,
+              },
+            },
+          },
+        },
+      },
+    });
+
+    if (!form) {
+      throw new NotFoundException(`Form with ID ${id} not found`);
+    }
+
+    // Extract text feedback from responses (SHORT_TEXT and LONG_TEXT answers)
+    const feedbackTexts: string[] = [];
+
+    for (const response of form.responses) {
+      for (const answer of response.answers) {
+        const questionType = answer.question.type;
+        if (questionType === 'SHORT_TEXT' || questionType === 'LONG_TEXT') {
+          const value = answer.value as { content?: string };
+          if (
+            value?.content &&
+            typeof value.content === 'string' &&
+            value.content.trim()
+          ) {
+            feedbackTexts.push(`[${answer.question.label}]: ${value.content}`);
+          }
+        }
+      }
+    }
+
+    // Generate synthesis using Gemini
+    const synthesis =
+      await this.geminiService.generateFeedbackSynthesis(feedbackTexts);
+
+    // Update the form with the generated synthesis
+    return this.prisma.form.update({
+      where: { id },
+      data: { aiSynthesis: synthesis },
+    });
   }
 }

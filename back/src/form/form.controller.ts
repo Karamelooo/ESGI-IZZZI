@@ -17,7 +17,7 @@ import { RequirePermissions } from '../auth/decorators/permissions.decorator';
 
 @Controller('forms')
 export class FormController {
-  constructor(private readonly formService: FormService) { }
+  constructor(private readonly formService: FormService) {}
 
   @Post()
   @UseGuards(AccessTokenGuard, PermissionsGuard)
@@ -64,5 +64,12 @@ export class FormController {
   @RequirePermissions('form:update')
   remind(@Param('id') id: string) {
     return this.formService.remind(+id);
+  }
+
+  @Post(':id/generate-synthesis')
+  @UseGuards(AccessTokenGuard, PermissionsGuard)
+  @RequirePermissions('form:update')
+  generateSynthesis(@Param('id') id: string) {
+    return this.formService.generateSynthesis(+id);
   }
 }
