@@ -281,8 +281,12 @@ const handleSubmit = async () => {
                 <p>{{ subscriptionDetails?.nextPayment }}</p>
              </div>
            </div>
-           <div v-else class="loading-details">
+           <div v-else-if="!errorMessage" class="loading-details">
              <p>Chargement des détails...</p>
+           </div>
+           <div v-else class="error-details">
+             <p class="error-text">{{ errorMessage }}</p>
+             <Button variant="neutral" @click="checkPaymentStatus">Réessayer l'enregistrement</Button>
            </div>
         </Card>
         
@@ -646,6 +650,17 @@ const handleSubmit = async () => {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 1.5rem;
+}
+
+.error-details {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 2rem;
+}
+
+.error-text {
+  color: #ff4d4f;
+  margin-bottom: 1rem;
 }
 
 @media (min-width: 1024px) {

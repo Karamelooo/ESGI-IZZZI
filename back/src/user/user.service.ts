@@ -170,17 +170,26 @@ export class UserService {
     });
   }
 
-  async remove(userId: number, institutionId: number): Promise<UserPublic> {
-    const user = await this.findOneById(userId, institutionId);
-    if (!user)
-      throw new NotFoundException('Utilisateur non trouvé ou déjà supprimé');
+async remove(userId: number, institutionId: number): Promise<UserPublic> {
+  const user = await this.findOneById(userId, institutionId);
+  if (!user)
+    throw new NotFoundException('Utilisateur non trouvé ou déjà supprimé');
 
-    return this.prisma.user.update({
-      where: { id: userId },
-      data: { deletedAt: new Date() },
-      select: this.userPublicFields,
-    });
-  }
+  return this.prisma.user.update({
+    where: { id: userId },
+    data: {
+      firstName: 'Anonymisé',
+      lastName: 'Utilisateur',
+      email: `deleted_${userId}_${Date.now()}@izzzi.io`,
+      password: 'DELETED',
+      refreshToken: null,
+      refreshTokenVersion: { increment: 1 },
+      authorizationVersion: { increment: 1 },
+      deletedAt: new Date(),
+    },
+    select: this.userPublicFields,
+  });
+}
 
   async restore(userId: number, institutionId: number): Promise<UserPublic> {
     const user = await this.prisma.user.findFirst({
