@@ -8,10 +8,10 @@ export class MailService {
     public async sendExampleEmail(to: string, subject: string, content: string): Promise<void> {
         await this.mailerService.sendMail({
             to: to,
-            
+
             subject: subject,
-            text: content.replace(/<[^>]*>?/gm, ''), 
-            html: content, 
+            text: content.replace(/<[^>]*>?/gm, ''),
+            html: content,
         });
     }
 
@@ -56,6 +56,25 @@ export class MailService {
             <p>Ce lien est valable pendant 15 minutes.</p>
             <p>Si vous n'êtes pas à l'origine de cette demande, vous pouvez ignorer cet email.</p>
             <p>L'équipe Izzzi</p>
+        `;
+
+        await this.mailerService.sendMail({
+            to: email,
+            subject: subject,
+            html: html,
+        });
+    }
+
+    public async sendFormReminderEmail(email: string, formName: string, formUrl: string): Promise<void> {
+        const subject = `Rappel : Formulaire de satisfaction - ${formName}`;
+        const html = `
+            <h2>Rappel : Votre avis nous intéresse</h2>
+            <p>Bonjour,</p>
+            <p>Nous vous rappelons qu'un formulaire de satisfaction est disponible pour le cours <strong>${formName}</strong>.</p>
+            <p>Merci de prendre quelques minutes pour le compléter en cliquant sur le lien ci-dessous :</p>
+            <p><a href="${formUrl}">${formUrl}</a></p>
+            <p>Vos retours sont précieux pour nous aider à améliorer la qualité de nos formations.</p>
+            <p>L'équipe pédagogique</p>
         `;
 
         await this.mailerService.sendMail({

@@ -2,6 +2,8 @@
 import { ref, computed } from 'vue';
 import { useRouter } from 'vue-router';
 import type { Subject } from '@stores/subjects';
+import axios from '@api/axios';
+import { useToast } from '@composables/useToast';
 
 const props = defineProps<{
   subjectItem: Subject;
@@ -9,8 +11,11 @@ const props = defineProps<{
 }>();
 
 const router = useRouter();
+const toast = useToast();
+const api = axios();
 
 const showAISynthesisModal = ref(false);
+const isReminding = ref(false);
 
 const filteredForms = computed(() => {
   if (props.activeFilter === 'during_course') {
@@ -25,8 +30,21 @@ const toggleAISynthesisModal = (value: boolean) => {
   showAISynthesisModal.value = value;
 };
 
-const handleRemindStudents = (formId: number) => {
-  console.log('Reminding students for form ' + formId + '...');
+const handleRemindStudents = async (formId: number) => {
+  if (isReminding.value) return;
+
+  isReminding.value = true;
+  try {
+    await api.post(`/forms/${formId}/remind`);
+    toast.success('Relance envoyée', 'Les étudiants ont été relancés avec succès.');
+  } catch (error: any) {
+    toast.negative(
+      'Erreur',
+      error.response?.data?.message || 'Une erreur est survenue lors de la relance.'
+    );
+  } finally {
+    isReminding.value = false;
+  }
 };
 </script>
 
@@ -92,7 +110,8 @@ const handleRemindStudents = (formId: number) => {
           variant="plain"
           icon="Reload"
           iconPosition="right"
-          @click="handleRemindStudents(subjectItem.id, form.id)"
+          :isLoading="isReminding"
+          @click="handleRemindStudents(form.id)"
         >
           Relancer les étudiants
         </Button>
