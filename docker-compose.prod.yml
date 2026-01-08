@@ -23,6 +23,11 @@ services:
       - STRIPE_SECRET_KEY=${STRIPE_SECRET_KEY}
       - CORS_ORIGIN=https://${DOMAIN_NAME}
       - PORT=3500
+      - MAIL_HOST=${MAIL_HOST:localhost}
+      - MAIL_PORT=${MAIL_PORT:1025}
+      - MAIL_USER=${MAIL_USER:localhost}
+      - MAIL_PASS=${MAIL_PASS:localhost}
+      - MAIL_FROM=${MAIL_FROM:localhost}
     depends_on:
       - db
     networks:
