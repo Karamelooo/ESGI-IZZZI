@@ -1,10 +1,10 @@
 <script lang="ts" setup>
 import { ref, onMounted, computed } from 'vue';
 import { useRoute } from 'vue-router';
+import { fetchFormStatistics, type FormStatistics, type GroupDistribution } from '@api/forms';
 import DoughnutChart from '@components/charts/DoughnutChart.vue';
 import BarChart from '@components/charts/BarChart.vue';
 import LineChart from '@components/charts/LineChart.vue';
-import { fetchFormStatistics, type FormStatistics, type GroupDistribution } from '@api/forms';
 
 const route = useRoute();
 const formId = computed(() => route.params.id as string);
@@ -175,6 +175,12 @@ const copyToClipboard = () => {
   flex: 2;
 }
 
+@media (min-width: 1650px) {
+  .fb-content {
+    flex: 3;
+  }
+}
+
 .fb-header {
   display: flex;
   flex-direction: column;
@@ -198,9 +204,15 @@ const copyToClipboard = () => {
 }
 
 .fb-charts {
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-columns: 1fr;
   gap: 24px;
+}
+
+@media (min-width: 1650px) {
+  .fb-charts {
+    grid-template-columns: repeat(2, 1fr);
+  }
 }
 
 .chart-container {

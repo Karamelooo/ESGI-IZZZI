@@ -1,9 +1,11 @@
 import { createRouter, createWebHistory, type RouteRecordRaw } from 'vue-router';
+import { isPublicRoute } from '@utils/route';
 
 import Home from '@views/public/Home.vue';
 import Pricing from '@views/public/Pricing.vue';
 import SubscriptionConfirmation from '@views/public/SubscriptionConfirmation.vue';
 import UIKit from '@views/public/UIKit.vue';
+import DesktopOnly from '@views/public/DesktopOnly.vue';
 import Auth from '@views/auth/Auth.vue';
 import ChangePassword from '@views/auth/ChangePassword.vue';
 import ForgotPassword from '@views/auth/ForgotPassword.vue';
@@ -22,6 +24,7 @@ const routes: Array<RouteRecordRaw> = [
   { path: '/pricing', name: 'pricing', component: Pricing },
   { path: '/pricing/confirm', name: 'subscription-confirmation', component: SubscriptionConfirmation },
   { path: '/ui-kit', name: 'ui-kit', component: UIKit },
+  { path: '/desktop-only', name: 'desktop-only', component: DesktopOnly },
 
   /* Auth Routes */
   { path: '/auth', name: 'login', component: Auth },
@@ -54,6 +57,11 @@ router.beforeEach(async (to, _from, next) => {
 
   if (!authStore.initialized) {
     await authStore.fetchMe();
+  }
+
+  if (window.innerWidth < 960 && !isPublicRoute(to.path)) {
+    next('/desktop-only');
+    return;
   }
 
   if (to.path.startsWith('/auth') && authStore.isAuthenticated) {
