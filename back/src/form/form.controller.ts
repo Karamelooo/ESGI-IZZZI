@@ -17,7 +17,7 @@ import { RequirePermissions } from '../auth/decorators/permissions.decorator';
 
 @Controller('forms')
 export class FormController {
-  constructor(private readonly formService: FormService) {}
+  constructor(private readonly formService: FormService) { }
 
   @Post()
   @UseGuards(AccessTokenGuard, PermissionsGuard)
@@ -57,5 +57,12 @@ export class FormController {
   @RequirePermissions('form:delete')
   remove(@Param('id') id: string) {
     return this.formService.remove(+id);
+  }
+
+  @Post(':id/remind')
+  @UseGuards(AccessTokenGuard, PermissionsGuard)
+  @RequirePermissions('form:update')
+  remind(@Param('id') id: string) {
+    return this.formService.remind(+id);
   }
 }
