@@ -2,11 +2,11 @@
 import { ref, computed } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useAuthStore } from '@stores/auth';
+import { isAdminRoute } from '@utils/route';
 import AdminNavBar from './AdminNavBar.vue';
 import NavBar from './NavBar.vue';
 import Profile from './Profile.vue';
-import InviteModal from './InviteModal.vue'; 
-import { isAdminRoute } from '@utils/route';
+import InviteModal from './InviteModal.vue';
 
 const route = useRoute();
 const router = useRouter();
@@ -47,25 +47,25 @@ async function logout() {
     :class="{
       'header--admin': isAdminRoute(route.path),
       'header--authenticated': authStore.isAuthenticated,
-      'header--with-share': canShare
+      'header--with-share': canShare,
     }"
   >
     <Logo :linkToHome="true" />
 
     <component :is="isAdminRoute(route.path) ? AdminNavBar : NavBar" class="header-component" />
 
-    <div v-if="!authStore.isAuthenticated" class="header-menu-mobile">
-      <Button icon="burger" iconPosition="right" @click="openMobileMenu">Menu</Button>
-    </div>
-
     <Profile v-if="authStore.isAuthenticated" />
+
+    <div v-if="authStore.isAuthenticated" class="header-logout">
+      <IconButton icon="Cross-Desktop" @click="logout" />
+    </div>
 
     <div v-if="canShare" class="header-share">
       <Button variant="primary" @click="showInviteModal = true">Partager</Button>
     </div>
 
-    <div v-if="authStore.isAuthenticated" class="header-logout">
-      <Button variant="neutral" @click="logout">Déconnexion</Button>
+    <div v-if="!authStore.isAuthenticated" class="header-menu-mobile">
+      <Button icon="burger" iconPosition="right" @click="openMobileMenu">Menu</Button>
     </div>
 
     <InviteModal :isOpen="showInviteModal" @close="showInviteModal = false" />
@@ -79,7 +79,7 @@ async function logout() {
   margin: 1em 0;
   padding: 0 20px;
   border-radius: 8px;
-  gap: 32px;
+  gap: 24px;
   display: grid;
   position: fixed;
   top: 0;
@@ -110,7 +110,8 @@ async function logout() {
   display: none;
 }
 
-.header-logout, .header-share {
+.header-logout,
+.header-share {
   margin: auto 0;
 }
 

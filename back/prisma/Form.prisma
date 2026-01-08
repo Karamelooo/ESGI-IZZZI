@@ -1,9 +1,10 @@
 model Form {
-  id         Int        @id @default(autoincrement())
-  type       FormType
-  status     FormStatus @default(DRAFT)
-  subjectId  Int
-  templateId Int
+  id          Int        @id @default(autoincrement())
+  type        FormType
+  status      FormStatus @default(DRAFT)
+  subjectId   Int
+  templateId  Int
+  aiSynthesis String?
 
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt

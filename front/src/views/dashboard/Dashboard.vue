@@ -3,6 +3,7 @@ import { ref, onMounted, computed } from 'vue';
 import { useRouter } from 'vue-router';
 import { useAuthStore } from '@stores/auth';
 import { useSubjectsStore } from '@stores/subjects';
+import TrialBanner from '@components/page/TrialBanner.vue';
 import DashboardSubjectItem from '@components/dashboard/DashboardSubjectItem.vue';
 
 const router = useRouter();
@@ -71,6 +72,7 @@ onMounted(async () => {
 <template>
   <div class="page">
     <Header />
+    <TrialBanner v-if="authStore.user?.subscription?.plan === 'Izzzi'" />
 
     <div class="page-content">
       <div class="page-header">

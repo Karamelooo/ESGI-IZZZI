@@ -1,4 +1,4 @@
-import { IsEnum, IsInt, IsOptional } from 'class-validator';
+import { IsEnum, IsInt, IsOptional, IsString } from 'class-validator';
 import { FormStatus } from '@prisma/client';
 
 export class UpdateFormDto {
@@ -9,4 +9,8 @@ export class UpdateFormDto {
   @IsInt()
   @IsOptional()
   templateId?: number;
+
+  @IsString()
+  @IsOptional()
+  aiSynthesis?: string;
 }

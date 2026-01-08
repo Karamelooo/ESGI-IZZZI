@@ -29,72 +29,71 @@ interface User {
   firstName: string;
   lastName: string;
   email: string;
-  role: string | null; 
+  role: string | null;
   UserRole?: { role: { name: string } }[];
 }
 
 const users = ref<User[]>([]);
 
 const fetchUsers = async () => {
-    try {
-        const { data } = await api.get('/users');
-        users.value = data;
-    } catch (e) {
-        console.error('Failed to fetch users', e);
-    }
-}
+  try {
+    const { data } = await api.get('/users');
+    users.value = data;
+  } catch (e) {
+    console.error('Failed to fetch users', e);
+  }
+};
 
 const inviteUser = async () => {
   if (!email.value) return;
   try {
-      await api.post('/invitations', {
-          email: email.value,
-          role: selectedRole.value
-      });
-      email.value = '';
-      
-      alert('Invitation envoyée !');
+    await api.post('/invitations', {
+      email: email.value,
+      role: selectedRole.value,
+    });
+    email.value = '';
+
+    alert('Invitation envoyée !');
   } catch (e) {
-      console.error('Failed to send invitation', e);
-      alert('Erreur lors de l\'envoi de l\'invitation.');
+    console.error('Failed to send invitation', e);
+    alert("Erreur lors de l'envoi de l'invitation.");
   }
 };
 
 const copyLink = async () => {
   try {
-      const { data } = await api.post('/invitations', { role: selectedRole.value }); 
-      const link = `${window.location.origin}/register?token=${data.token}`;
-      await navigator.clipboard.writeText(link);
-      alert('Lien copié dans le presse-papier !');
+    const { data } = await api.post('/invitations', { role: selectedRole.value });
+    const link = `${window.location.origin}/register?token=${data.token}`;
+    await navigator.clipboard.writeText(link);
+    alert('Lien copié dans le presse-papier !');
   } catch (e) {
-      console.error('Failed to generate link', e);
+    console.error('Failed to generate link', e);
   }
 };
 
 onMounted(() => {
-    fetchUsers();
+  fetchUsers();
 });
 
 const getInitials = (user: User) => {
-    return ((user.firstName?.[0] || '') + (user.lastName?.[0] || '')).toUpperCase();
-}
+  return ((user.firstName?.[0] || '') + (user.lastName?.[0] || '')).toUpperCase();
+};
 
 const getUserRole = (user: User) => {
-    const userRole = user.UserRole?.[0];
-    if (userRole) {
-        const roleName = userRole.role.name;
-        
-        const formatted = roleName.charAt(0).toUpperCase() + roleName.slice(1);
-        
-        if (formatted === 'Owner') return 'Propriétaire';
-        return formatted;
-    }
-    return 'Membre'; 
-}
+  const userRole = user.UserRole?.[0];
+  if (userRole) {
+    const roleName = userRole.role.name;
+
+    const formatted = roleName.charAt(0).toUpperCase() + roleName.slice(1);
+
+    if (formatted === 'Owner') return 'Propriétaire';
+    return formatted;
+  }
+  return 'Membre';
+};
 
 const colors = ['#F25C05', '#F2994A', '#2F80ED', '#27AE60', '#EB5757', '#9B51E0'];
 const getUserColor = (id: number) => colors[id % colors.length];
-
 </script>
 
 <template>
@@ -108,18 +107,16 @@ const getUserColor = (id: number) => colors[id % colors.length];
       <div class="invite-form">
         <Input v-model="email" placeholder="Inviter par email..." class="email-input" />
         <div class="role-select-wrapper">
-            <select v-model="selectedRole" class="role-select">
+          <select v-model="selectedRole" class="role-select">
             <option v-for="role in roles" :key="role.value" :value="role.value">
-                {{ role.label }}
+              {{ role.label }}
             </option>
-            </select>
-            <Icon name="Arrowdown" class="select-icon" />
+          </select>
+          <Icon name="Arrowdown" class="select-icon" />
         </div>
       </div>
 
-      <Button variant="primary" class="invite-submit-btn" @click="inviteUser">
-        Inviter <Icon name="Arrow" />
-      </Button>
+      <Button variant="primary" class="invite-submit-btn" @click="inviteUser"> Inviter <Icon name="Arrow" /> </Button>
 
       <div class="users-list-section">
         <h4>Personnes disposant de l'accès</h4>
@@ -130,7 +127,7 @@ const getUserColor = (id: number) => colors[id % colors.length];
             </div>
             <span class="user-name">{{ user.firstName }} {{ user.lastName }}</span>
             <div class="user-role-wrapper">
-                <span class="user-role-badge">{{ getUserRole(user) }}</span>
+              <span class="user-role-badge">{{ getUserRole(user) }}</span>
             </div>
           </div>
         </div>
@@ -147,17 +144,16 @@ const getUserColor = (id: number) => colors[id % colors.length];
   gap: 20px;
 }
 
+.invite-container h3,
+.invite-container h4 {
+  font-weight: 400;
+}
+
 .invite-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 8px;
-}
-
-.invite-header h3 {
-  font-size: 1.1rem;
-  font-weight: 600;
-  margin: 0;
 }
 
 .invite-form {
@@ -166,10 +162,11 @@ const getUserColor = (id: number) => colors[id % colors.length];
   gap: 12px;
 }
 
-.role-select-wrapper, .user-role-wrapper {
-    position: relative;
-    display: flex;
-    align-items: center;
+.role-select-wrapper,
+.user-role-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
 }
 
 .role-select {
@@ -179,17 +176,17 @@ const getUserColor = (id: number) => colors[id % colors.length];
   border: 1px solid var(--gray-15);
   border-radius: 6px;
   appearance: none;
-  background-color: white;
+  background-color: var(--white);
   cursor: pointer;
   font-family: inherit;
 }
 
 .select-icon {
-    position: absolute;
-    right: 10px;
-    pointer-events: none;
-    width: 12px;
-    height: 12px;
+  position: absolute;
+  right: 10px;
+  pointer-events: none;
+  width: 12px;
+  height: 12px;
 }
 
 .invite-submit-btn {
@@ -202,7 +199,6 @@ const getUserColor = (id: number) => colors[id % colors.length];
 
 .users-list-section h4 {
   font-size: 0.9rem;
-  color: var(--gray-60);
   margin-bottom: 12px;
   font-weight: 600;
 }
@@ -229,7 +225,7 @@ const getUserColor = (id: number) => colors[id % colors.length];
   display: flex;
   align-items: center;
   justify-content: center;
-  color: white;
+  color: var(--white);
   font-size: 12px;
   font-weight: 600;
 }
@@ -240,15 +236,13 @@ const getUserColor = (id: number) => colors[id % colors.length];
 }
 
 .user-role-badge {
-    padding: 4px 12px;
-    background-color: var(--gray-2);
-    border-radius: 12px;
-    font-size: 0.85rem;
-    color: var(--gray-80);
+  padding: 4px 12px;
+  background-color: var(--gray-2);
+  border-radius: 12px;
+  font-size: 0.85rem;
 }
 
-
 :global(.modal-content) {
-    max-width: 600px;
+  max-width: 600px;
 }
 </style>
