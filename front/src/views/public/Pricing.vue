@@ -342,6 +342,8 @@ main {
   flex-direction: column;
   gap: 2rem;
   margin-bottom: 5rem;
+  margin:auto;
+  width:50%;
 }
 
 .annuel-pricing {
