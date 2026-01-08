@@ -28,6 +28,8 @@ services:
       - MAIL_USER=${MAIL_USER:-localhost}
       - MAIL_PASS=${MAIL_PASS:-localhost}
       - MAIL_FROM=${MAIL_FROM:-localhost}
+      - OPENROUTER_API_KEY=${OPENROUTER_API_KEY}
+      - FRONTEND_URL=${FRONTEND_URL}
     depends_on:
       - db
     networks:
