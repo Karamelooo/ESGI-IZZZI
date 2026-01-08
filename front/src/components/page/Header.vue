@@ -1,14 +1,22 @@
 <script lang="ts" setup>
+import { ref, computed } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useAuthStore } from '@stores/auth';
 import AdminNavBar from './AdminNavBar.vue';
 import NavBar from './NavBar.vue';
 import Profile from './Profile.vue';
+import InviteModal from './InviteModal.vue'; 
 import { isAdminRoute } from '@utils/route';
 
 const route = useRoute();
 const router = useRouter();
 const authStore = useAuthStore();
+
+const showInviteModal = ref(false);
+
+const canShare = computed(() => {
+  return authStore.isAuthenticated && ['admin', 'owner'].includes(authStore.user?.role ?? '');
+});
 
 withDefaults(
   defineProps<{
@@ -36,21 +44,31 @@ async function logout() {
 <template>
   <header
     class="header"
-    :class="{ 'header--admin': isAdminRoute(route.path), 'header--authenticated': authStore.isAuthenticated }"
+    :class="{
+      'header--admin': isAdminRoute(route.path),
+      'header--authenticated': authStore.isAuthenticated,
+      'header--with-share': canShare
+    }"
   >
     <Logo :linkToHome="true" />
 
     <component :is="isAdminRoute(route.path) ? AdminNavBar : NavBar" class="header-component" />
 
-    <div class="header-menu-mobile">
+    <div v-if="!authStore.isAuthenticated" class="header-menu-mobile">
       <Button icon="burger" iconPosition="right" @click="openMobileMenu">Menu</Button>
     </div>
 
     <Profile v-if="authStore.isAuthenticated" />
 
+    <div v-if="canShare" class="header-share">
+      <Button variant="primary" @click="showInviteModal = true">Partager</Button>
+    </div>
+
     <div v-if="authStore.isAuthenticated" class="header-logout">
       <Button variant="neutral" @click="logout">Déconnexion</Button>
     </div>
+
+    <InviteModal :isOpen="showInviteModal" @close="showInviteModal = false" />
   </header>
 </template>
 
@@ -68,12 +86,16 @@ async function logout() {
   z-index: 500;
   align-self: center;
   justify-self: center;
-  grid-template-columns: auto 1fr auto;
+  grid-template-columns: auto 1fr;
   background-color: var(--white);
 }
 
 .header--authenticated {
   grid-template-columns: auto 1fr auto auto;
+}
+
+.header--authenticated.header--with-share {
+  grid-template-columns: auto 1fr auto auto auto;
 }
 
 .header--admin {
@@ -88,16 +110,32 @@ async function logout() {
   display: none;
 }
 
-.header-logout {
+.header-logout, .header-share {
   margin: auto 0;
 }
 
 @media screen and (max-width: 768px) {
+  .header--authenticated {
+    grid-template-columns: auto 1fr;
+  }
+
   .header .header-component {
     display: none;
   }
 
-  .header .header-menu-mobile {
+  .header-logout {
+    display: none;
+  }
+
+  :deep(.icon-button-wrapper) {
+    display: none;
+  }
+
+  :deep(.profile .infos) {
+    display: none;
+  }
+
+  .header-menu-mobile {
     display: block;
     justify-self: end;
     align-self: center;

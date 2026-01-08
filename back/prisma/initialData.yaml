@@ -118,125 +118,116 @@ institutions:
           - 'student1@esgi.fr'
           - 'student2@esgi.fr'
           - 'student3@esgi.fr'
-        subjects:
-          - name: 'Microservices'
-            instructorName: 'Microservices TEACHER'
-            instructorEmail: 'microservices.teacher@esgi.fr'
-            startDate: '2026-01-12'
-            endDate: '2026-03-25'
-          - name: 'Design Patterns'
-            instructorName: 'Design Patterns TEACHER'
-            instructorEmail: 'design-patterns.teacher@esgi.fr'
-            startDate: '2026-04-05'
-            endDate: '2026-06-15'
-          - name: 'Cloud Computing'
-            instructorName: 'Cloud Computing TEACHER'
-            instructorEmail: 'cloud-computing.teacher@esgi.fr'
-            startDate: '2026-09-10'
-            endDate: '2026-12-18'
-
-      - name: '3JV'
-        description: 'Jeu Vidéo'
-        studentCount: 15
-        studentEmails:
           - 'student4@esgi.fr'
           - 'student5@esgi.fr'
-          - 'student6@esgi.fr'
         subjects:
-          - name: 'Unreal Engine'
-            instructorName: 'Unreal Engine TEACHER'
-            instructorEmail: 'unreal-engine.teacher@esgi.fr'
-            startDate: '2026-02-15'
-            endDate: '2026-05-30'
-          - name: 'Game Design'
-            instructorName: 'Game Design TEACHER'
-            instructorEmail: 'game-design.teacher@esgi.fr'
-            startDate: '2026-06-01'
-            endDate: '2026-07-15'
-          - name: 'Modélisation 3D'
-            instructorName: 'Modélisation 3D TEACHER'
-            instructorEmail: 'modelisation-3d.teacher@esgi.fr'
-            startDate: '2026-09-20'
-            endDate: '2026-11-25'
-
-      - name: '4MOC'
-        description: 'Mobilité et Objets Connectés'
-        studentCount: 12
-        studentEmails:
-          - 'student7@esgi.fr'
-          - 'student8@esgi.fr'
-          - 'student9@esgi.fr'
-        subjects:
-          - name: 'Développement Mobile'
-            instructorName: 'Développement Mobile TEACHER'
-            instructorEmail: 'developpement-mobile.teacher@esgi.fr'
-            startDate: '2026-01-20'
-            endDate: '2026-06-10'
-          - name: 'Protocoles IoT'
-            instructorName: 'Protocoles IoT TEACHER'
-            instructorEmail: 'protocoles-iot.teacher@esgi.fr'
-            startDate: '2026-03-12'
-            endDate: '2026-05-04'
-          - name: 'Sécurité IoT'
-            instructorName: 'Sécurité IoT TEACHER'
-            instructorEmail: 'securite-iot.teacher@esgi.fr'
-            startDate: '2026-10-05'
-            endDate: '2026-12-15'
-
-      - name: '3IABD'
-        description: 'Intelligence Artificielle et Big Data'
-        studentCount: 24
-        studentEmails:
-          - 'student10@esgi.fr'
-          - 'student11@esgi.fr'
-          - 'student12@esgi.fr'
-        subjects:
-          - name: 'Machine Learning'
-            instructorName: 'Machine Learning TEACHER'
-            instructorEmail: 'machine-learning.teacher@esgi.fr'
-            startDate: '2026-01-05'
-            endDate: '2026-04-20'
-          - name: 'Big Data'
-            instructorName: 'Big Data TEACHER'
-            instructorEmail: 'big-data.teacher@esgi.fr'
-            startDate: '2026-05-10'
-            endDate: '2026-07-25'
-          - name: 'NLP'
-            instructorName: 'NLP TEACHER'
-            instructorEmail: 'nlp.teacher@esgi.fr'
-            startDate: '2026-09-15'
-            endDate: '2026-12-10'
+          - name: 'Microservices'
+            instructorName: 'Jean-Pierre MARTIN'
+            instructorEmail: 'jp.martin@esgi.fr'
+            startDate: '2026-01-03'
+            endDate: '2026-01-07'
+            forms:
+              - type: 'DURING_COURSE'
+                status: 'OPEN'
+                templateId: 1
+              - type: 'AFTER_COURSE'
+                status: 'OPEN'
+                templateId: 1
+          - name: 'Design Patterns'
+            instructorName: 'Marie DUPONT'
+            instructorEmail: 'marie.dupont@esgi.fr'
+            startDate: '2026-01-03'
+            endDate: '2026-01-07'
+            forms:
+              - type: 'DURING_COURSE'
+                status: 'OPEN'
+                templateId: 1
+              - type: 'AFTER_COURSE'
+                status: 'OPEN'
+                templateId: 1
+          - name: 'Cloud Computing'
+            instructorName: 'Pierre LEFEBVRE'
+            instructorEmail: 'pierre.lefebvre@esgi.fr'
+            startDate: '2026-01-03'
+            endDate: '2026-01-07'
+            forms:
+              - type: 'DURING_COURSE'
+                status: 'OPEN'
+                templateId: 1
+              - type: 'AFTER_COURSE'
+                status: 'OPEN'
+                templateId: 1
+          - name: 'DevOps'
+            instructorName: 'Sophie BERNARD'
+            instructorEmail: 'sophie.bernard@esgi.fr'
+            startDate: '2026-01-03'
+            endDate: '2026-01-07'
+            forms:
+              - type: 'DURING_COURSE'
+                status: 'OPEN'
+                templateId: 1
+              - type: 'AFTER_COURSE'
+                status: 'OPEN'
+                templateId: 1
 
       - name: '5IW'
         description: 'Ingénierie du Web'
         studentCount: 21
         studentEmails:
-          - 'student13@esgi.fr'
-          - 'student14@esgi.fr'
-          - 'student15@esgi.fr'
+          - 'student6@esgi.fr'
+          - 'student7@esgi.fr'
+          - 'student8@esgi.fr'
+          - 'student9@esgi.fr'
+          - 'student10@esgi.fr'
         subjects:
           - name: 'React NextJS'
-            instructorName: 'React NextJS TEACHER'
-            instructorEmail: 'react-nextjs.teacher@esgi.fr'
-            startDate: '2026-02-01'
-            endDate: '2026-06-30'
+            instructorName: 'Thomas MOREAU'
+            instructorEmail: 'thomas.moreau@esgi.fr'
+            startDate: '2026-01-03'
+            endDate: '2026-01-07'
             forms:
               - type: 'DURING_COURSE'
-                status: 'DRAFT'
+                status: 'OPEN'
                 templateId: 1
               - type: 'AFTER_COURSE'
-                status: 'DRAFT'
+                status: 'OPEN'
                 templateId: 1
           - name: 'Sécurité Web'
-            instructorName: 'Sécurité Web TEACHER'
-            instructorEmail: 'securite-web.teacher@esgi.fr'
-            startDate: '2026-09-01'
-            endDate: '2026-10-15'
+            instructorName: 'Claire ROUSSEAU'
+            instructorEmail: 'claire.rousseau@esgi.fr'
+            startDate: '2026-01-03'
+            endDate: '2026-01-07'
+            forms:
+              - type: 'DURING_COURSE'
+                status: 'OPEN'
+                templateId: 1
+              - type: 'AFTER_COURSE'
+                status: 'OPEN'
+                templateId: 1
           - name: 'Performance Web'
-            instructorName: 'Performance Web TEACHER'
-            instructorEmail: 'performance-web.teacher@esgi.fr'
-            startDate: '2026-11-02'
-            endDate: '2026-12-22'
+            instructorName: 'Lucas GARCIA'
+            instructorEmail: 'lucas.garcia@esgi.fr'
+            startDate: '2026-01-03'
+            endDate: '2026-01-07'
+            forms:
+              - type: 'DURING_COURSE'
+                status: 'OPEN'
+                templateId: 1
+              - type: 'AFTER_COURSE'
+                status: 'OPEN'
+                templateId: 1
+          - name: 'API Design'
+            instructorName: 'Emma PETIT'
+            instructorEmail: 'emma.petit@esgi.fr'
+            startDate: '2026-01-03'
+            endDate: '2026-01-07'
+            forms:
+              - type: 'DURING_COURSE'
+                status: 'OPEN'
+                templateId: 1
+              - type: 'AFTER_COURSE'
+                status: 'OPEN'
+                templateId: 1
 
 formTemplates:
   - name: 'Basique'

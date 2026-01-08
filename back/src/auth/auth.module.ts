@@ -12,11 +12,13 @@ import { PermissionsGuard } from './guards/permissions.guard';
 import { PrismaService } from '../prisma/prisma.service';
 import { InstitutionService } from '../institution/institution.service';
 import { UserService } from '../user/user.service';
+import { MailModule } from '../mail/mail.module';
 
 @Module({
   imports: [
     JwtModule.register({}),
     PassportModule.register({ defaultStrategy: 'jwt-access' }),
+    MailModule,
   ],
   controllers: [AuthController],
   providers: [

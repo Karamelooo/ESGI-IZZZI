@@ -133,6 +133,11 @@ const handleSubscription = (planName: string) => {
       price = Math.round(basePriceMonthly * numberOfClasses.value);
     }
     
+    if (numberOfClasses.value > 20) {
+      router.push({ name: 'contact' });
+      return;
+    }
+    
     router.push({ 
       name: 'subscription-confirmation', 
       query: { 
@@ -337,6 +342,8 @@ main {
   flex-direction: column;
   gap: 2rem;
   margin-bottom: 5rem;
+  margin:auto;
+  width:50%;
 }
 
 .annuel-pricing {

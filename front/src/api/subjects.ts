@@ -9,8 +9,26 @@ export interface CreateSubjectPayload {
   classId: number;
 }
 
+export async function fetchSubjects(withDeleted: boolean = false) {
+  const api = useTypedApi();
+  const response = await api.get(`/subjects${withDeleted ? '?withDeleted=true' : ''}`);
+  return response.data;
+}
+
+export async function fetchSubject(id: number) {
+  const api = useTypedApi();
+  const response = await api.get(`/subjects/${id}`);
+  return response.data;
+}
+
 export async function createSubject(payload: CreateSubjectPayload) {
   const api = useTypedApi();
   const response = await api.post('/subjects', payload);
+  return response.data;
+}
+
+export async function createSubjectsBulk(payload: CreateSubjectPayload[]) {
+  const api = useTypedApi();
+  const response = await api.post('/subjects/bulk', payload);
   return response.data;
 }

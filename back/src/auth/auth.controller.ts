@@ -76,6 +76,21 @@ export class AuthController {
     return res.json({ message: 'Déconnexion globale réussie' });
   }
 
+  @Post('forgot-password')
+  @HttpCode(200)
+  async forgotPassword(@Body('email') email: string) {
+    await this.authService.forgotPassword(email);
+    return { message: 'Si un compte existe pour cet email, un lien de réinitialisation a été envoyé.' };
+  }
+
+  @Post('reset-password')
+  @HttpCode(200)
+  async resetPassword(@Body() body: any) {
+    const { token, password } = body;
+    await this.authService.resetPassword(token, { password });
+    return { message: 'Votre mot de passe a été réinitialisé avec succès.' };
+  }
+
   private setAccessCookie(res: Response, token: string) {
     res.cookie('access_token', token, {
       httpOnly: true,

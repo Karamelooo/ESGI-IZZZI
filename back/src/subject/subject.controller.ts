@@ -34,7 +34,7 @@ export class SubjectController {
   async findAll(
     @CurrentUser() user: any,
     @Query('withDeleted') withDeleted?: string,
-  ): Promise<Subject[]> {
+  ): Promise<any> {
     return this.subjectService.findAll(
       user.institutionId,
       withDeleted === 'true',
@@ -66,6 +66,24 @@ export class SubjectController {
     @CurrentUser() user: any,
   ): Promise<Subject> {
     return this.subjectService.create(user.institutionId, createSubjectDto);
+  }
+
+  @Post('bulk')
+  @HttpCode(201)
+  @ApiOperation({ summary: 'Create multiple new subjects' })
+  @RequirePermissions('subject:create')
+  @UsePipes(
+    new ValidationPipe({
+      whitelist: true,
+      forbidNonWhitelisted: true,
+      transform: true,
+    }),
+  )
+  async bulkCreate(
+    @Body() createSubjectDtos: CreateSubjectDto[],
+    @CurrentUser() user: any,
+  ): Promise<{ count: number }> {
+    return this.subjectService.createMany(user.institutionId, createSubjectDtos);
   }
 
   @Patch(':id')

@@ -77,3 +77,43 @@ export const submitFormResponse = async (payload: CreateResponseDto) => {
   const { data } = await axios.post('/responses', payload);
   return data;
 };
+
+// Statistics types
+export interface QuestionDistribution {
+  questionId: number;
+  questionLabel: string;
+  options: string[];
+  counts: number[];
+}
+
+export interface GroupDistribution {
+  groupName: string;
+  questions: QuestionDistribution[];
+}
+
+export interface FormStatistics {
+  metadata: {
+    subjectName: string;
+    className: string;
+    institutionName: string;
+  };
+  temporal: {
+    labels: string[];
+    avgRatings: number[];
+    minRatings: number[];
+    maxRatings: number[];
+    submissionCounts: number[];
+  };
+  ratingDistribution: {
+    labels: string[];
+    counts: number[];
+  };
+  courseContentDistributions: GroupDistribution[];
+  instructorPedagogyDistributions: GroupDistribution[];
+}
+
+export const fetchFormStatistics = async (formId: number | string): Promise<FormStatistics> => {
+  const axios = axiosInstance();
+  const { data } = await axios.get(`/forms/${formId}/statistics`);
+  return data;
+};

@@ -1,15 +1,34 @@
 <script lang="ts" setup>
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
+import { useApi } from '@/api/axios';
+import { useToast } from '@composables/useToast';
 
 const router = useRouter();
+const api = useApi();
+const toast = useToast();
 
 const isFormSubmitted = ref(false);
 const emailInput = ref('');
+const loading = ref(false);
 
-function handleSubmit() {
-  if (isFormSubmitted.value) return;
-  isFormSubmitted.value = true;
+async function handleSubmit() {
+  if (isFormSubmitted.value || loading.value) return;
+  if (!emailInput.value) {
+    toast.negative('Erreur', 'Veuillez renseigner votre email.');
+    return;
+  }
+
+  loading.value = true;
+  try {
+    await api.post('/auth/forgot-password', { email: emailInput.value });
+    isFormSubmitted.value = true;
+  } catch (e) {
+    console.error(e);
+    toast.negative('Erreur', 'Une erreur est survenue. Veuillez réessayer.');
+  } finally {
+    loading.value = false;
+  }
 }
 
 function goToLogin() {
@@ -27,14 +46,16 @@ function goToLogin() {
 
         <Input
           v-model="emailInput"
-          type="text"
+          type="email"
           label="Adresse email"
           name="email"
           placeholder="Entrez votre email"
-          :required="false"
+          :required="true"
         />
 
-        <Button icon="Arrow" iconPosition="right" @click="handleSubmit">Réinitialiser</Button>
+        <Button icon="Arrow" iconPosition="right" :disabled="loading" @click="handleSubmit">
+          {{ loading ? 'Envoi...' : 'Réinitialiser' }}
+        </Button>
       </form>
 
       <form v-else class="form">

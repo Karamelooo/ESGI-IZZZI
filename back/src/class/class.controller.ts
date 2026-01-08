@@ -67,7 +67,7 @@ export class ClassController {
     @Param('id', ParseIntPipe) id: number,
     @CurrentUser() user: any,
     @Query('withDeleted') withDeleted?: string,
-  ): Promise<Subject[]> {
+  ): Promise<any> {
     return this.subjectService.findAllByClassId(
       id,
       user.institutionId,

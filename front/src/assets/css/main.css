@@ -22,7 +22,7 @@
   --white: #fff;
   --black: #000;
   --beige: #fff9d8;
-  --yellow: #ffe552;
+  --blue: #153278;
 
   /* Status */
   --success: #4caf50;
@@ -222,6 +222,18 @@ h4 {
   height: 100vh;
 }
 
+@media (min-width: 1650px) {
+  .page {
+    padding: 12px 200px;
+  }
+}
+
+@media (min-width: 2000px) {
+  .page {
+    padding: 12px 350px;
+  }
+}
+
 .page .switch-panels {
   flex: 1;
 }
@@ -284,5 +296,6 @@ h4 {
 .search-input {
   min-width: 362px;
   overflow: hidden;
+  border-radius: 6px;
   background-color: var(--white);
 }

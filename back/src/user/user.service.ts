@@ -23,9 +23,18 @@ export class UserService {
     createdAt: true,
     updatedAt: true,
     deletedAt: true,
+    userRoles: {
+      select: {
+        role: {
+          select: {
+            name: true,
+          },
+        },
+      },
+    },
   };
 
-  constructor(private prisma: PrismaService) {}
+  constructor(private prisma: PrismaService) { }
 
   async findAll(
     institutionId: number,
