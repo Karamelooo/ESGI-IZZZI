@@ -14,6 +14,7 @@ export interface User {
   };
   subscription?: {
     plan: string;
+    billingPeriod: 'trial' | 'monthly' | 'annual';
     endDate: string | null;
   } | null;
 }

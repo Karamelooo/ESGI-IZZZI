@@ -4,6 +4,7 @@ import { useRouter } from 'vue-router';
 import type { Subject, Form } from '@stores/subjects';
 import axios from '@api/axios';
 import { useToast } from '@composables/useToast';
+import { usePlan } from '@composables/usePlan';
 import { generateFormSynthesis } from '@api/forms';
 
 const props = defineProps<{
@@ -18,6 +19,7 @@ const emit = defineEmits<{
 const router = useRouter();
 const toast = useToast();
 const api = axios();
+const { canAccess } = usePlan();
 
 const showAISynthesisModal = ref(false);
 const isReminding = ref(false);
@@ -171,9 +173,17 @@ const handleRemindStudents = async (formId: number) => {
       <p v-else class="dsi-no-synthesis">
         Aucune synthèse disponible. Cliquez sur le bouton ci-dessous pour en générer une.
       </p>
-      <Button variant="secondary" :isLoading="isGeneratingSynthesis" @click="handleGenerateSynthesis">
-        {{ currentModalForm && getSynthesis(currentModalForm) ? 'Régénérer la synthèse' : 'Générer la synthèse' }}
-      </Button>
+      <div :class="{ 'plan-restricted': !canAccess('ai-synthesis') }">
+        <Button
+          variant="secondary"
+          :isLoading="isGeneratingSynthesis"
+          :disabled="!canAccess('ai-synthesis')"
+          @click="handleGenerateSynthesis"
+        >
+          {{ currentModalForm && getSynthesis(currentModalForm) ? 'Régénérer la synthèse' : 'Générer la synthèse' }}
+        </Button>
+        <p v-if="!canAccess('ai-synthesis')" class="plan-upgrade-hint">Fonctionnalité réservée au plan Super Izzzi</p>
+      </div>
     </div>
   </Modal>
 </template>
@@ -321,6 +331,18 @@ const handleRemindStudents = async (formId: number) => {
 .dsi-no-synthesis {
   color: var(--gray-100);
   font-style: italic;
+}
+
+.plan-restricted {
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+.plan-upgrade-hint {
+  font-size: 12px;
+  color: var(--gray-100);
+  font-style: italic;
+  margin-top: 8px;
 }
 
 @media (min-width: 1280px) {

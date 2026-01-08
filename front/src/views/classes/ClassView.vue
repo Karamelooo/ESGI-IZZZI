@@ -10,6 +10,7 @@ import { toDateFR } from '@utils/date';
 import TrialBanner from '@components/page/TrialBanner.vue';
 import AddFormModal from '@components/classes/AddFormModal.vue';
 import QRCodeModal from '@components/classes/QRCodeModal.vue';
+import { usePlan } from '@composables/usePlan';
 
 interface Subject {
   name: string;
@@ -53,6 +54,7 @@ const selectedSubjectId = ref<number | null>(null);
 const authStore = useAuthStore();
 const subjectsStore = useSubjectsStore();
 const { subjects } = storeToRefs(subjectsStore);
+const { canAccess } = usePlan();
 
 const filteredSubjects = computed(() => {
   if (!searchQuery.value) return subjects.value;
@@ -208,6 +210,8 @@ onMounted(async () => {
                       Copier le lien
                     </Button>
                     <Button
+                      :class="{ 'plan-restricted': !canAccess('qr-code') }"
+                      :disabled="!canAccess('qr-code')"
                       variant="plain"
                       icon="Download"
                       iconPosition="right"
@@ -300,5 +304,10 @@ onMounted(async () => {
 
 .row-form-actions button {
   background-color: var(--white);
+}
+
+.plan-restricted {
+  opacity: 0.5;
+  pointer-events: none;
 }
 </style>
