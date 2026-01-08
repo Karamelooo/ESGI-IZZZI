@@ -6,7 +6,7 @@ import { useAuthStore } from '@stores/auth';
 import Header from '@components/page/Header.vue';
 import MobileMenu from '@components/page/MobileMenu.vue';
 import { isHeaderInApp, isPublicRoute } from '@utils/route';
-
+import TrialBanner from '@components/page/TrialBanner.vue';
 const route = useRoute();
 const router = useRouter();
 const authStore = useAuthStore();
@@ -29,6 +29,7 @@ const isMobileMenuOpen = ref(false);
 
   <div id="root">
     <Header v-if="isHeaderInApp(route.path)" @openMobileMenu="isMobileMenuOpen = true" />
+    <TrialBanner v-if="authStore.user?.subscription?.plan === 'Izzzi'" />
     <MobileMenu
       :isOpen="isMobileMenuOpen"
       :isAuthenticated="authStore.isAuthenticated"

@@ -39,7 +39,9 @@ export class PermissionsGuard implements CanActivate {
     );
 
     if (!hasPermission) {
-      throw new ForbiddenException('Permissions insuffisantes');
+      throw new ForbiddenException(
+        `Permissions insuffisantes. Requis: ${requiredPermissions.join(', ')}`,
+      );
     }
 
     return true;

@@ -68,6 +68,24 @@ export class SubjectController {
     return this.subjectService.create(user.institutionId, createSubjectDto);
   }
 
+  @Post('bulk')
+  @HttpCode(201)
+  @ApiOperation({ summary: 'Create multiple new subjects' })
+  @RequirePermissions('subject:create')
+  @UsePipes(
+    new ValidationPipe({
+      whitelist: true,
+      forbidNonWhitelisted: true,
+      transform: true,
+    }),
+  )
+  async bulkCreate(
+    @Body() createSubjectDtos: CreateSubjectDto[],
+    @CurrentUser() user: any,
+  ): Promise<{ count: number }> {
+    return this.subjectService.createMany(user.institutionId, createSubjectDtos);
+  }
+
   @Patch(':id')
   @ApiOperation({ summary: 'Update subject by id' })
   @RequirePermissions('subject:update')

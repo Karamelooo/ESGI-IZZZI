@@ -75,10 +75,7 @@ async function onSubmit(event: Event) {
       <Button icon="Arrow" iconPosition="right" :disabled="loadingState" type="submit">{{
         loadingState ? 'Connexion...' : 'Se connecter'
       }}</Button>
-      <!--
-      <div class="separator">Ou</div>
-      <Button icon="Arrow" variant="neutral" iconPosition="right">Se connecter avec Google</Button>
-      -->
+      
       <div class="separator">Connexion rapide</div>
       <div style="display: flex; gap: 8px">
         <Button variant="neutral" @click="fillCredentials('owner')">Owner</Button>

@@ -261,7 +261,8 @@ const wrapperClass = computed(() => ({
   border: 1px solid var(--gray-15);
   border-radius: 6px;
   padding: 8px 12px;
-  transition: border-color 0.2s;
+  box-sizing: border-box;
+  width: 100%;
 }
 
 .input:disabled {

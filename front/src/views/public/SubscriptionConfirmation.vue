@@ -139,6 +139,10 @@ onMounted(async () => {
   await checkPaymentStatus();
   if (isPaymentSuccess.value) return;
 
+  if (isFreePlan.value) {
+    return;
+  }
+
   if (!STRIPE_PUBLIC_KEY) {
     errorMessage.value = "Configuration Stripe manquante.";
     return;
@@ -167,6 +171,41 @@ onMounted(async () => {
     errorMessage.value = "Erreur lors de l'initialisation du paiement.";
   }
 });
+
+const isFreePlan = computed(() => route.query.plan === 'Izzzi');
+
+const handleFreePlanSubmit = async () => {
+  if (!acceptedTerms.value) {
+    alert('Veuillez accepter les Conditions Générales de Vente');
+    return;
+  }
+
+  isLoading.value = true;
+  errorMessage.value = null;
+
+  try {
+    const response = await api.post('/subscription/free');
+    console.log('Free subscription created:', response.data);
+    
+    isPaymentSuccess.value = true;
+    
+    const endDate = new Date();
+    endDate.setMonth(endDate.getMonth() + 4);
+    
+    subscriptionDetails.value = {
+      plan: 'Izzzi',
+      period: 'trial',
+      amount: 0,
+      date: new Date().toLocaleDateString(),
+      nextPayment: endDate.toLocaleDateString()
+    };
+  } catch (e: any) {
+    console.error("Failed to create free subscription", e);
+    errorMessage.value = e.response?.data?.message || "Erreur lors de la création de l'abonnement.";
+  } finally {
+    isLoading.value = false;
+  }
+};
 
 const handleSubmit = async () => {
   if (!acceptedTerms.value) {
@@ -212,30 +251,33 @@ const handleSubmit = async () => {
   <main class="subscription-confirmation">
     <div v-if="isPaymentSuccess" class="success-content">
       <div class="confirmation-header">
-        <h1>Paiement confirmé !</h1>
-        <p>Vous êtes passé au plan Super Izzzi.<br>Merci pour votre confiance.</p>
+        <h1>{{ subscriptionDetails?.plan === 'Izzzi' ? 'Essai gratuit activé !' : 'Paiement confirmé !' }}</h1>
+        <p>Vous êtes passé au plan {{ subscriptionDetails?.plan || 'Super Izzzi' }}.<br>Merci pour votre confiance.</p>
       </div>
       <div class="confirmation-content">
         <Card class="subscription-plan-card">
            <div class="plan-badge">
-            <Button variant="primary" round>🙌 Super Izzzi</Button>
+            <Button v-if="subscriptionDetails?.plan === 'Izzzi'" variant="neutral" round>👌🏻 Izzzi</Button>
+            <Button v-else variant="primary" round>🙌 Super Izzzi</Button>
            </div>
            <h2>Détail de votre abonnement</h2>
            <div class="details-grid" v-if="subscriptionDetails">
              <div>
                 <strong>Plan</strong>
-                <p>Super Izzzi – Paiement {{ billingPeriod === 'annual' ? 'annuel' : 'mensuel' }}</p>
+                <p v-if="subscriptionDetails?.plan === 'Izzzi'">Izzzi – Période d'essai</p>
+                <p v-else>Super Izzzi – Paiement {{ billingPeriod === 'annual' ? 'annuel' : 'mensuel' }}</p>
              </div>
              <div>
                 <strong>Moyen de paiement</strong>
-                <p>Stripe</p>
+                <p v-if="subscriptionDetails?.plan === 'Izzzi'">Aucun</p>
+                <p v-else>Stripe</p>
              </div>
              <div>
                 <strong>Montant payé</strong>
-                <p>{{ totalPrice }}€ TTC</p>
+                <p>{{ subscriptionDetails?.plan === 'Izzzi' ? '0€' : `${totalPrice}€ TTC` }}</p>
              </div>
              <div>
-                <strong>Prochain paiement</strong>
+                <strong>{{ subscriptionDetails?.plan === 'Izzzi' ? 'Fin de l\'essai' : 'Prochain paiement' }}</strong>
                 <p>{{ subscriptionDetails?.nextPayment }}</p>
              </div>
            </div>
@@ -248,10 +290,10 @@ const handleSubmit = async () => {
            <h2>Ce que vous pouvez faire maintenant</h2>
            <ul class="features-list">
              <li><Icon name="Check-Desktop" /> Accéder à vos classes et retours en illimités</li>
-             <li><Icon name="Check-Desktop" /> Télécharger votre facture</li>
+             <li v-if="subscriptionDetails?.plan !== 'Izzzi'"><Icon name="Check-Desktop" /> Télécharger votre facture</li>
            </ul>
            <Button variant="primary" to="/dashboard">Accéder à mon dashboard</Button>
-           <Button variant="neutral">Télécharger ma facture <Icon name="Download" /></Button>
+           <Button v-if="subscriptionDetails?.plan !== 'Izzzi'" variant="neutral">Télécharger ma facture <Icon name="Download" /></Button>
         </Card>
       </div>
     </div>
@@ -265,10 +307,13 @@ const handleSubmit = async () => {
       <Card class="confirmation-left">
         <div class="subscription-plan-card">
           <div class="plan-badge">
-            <Button variant="primary" round>🙌 Super Izzzi</Button>
+            <Button v-if="isFreePlan" variant="neutral" round>👌🏻 Izzzi</Button>
+            <Button v-else variant="primary" round>🙌 Super Izzzi</Button>
           </div>
-          <h2>Passez au plan Super Izzzi</h2>
-          <p>Changez de plan pour débloquer les retours illimités</p>
+          <h2 v-if="isFreePlan">Démarrez votre essai gratuit</h2>
+          <h2 v-else>Passez au plan Super Izzzi</h2>
+          <p v-if="isFreePlan">4 mois d'essai gratuit, sans engagement</p>
+          <p v-else>Changez de plan pour débloquer les retours illimités</p>
         </div>
 
         <div class="billing-info-card">
@@ -280,7 +325,7 @@ const handleSubmit = async () => {
           <Input v-model="firstName" type="text" name="first-name" />
         </div>
 
-        <div class="card-info-card">
+        <div v-if="!isFreePlan" class="card-info-card">
           <h3>Informations de carte</h3>
           <div v-if="errorMessage" class="error-message">
             {{ errorMessage }}
@@ -289,7 +334,7 @@ const handleSubmit = async () => {
           </div>
         </div>
 
-        <div class="address-card">
+        <div v-if="!isFreePlan" class="address-card">
           <h3>Adresse de facturation</h3>
           <Input v-model="address" type="text" name="address" />
           <Input v-model="addressComplement" type="text" name="address-complement" placeholder="Étage, bâtiment..." />
@@ -299,11 +344,15 @@ const handleSubmit = async () => {
           </div>
           <Input v-model="country" type="text" name="country" />
         </div>
+
+        <div v-if="isFreePlan && errorMessage" class="error-message">
+          {{ errorMessage }}
+        </div>
       </Card>
 
       <div class="confirmation-right">
         <Card class="payment-summary-card">
-          <div class="payment-options">
+          <div v-if="!isFreePlan" class="payment-options">
             <div
               v-for="(option, index) in paymentOptions"
               :key="index"
@@ -330,9 +379,14 @@ const handleSubmit = async () => {
             </div>
           </div>
 
+          <div v-if="isFreePlan" class="free-plan-summary">
+            <h3>Plan Izzzi - Essai gratuit</h3>
+            <p>4 mois d'accès complet, sans carte bancaire</p>
+          </div>
+
           <div class="total-section">
             <span>Total</span>
-            <span class="total-price">{{ totalPrice }}€/mois TTC</span>
+            <span class="total-price">{{ isFreePlan ? '0€' : `${totalPrice}€/mois TTC` }}</span>
           </div>
 
           <div class="terms-section">
@@ -341,6 +395,17 @@ const handleSubmit = async () => {
           </div>
 
           <Button 
+            v-if="isFreePlan"
+            variant="primary" 
+            @click="handleFreePlanSubmit" 
+            class="submit-button"
+            :disabled="isLoading"
+          >
+            {{ isLoading ? 'Traitement...' : 'Démarrer mon essai gratuit' }}
+          </Button>
+
+          <Button 
+            v-else
             variant="primary" 
             @click="handleSubmit" 
             class="submit-button"
@@ -349,7 +414,7 @@ const handleSubmit = async () => {
             {{ isLoading ? 'Traitement...' : `Valider et payer ${totalPriceYear}€/an (ou ${totalPrice}€/mois)` }}
           </Button>
 
-          <div class="security-info">
+          <div v-if="!isFreePlan" class="security-info">
             <Icon name="Check-Desktop" />
             <span>Paiement sécurisé via Stripe</span>
           </div>

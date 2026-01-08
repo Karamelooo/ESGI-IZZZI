@@ -133,6 +133,22 @@ export class SubjectService {
     });
   }
 
+  async createMany(
+    institutionId: number,
+    items: CreateSubjectDto[],
+  ): Promise<{ count: number }> {
+    const data = items.map((item) => ({
+      ...item,
+      startDate: item.startDate ? new Date(item.startDate) : undefined,
+      endDate: item.endDate ? new Date(item.endDate) : undefined,
+      institutionId,
+    }));
+
+    return this.prisma.subject.createMany({
+      data,
+    });
+  }
+
   async update(
     id: number,
     institutionId: number,

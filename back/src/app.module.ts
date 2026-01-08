@@ -15,6 +15,9 @@ import { FormTemplateModule } from './form-template/form-template.module';
 import { FormModule } from './form/form.module';
 import { ResponseModule } from './response/response.module';
 import { StatisticsModule } from './statistics/statistics.module';
+import { InvitationModule } from './invitation/invitation.module';
+import { MailModule } from './mail/mail.module';
+import { ContactModule } from './contact/contact.module';
 
 @Module({
   imports: [
@@ -36,8 +39,11 @@ import { StatisticsModule } from './statistics/statistics.module';
     FormModule,
     ResponseModule,
     StatisticsModule,
+    InvitationModule,
+    MailModule,
+    ContactModule,
   ],
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule {}
+export class AppModule { }

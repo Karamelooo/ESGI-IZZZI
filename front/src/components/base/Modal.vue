@@ -12,7 +12,7 @@ interface Props {
   cancelVariant?: ButtonVariant;
 }
 
-const props = withDefaults(defineProps<Props>(), {
+withDefaults(defineProps<Props>(), {
   isOpen: false,
   confirmVariant: 'primary',
   cancelVariant: 'plain',
