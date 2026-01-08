@@ -5,6 +5,7 @@ services:
       dockerfile: Dockerfile.prod
     environment:
       - API_URL=${API_URL:-http://localhost:3500}
+      - VITE_STRIPE_PUBLIC_KEY=${VITE_STRIPE_PUBLIC_KEY}
     restart: always
     depends_on:
       - back
