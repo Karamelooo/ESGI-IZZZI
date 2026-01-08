@@ -67,6 +67,11 @@ export class SubjectService {
         ...(withDeleted ? {} : { deletedAt: null }),
       },
       include: {
+        class: {
+          include: {
+            institution: true,
+          },
+        },
         forms: {
           include: {
             _count: {
