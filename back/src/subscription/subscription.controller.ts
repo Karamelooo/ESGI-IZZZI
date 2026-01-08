@@ -17,8 +17,7 @@ export class SubscriptionController {
   }
 
   @Post()
-  @UseGuards(AccessTokenGuard, PermissionsGuard)
-  @RequirePermissions('institution:manage')
+  @UseGuards(AccessTokenGuard)
   async create(
     @CurrentUser() user: any,
     @Body() createSubscriptionDto: CreateSubscriptionDto,
