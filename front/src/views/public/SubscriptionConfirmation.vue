@@ -77,58 +77,59 @@ const checkPaymentStatus = async () => {
     isPaymentSuccess.value = true;
     console.log('Payment succeeded. Attempting to save subscription...');
     try {
-        const paymentIntentId = route.query.payment_intent as string;
-        
-        console.log('Sending subscription data to backend:', {
-            paymentIntentId,
-            plan: route.query.plan,
-            billingPeriod: billingPeriod.value,
-            numberOfClasses: numberOfClasses.value
-        });
+      const paymentIntentId = route.query.payment_intent as string;
 
-        const response = await api.post('/subscription', {
-            paymentIntentId,
-            plan: route.query.plan || 'Super Izzzi',
-            billingPeriod: billingPeriod.value,
-            numberOfClasses: numberOfClasses.value,
-            address: address.value,
-            city: city.value,
-            postalCode: postalCode.value,
-            country: country.value,
-            email: billingEmail.value,
-            firstName: firstName.value,
-            lastName: lastName.value
-        });
-        
-        console.log('Subscription saved successfully:', response.data);
+      console.log('Sending subscription data to backend:', {
+        paymentIntentId,
+        plan: route.query.plan,
+        billingPeriod: billingPeriod.value,
+        numberOfClasses: numberOfClasses.value,
+      });
 
-        subscriptionDetails.value = {
-            plan: 'Super Izzzi',
-            period: billingPeriod.value,
-            amount: totalPrice.value,
-            date: new Date().toLocaleDateString(),
-            nextPayment: billingPeriod.value === 'annual' 
-              ? new Date(new Date().setFullYear(new Date().getFullYear() + 1)).toLocaleDateString()
-              : new Date(new Date().setMonth(new Date().getMonth() + 1)).toLocaleDateString()
-        };
+      const response = await api.post('/subscription', {
+        paymentIntentId,
+        plan: route.query.plan || 'Super Izzzi',
+        billingPeriod: billingPeriod.value,
+        numberOfClasses: numberOfClasses.value,
+        address: address.value,
+        city: city.value,
+        postalCode: postalCode.value,
+        country: country.value,
+        email: billingEmail.value,
+        firstName: firstName.value,
+        lastName: lastName.value,
+      });
+
+      console.log('Subscription saved successfully:', response.data);
+
+      subscriptionDetails.value = {
+        plan: 'Super Izzzi',
+        period: billingPeriod.value,
+        amount: totalPrice.value,
+        date: new Date().toLocaleDateString(),
+        nextPayment:
+          billingPeriod.value === 'annual'
+            ? new Date(new Date().setFullYear(new Date().getFullYear() + 1)).toLocaleDateString()
+            : new Date(new Date().setMonth(new Date().getMonth() + 1)).toLocaleDateString(),
+      };
     } catch (e: any) {
-        console.error("Failed to record subscription", e);
-        if (e.response) {
-            console.error("Backend error response:", e.response.data);
-            errorMessage.value = `Erreur backend: ${JSON.stringify(e.response.data)}`;
-        } else {
-            errorMessage.value = "Paiement réussi mais échec de l'enregistrement.";
-        }
+      console.error('Failed to record subscription', e);
+      if (e.response) {
+        console.error('Backend error response:', e.response.data);
+        errorMessage.value = `Erreur backend: ${JSON.stringify(e.response.data)}`;
+      } else {
+        errorMessage.value = "Paiement réussi mais échec de l'enregistrement.";
+      }
     }
   } else {
-      console.log('No payment success params found or status not succeeded.');
+    console.log('No payment success params found or status not succeeded.');
   }
 };
 
 onMounted(async () => {
   await authStore.fetchMe();
   if (!authStore.isAuthenticated) {
-    router.push('/auth'); 
+    router.push('/auth');
     return;
   }
 
@@ -144,14 +145,14 @@ onMounted(async () => {
   }
 
   if (!STRIPE_PUBLIC_KEY) {
-    errorMessage.value = "Configuration Stripe manquante.";
+    errorMessage.value = 'Configuration Stripe manquante.';
     return;
   }
 
   stripe.value = await loadStripe(STRIPE_PUBLIC_KEY);
 
   if (!stripe.value) {
-    errorMessage.value = "Impossible de charger Stripe.";
+    errorMessage.value = 'Impossible de charger Stripe.';
     return;
   }
 
@@ -186,21 +187,21 @@ const handleFreePlanSubmit = async () => {
   try {
     const response = await api.post('/subscription/free');
     console.log('Free subscription created:', response.data);
-    
+
     isPaymentSuccess.value = true;
-    
+
     const endDate = new Date();
     endDate.setMonth(endDate.getMonth() + 4);
-    
+
     subscriptionDetails.value = {
       plan: 'Izzzi',
       period: 'trial',
       amount: 0,
       date: new Date().toLocaleDateString(),
-      nextPayment: endDate.toLocaleDateString()
+      nextPayment: endDate.toLocaleDateString(),
     };
   } catch (e: any) {
-    console.error("Failed to create free subscription", e);
+    console.error('Failed to create free subscription', e);
     errorMessage.value = e.response?.data?.message || "Erreur lors de la création de l'abonnement.";
   } finally {
     isLoading.value = false;
@@ -212,7 +213,7 @@ const handleSubmit = async () => {
     alert('Veuillez accepter les Conditions Générales de Vente');
     return;
   }
-  
+
   if (!stripe.value || !elements.value) {
     return;
   }
@@ -223,7 +224,7 @@ const handleSubmit = async () => {
   const { error } = await stripe.value.confirmPayment({
     elements: elements.value,
     confirmParams: {
-      return_url: `${window.location.origin}/pricing/confirm?plan=${route.query.plan}&classes=${numberOfClasses.value}&period=${billingPeriod.value}`, 
+      return_url: `${window.location.origin}/pricing/confirm?plan=${route.query.plan}&classes=${numberOfClasses.value}&period=${billingPeriod.value}`,
       payment_method_data: {
         billing_details: {
           name: `${firstName.value} ${lastName.value}`,
@@ -233,18 +234,17 @@ const handleSubmit = async () => {
             city: city.value,
             postal_code: postalCode.value,
             country: 'FR',
-          }
-        }
-      }
+          },
+        },
+      },
     },
   });
 
   if (error) {
-    errorMessage.value = error.message || "Une erreur est survenue lors du paiement.";
+    errorMessage.value = error.message || 'Une erreur est survenue lors du paiement.';
     isLoading.value = false;
   }
 };
-
 </script>
 
 <template>
@@ -252,52 +252,58 @@ const handleSubmit = async () => {
     <div v-if="isPaymentSuccess" class="success-content">
       <div class="confirmation-header">
         <h1>{{ subscriptionDetails?.plan === 'Izzzi' ? 'Essai gratuit activé !' : 'Paiement confirmé !' }}</h1>
-        <p>Vous êtes passé au plan {{ subscriptionDetails?.plan || 'Super Izzzi' }}.<br>Merci pour votre confiance.</p>
+        <p>
+          Vous êtes passé au plan {{ subscriptionDetails?.plan || 'Super Izzzi' }}.<br />Merci pour votre confiance.
+        </p>
       </div>
       <div class="confirmation-content">
         <Card class="subscription-plan-card">
-           <div class="plan-badge">
+          <div class="plan-badge">
             <Button v-if="subscriptionDetails?.plan === 'Izzzi'" variant="neutral" round>👌🏻 Izzzi</Button>
             <Button v-else variant="primary" round>🙌 Super Izzzi</Button>
-           </div>
-           <h2>Détail de votre abonnement</h2>
-           <div class="details-grid" v-if="subscriptionDetails">
-             <div>
-                <strong>Plan</strong>
-                <p v-if="subscriptionDetails?.plan === 'Izzzi'">Izzzi – Période d'essai</p>
-                <p v-else>Super Izzzi – Paiement {{ billingPeriod === 'annual' ? 'annuel' : 'mensuel' }}</p>
-             </div>
-             <div>
-                <strong>Moyen de paiement</strong>
-                <p v-if="subscriptionDetails?.plan === 'Izzzi'">Aucun</p>
-                <p v-else>Stripe</p>
-             </div>
-             <div>
-                <strong>Montant payé</strong>
-                <p>{{ subscriptionDetails?.plan === 'Izzzi' ? '0€' : `${totalPrice}€ TTC` }}</p>
-             </div>
-             <div>
-                <strong>{{ subscriptionDetails?.plan === 'Izzzi' ? 'Fin de l\'essai' : 'Prochain paiement' }}</strong>
-                <p>{{ subscriptionDetails?.nextPayment }}</p>
-             </div>
-           </div>
-           <div v-else-if="!errorMessage" class="loading-details">
-             <p>Chargement des détails...</p>
-           </div>
-           <div v-else class="error-details">
-             <p class="error-text">{{ errorMessage }}</p>
-             <Button variant="neutral" @click="checkPaymentStatus">Réessayer l'enregistrement</Button>
-           </div>
+          </div>
+          <h2>Détail de votre abonnement</h2>
+          <div class="details-grid" v-if="subscriptionDetails">
+            <div>
+              <strong>Plan</strong>
+              <p v-if="subscriptionDetails?.plan === 'Izzzi'">Izzzi – Période d'essai</p>
+              <p v-else>Super Izzzi – Paiement {{ billingPeriod === 'annual' ? 'annuel' : 'mensuel' }}</p>
+            </div>
+            <div>
+              <strong>Moyen de paiement</strong>
+              <p v-if="subscriptionDetails?.plan === 'Izzzi'">Aucun</p>
+              <p v-else>Stripe</p>
+            </div>
+            <div>
+              <strong>Montant payé</strong>
+              <p>{{ subscriptionDetails?.plan === 'Izzzi' ? '0€' : `${totalPrice}€ TTC` }}</p>
+            </div>
+            <div>
+              <strong>{{ subscriptionDetails?.plan === 'Izzzi' ? "Fin de l'essai" : 'Prochain paiement' }}</strong>
+              <p>{{ subscriptionDetails?.nextPayment }}</p>
+            </div>
+          </div>
+          <div v-else-if="!errorMessage" class="loading-details">
+            <p>Chargement des détails...</p>
+          </div>
+          <div v-else class="error-details">
+            <p class="error-text">{{ errorMessage }}</p>
+            <Button variant="neutral" @click="checkPaymentStatus">Réessayer l'enregistrement</Button>
+          </div>
         </Card>
-        
+
         <Card class="actions-card">
-           <h2>Ce que vous pouvez faire maintenant</h2>
-           <ul class="features-list">
-             <li><Icon name="Check-Desktop" /> Accéder à vos classes et retours en illimités</li>
-             <li v-if="subscriptionDetails?.plan !== 'Izzzi'"><Icon name="Check-Desktop" /> Télécharger votre facture</li>
-           </ul>
-           <Button variant="primary" to="/dashboard">Accéder à mon dashboard</Button>
-           <Button v-if="subscriptionDetails?.plan !== 'Izzzi'" variant="neutral">Télécharger ma facture <Icon name="Download" /></Button>
+          <h2>Ce que vous pouvez faire maintenant</h2>
+          <ul class="features-list">
+            <li><Icon name="Check-Desktop" /> Accéder à vos classes et retours en illimités</li>
+            <li v-if="subscriptionDetails?.plan !== 'Izzzi'">
+              <Icon name="Check-Desktop" /> Télécharger votre facture
+            </li>
+          </ul>
+          <Button variant="primary" link="/dashboard">Accéder à mon dashboard</Button>
+          <Button v-if="subscriptionDetails?.plan !== 'Izzzi'" variant="neutral"
+            >Télécharger ma facture <Icon name="Download"
+          /></Button>
         </Card>
       </div>
     </div>
@@ -334,8 +340,7 @@ const handleSubmit = async () => {
           <div v-if="errorMessage" class="error-message">
             {{ errorMessage }}
           </div>
-          <div id="payment-element">
-          </div>
+          <div id="payment-element"></div>
         </div>
 
         <div v-if="!isFreePlan" class="address-card">
@@ -398,23 +403,17 @@ const handleSubmit = async () => {
             <a href="#" class="cgv-link">(CGV)</a>
           </div>
 
-          <Button 
+          <Button
             v-if="isFreePlan"
-            variant="primary" 
-            @click="handleFreePlanSubmit" 
+            variant="primary"
+            @click="handleFreePlanSubmit"
             class="submit-button"
             :disabled="isLoading"
           >
             {{ isLoading ? 'Traitement...' : 'Démarrer mon essai gratuit' }}
           </Button>
 
-          <Button 
-            v-else
-            variant="primary" 
-            @click="handleSubmit" 
-            class="submit-button"
-            :disabled="isLoading"
-          >
+          <Button v-else variant="primary" @click="handleSubmit" class="submit-button" :disabled="isLoading">
             {{ isLoading ? 'Traitement...' : `Valider et payer ${totalPriceYear}€/an (ou ${totalPrice}€/mois)` }}
           </Button>
 
@@ -477,8 +476,8 @@ const handleSubmit = async () => {
 }
 
 .confirmation-left div {
-  gap:0;
-  padding:0;
+  gap: 0;
+  padding: 0;
 }
 
 .subscription-plan-card {

@@ -176,9 +176,7 @@ const userInitials = computed(() => {
               <label>Établissement</label>
               <Input v-model="userForm.institution" placeholder="Votre établissement" disabled />
             </div>
-            <Button variant="primary" icon="Arrow" iconPosition="right" @click="handleUpdateProfile">
-              Modifier
-            </Button>
+            <Button variant="primary" icon="Arrow" iconPosition="right" @click="handleUpdateProfile"> Modifier </Button>
           </Card>
         </div>
 
@@ -187,16 +185,28 @@ const userInitials = computed(() => {
             <h3>Modifier mon mot de passe</h3>
             <div class="form-group">
               <label>Ancien mot de passe</label>
-              <Input v-model="passwordForm.currentPassword" type="password" placeholder="Entrez votre ancien mot de passe" />
+              <Input
+                v-model="passwordForm.currentPassword"
+                type="password"
+                placeholder="Entrez votre ancien mot de passe"
+              />
             </div>
             <div class="form-group">
               <label>Nouveau</label>
-              <Input v-model="passwordForm.newPassword" type="password" placeholder="Entrez votre nouveau mot de passe" />
+              <Input
+                v-model="passwordForm.newPassword"
+                type="password"
+                placeholder="Entrez votre nouveau mot de passe"
+              />
               <p class="hint">• 8 caractères &nbsp; • 1 minuscule &nbsp; • 1 majuscule</p>
             </div>
             <div class="form-group">
               <label>Confirmez votre nouveau mot de passe</label>
-              <Input v-model="passwordForm.confirmPassword" type="password" placeholder="Entrez votre nouveau mot de passe" />
+              <Input
+                v-model="passwordForm.confirmPassword"
+                type="password"
+                placeholder="Entrez votre nouveau mot de passe"
+              />
             </div>
             <Button variant="primary" icon="Arrow" iconPosition="right" @click="handleUpdatePassword">
               Modifier
@@ -218,8 +228,12 @@ const userInitials = computed(() => {
 <style scoped>
 .profile-page {
   min-height: 100vh;
-  margin-top:6rem;
+  margin-top: 6rem;
   background-color: var(--gray-1);
+}
+
+.profile-page h3 {
+  font-weight: 400;
 }
 
 .content {
@@ -261,7 +275,6 @@ const userInitials = computed(() => {
   align-items: center;
   justify-content: center;
   font-size: 32px;
-  font-weight: 700;
   color: var(--gray-20);
   position: relative;
 }
@@ -282,7 +295,6 @@ const userInitials = computed(() => {
 
 .user-info h3 {
   font-size: 20px;
-  font-weight: 700;
   margin-bottom: 4px;
 }
 
@@ -298,9 +310,9 @@ const userInitials = computed(() => {
   font-weight: 600;
 }
 
-.billing-card h3, .form-card h3 {
+.billing-card h3,
+.form-card h3 {
   font-size: 18px;
-  font-weight: 700;
 }
 
 .billing-features {

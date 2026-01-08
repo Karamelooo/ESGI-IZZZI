@@ -7,6 +7,7 @@ import { useAuthStore } from '@stores/auth';
 import { useSubjectsStore } from '@stores/subjects';
 import { storeToRefs } from 'pinia';
 import { toDateFR } from '@utils/date';
+import TrialBanner from '@components/page/TrialBanner.vue';
 import AddFormModal from '@components/classes/AddFormModal.vue';
 import QRCodeModal from '@components/classes/QRCodeModal.vue';
 
@@ -123,6 +124,7 @@ onMounted(async () => {
 <template>
   <div class="page">
     <Header />
+    <TrialBanner v-if="authStore.user?.subscription?.plan === 'Izzzi'" />
 
     <div class="page-content">
       <div class="page-header">
