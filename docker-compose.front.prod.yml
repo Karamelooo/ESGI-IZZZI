@@ -7,6 +7,10 @@ services:
       - API_URL=${API_URL:-http://localhost:3500}
       - VITE_STRIPE_PUBLIC_KEY=${VITE_STRIPE_PUBLIC_KEY}
     restart: always
+    deploy:
+      replicas: 3
+      restart_policy:
+        condition: on-failure
     networks:
       - dokploy-network
 

@@ -18,6 +18,10 @@ services:
       - OPENROUTER_API_KEY=${OPENROUTER_API_KEY}
       - FRONTEND_URL=${FRONTEND_URL}
     restart: always
+    deploy:
+      replicas: 2
+      restart_policy:
+        condition: on-failure
     networks:
       - dokploy-network
 
