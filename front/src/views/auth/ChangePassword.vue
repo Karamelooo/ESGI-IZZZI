@@ -1,14 +1,52 @@
 <script lang="ts" setup>
-import { ref } from 'vue';
-import { useRouter } from 'vue-router';
+import { ref, onMounted } from 'vue';
+import { useRouter, useRoute } from 'vue-router';
+import { useApi } from '@/api/axios';
+import { useToast } from '@composables/useToast';
 
 const router = useRouter();
+const route = useRoute();
+const api = useApi();
+const toast = useToast();
 
 const newPasswordInput = ref('');
 const confirmPasswordInput = ref('');
+const loading = ref(false);
+const token = ref('');
 
-function handleSubmit() {
-  router.push('/auth');
+onMounted(() => {
+  token.value = route.query.token as string;
+  if (!token.value) {
+    toast.negative('Erreur', 'Lien de réinitialisation invalide.');
+    router.push('/auth');
+  }
+});
+
+async function handleSubmit() {
+  if (loading.value) return;
+  if (!newPasswordInput.value || !confirmPasswordInput.value) {
+    toast.negative('Erreur', 'Veuillez remplir tous les champs.');
+    return;
+  }
+  if (newPasswordInput.value !== confirmPasswordInput.value) {
+    toast.negative('Erreur', 'Les mots de passe ne correspondent pas.');
+    return;
+  }
+
+  loading.value = true;
+  try {
+    await api.post('/auth/reset-password', {
+      token: token.value,
+      password: newPasswordInput.value,
+    });
+    toast.success('Succès', 'Votre mot de passe a été réinitialisé.');
+    router.push('/auth');
+  } catch (e) {
+    console.error(e);
+    toast.negative('Erreur', 'Une erreur est survenue lors de la réinitialisation.');
+  } finally {
+    loading.value = false;
+  }
 }
 </script>
 
@@ -40,7 +78,9 @@ function handleSubmit() {
           :required="true"
         />
 
-        <Button icon="Arrow" iconPosition="right" @click="handleSubmit">Réinitialiser</Button>
+        <Button icon="Arrow" iconPosition="right" :disabled="loading" @click="handleSubmit">
+          {{ loading ? 'Réinitialisation...' : 'Réinitialiser' }}
+        </Button>
       </form>
     </Card>
   </main>

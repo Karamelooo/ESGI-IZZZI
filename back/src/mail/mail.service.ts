@@ -43,4 +43,25 @@ export class MailService {
             html: html,
         });
     }
+
+    public async sendResetPasswordEmail(email: string, token: string): Promise<void> {
+        const resetUrl = `${process.env.FRONTEND_URL || 'http://localhost:5173'}/auth/change-password?token=${token}`;
+        const subject = 'Réinitialisation de votre mot de passe - Izzzi';
+        const html = `
+            <h2>Réinitialisation de votre mot de passe</h2>
+            <p>Bonjour,</p>
+            <p>Vous avez demandé la réinitialisation de votre mot de passe pour votre compte Izzzi.</p>
+            <p>Cliquez sur le lien ci-dessous pour définir un nouveau mot de passe :</p>
+            <p><a href="${resetUrl}">${resetUrl}</a></p>
+            <p>Ce lien est valable pendant 15 minutes.</p>
+            <p>Si vous n'êtes pas à l'origine de cette demande, vous pouvez ignorer cet email.</p>
+            <p>L'équipe Izzzi</p>
+        `;
+
+        await this.mailerService.sendMail({
+            to: email,
+            subject: subject,
+            html: html,
+        });
+    }
 }

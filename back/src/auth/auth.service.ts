@@ -11,6 +11,7 @@ import { UserService } from '../user/user.service';
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
 import { Tokens } from './auth.types';
+import { MailService } from '../mail/mail.service';
 
 import { PERMISSIONS, DEFAULT_ROLES } from './permissions.constants';
 
@@ -21,6 +22,7 @@ export class AuthService {
     private readonly jwt: JwtService,
     private readonly institutionService: InstitutionService,
     private readonly userService: UserService,
+    private readonly mailService: MailService,
   ) {}
 
   async register(data: RegisterDto): Promise<{ user: any; tokens: Tokens }> {
@@ -161,6 +163,52 @@ export class AuthService {
       throw new ForbiddenException('Accès refusé');
     const ok = await argon2.verify(user.refreshToken, incoming);
     if (!ok) throw new ForbiddenException('Accès refusé');
+  }
+
+  async forgotPassword(email: string): Promise<void> {
+    const user = await this.prisma.user.findFirst({
+      where: { email, deletedAt: null },
+    });
+
+    // We don't throw if user is not found for security (prevent email enumeration)
+    if (!user) return;
+
+    const resetToken = await this.jwt.signAsync(
+      { sub: String(user.id), type: 'reset' },
+      {
+        secret: process.env.JWT_ACCESS_SECRET,
+        expiresIn: '15m',
+      },
+    );
+
+    await this.mailService.sendResetPasswordEmail(email, resetToken);
+  }
+
+  async resetPassword(token: string, data: any): Promise<void> {
+    let payload: any;
+    try {
+      payload = await this.jwt.verifyAsync(token, {
+        secret: process.env.JWT_ACCESS_SECRET,
+      });
+    } catch (e) {
+      throw new BadRequestException('Lien de réinitialisation invalide ou expiré');
+    }
+
+    if (payload.type !== 'reset') {
+      throw new BadRequestException('Lien de réinitialisation invalide');
+    }
+
+    const userId = Number(payload.sub);
+    const hashedPassword = await argon2.hash(data.password);
+
+    await this.prisma.user.update({
+      where: { id: userId },
+      data: {
+        password: hashedPassword,
+        refreshToken: null,
+        refreshTokenVersion: { increment: 1 }, // Invalidate all existing tokens
+      },
+    });
   }
 
   private toPublicUser(user: any) {
