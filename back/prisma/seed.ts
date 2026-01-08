@@ -163,7 +163,7 @@ async function generateResponsesForForm(
       day === DAYS_DISTRIBUTION - 1
         ? RESPONSES_PER_FORM - responseIndex
         : Math.floor(RESPONSES_PER_FORM / DAYS_DISTRIBUTION) +
-          Math.floor(Math.random() * 3);
+        Math.floor(Math.random() * 3);
 
     for (
       let i = 0;
@@ -207,6 +207,19 @@ async function main() {
     const data: any = yaml.load(fileContents);
 
     const baseDate = new Date();
+
+    console.log('Cleaning up existing data...');
+    await prisma.answer.deleteMany();
+    await prisma.response.deleteMany();
+    await prisma.form.deleteMany();
+    await prisma.subject.deleteMany();
+    await prisma.class.deleteMany();
+    await prisma.invitation.deleteMany();
+    await prisma.subscription.deleteMany();
+    await prisma.userRole.deleteMany();
+    await prisma.user.deleteMany();
+    await prisma.institution.deleteMany();
+    console.log('Cleanup complete.');
 
     const permissionMap = new Map<string, number>();
     for (const key of data.permissions) {
