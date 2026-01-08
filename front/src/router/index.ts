@@ -16,6 +16,7 @@ import SubjectCreate from '@views/subjects/SubjectCreate.vue';
 import Dashboard from '@views/dashboard/Dashboard.vue';
 import Feedbacks from '@views/dashboard/Feedbacks.vue';
 import FormView from '@views/forms/FormView.vue';
+import NotFound from '@views/NotFound.vue';
 import { useAuthStore } from '@stores/auth';
 
 const routes: Array<RouteRecordRaw> = [
@@ -45,6 +46,9 @@ const routes: Array<RouteRecordRaw> = [
 
   /* Form Routes */
   { path: '/form/:id', name: 'form', component: FormView },
+
+  /* 404 */
+  { path: '/:pathMatch(.*)*', name: 'not-found', component: NotFound },
 ];
 
 const router = createRouter({
