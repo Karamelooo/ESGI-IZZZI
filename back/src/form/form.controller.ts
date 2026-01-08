@@ -13,7 +13,9 @@ import { UpdateFormDto } from './dto/update-form.dto';
 import { FormService } from './form.service';
 import { AccessTokenGuard } from '../auth/guards/access-token.guard';
 import { PermissionsGuard } from '../auth/guards/permissions.guard';
+import { PlanGuard } from '../auth/guards/plan.guard';
 import { RequirePermissions } from '../auth/decorators/permissions.decorator';
+import { RequirePaidPlan } from '../auth/decorators/require-paid-plan.decorator';
 
 @Controller('forms')
 export class FormController {
@@ -67,8 +69,9 @@ export class FormController {
   }
 
   @Post(':id/generate-synthesis')
-  @UseGuards(AccessTokenGuard, PermissionsGuard)
+  @UseGuards(AccessTokenGuard, PermissionsGuard, PlanGuard)
   @RequirePermissions('form:update')
+  @RequirePaidPlan()
   generateSynthesis(@Param('id') id: string) {
     return this.formService.generateSynthesis(+id);
   }
